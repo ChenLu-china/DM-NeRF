@@ -12,9 +12,3 @@ This repository contains the implementation of the paper:
 ### Citation
 If you find our work useful in your research, please consider citing:
 
-      @article{wang2022rangeudf,
-      title={RangeUDF: Semantic Surface Reconstruction from 3D Point Clouds},
-      author={Bing, Wang and Zhengdi, Yu and Yang, Bo and Jie, Qin and Toby, Breckon and Ling, Shao and Trigoni, Niki and Markham, Andrew},
-      journal={arXiv preprint arXiv:2204.09138},
-      year={2022}
-    }
