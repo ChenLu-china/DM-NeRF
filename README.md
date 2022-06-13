@@ -9,13 +9,13 @@ This repository contains the implementation of the paper:
 
 **Demo:** <br />
 
-| ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) |
-<!-- 
+<!-- | ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) | -->
+
 <div align=left>
-     <img src="/figs/decompose.gif" width=48%>
-    <img src="/figs/decompose.gif" width=48%> 
+     <img src="/figs/decompose.gif" width=48% float=left>
+    <img src="/figs/decompose.gif" width=48% float=right> 
 </div>
--->
+
 
 
     
