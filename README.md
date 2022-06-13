@@ -7,7 +7,7 @@ This repository contains the implementation of the paper:
 [Bing Wang](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen](https://chenlu-china.github.io/), [Bo Yang<sup>*</sup>](https://yang7879.github.io/) <br />
 [**Paper**]() | [**Supplementary**]() | [**Video**]()
 
-**Demo:
+**Demo:** <br />
 <div align=left>
     <img src="/figs/decompose.gif" width=50%>
 </div>
