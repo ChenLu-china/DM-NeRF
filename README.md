@@ -9,7 +9,9 @@ This repository contains the implementation of the paper:
 
 Demos:
 <div align=center>
-<img src="/figs/Decomposition.mp4" width="100%"/>
+<video class="video-1" width="320" height="240" controls>
+<source src="assets/videos/Decomposition.mp4" type="video/mp4">
+</video>
 </div>
 
 ### Installation
