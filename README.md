@@ -9,7 +9,7 @@ This repository contains the implementation of the paper:
 
 Demo:
 <div align=center>
-    <img src="/figs/decompose.gif" width=80%>
+    <img src="/figs/decompose.gif" width=50%>
 </div>
 
 ### Installation
