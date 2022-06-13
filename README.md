@@ -9,10 +9,10 @@ This repository contains the implementation of the paper:
 
 **Demo:** <br />
 <div align=left>
-    <img src="/figs/decompose.gif" width=50%>
+    <img src="/figs/decompose.gif" width=48%>
 </div>
 <div align=right>
-    <img src="/figs/decompose.gif" width=50%>
+    <img src="/figs/decompose.gif" width=48%>
 </div>
 ### Installation
 
