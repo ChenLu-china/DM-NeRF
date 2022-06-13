@@ -8,11 +8,17 @@ This repository contains the implementation of the paper:
 [**Paper**]() | [**Supplementary**]() | [**Video**]()
 
 **Demo:** <br />
+
+| ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) |
+<!-- 
 <div align=left>
-    <img src="/figs/decompose.gif" width=48%>
+     <img src="/figs/decompose.gif" width=48%>
+    <img src="/figs/decompose.gif" width=48%> 
 </div>
-<div align=right>
-    <img src="/figs/decompose.gif" width=48%>
+-->
+
+
+    
 </div>
 ### Installation
 
