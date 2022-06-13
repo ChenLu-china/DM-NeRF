@@ -17,9 +17,6 @@ This repository contains the implementation of the paper:
 </div>
 
 
-
-    
-</div>
 ### Installation
 
 create python environment vision >=3.7
