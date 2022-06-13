@@ -7,8 +7,9 @@ This repository contains the implementation of the paper:
 [Bing Wang](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen](https://chenlu-china.github.io/), [Bo Yang<sup>*</sup>](https://yang7879.github.io/) <br />
 [**Paper**]() | [**Supplementary**]() | [**Video**]()
 
+Demos:
 <div align=center>
-<img src="" width="100%"/>
+<img src="/figs/Decomposition.mp4" width="100%"/>
 </div>
 
 ### Installation
