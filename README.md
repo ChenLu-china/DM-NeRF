@@ -13,18 +13,10 @@ This repository contains the implementation of the paper:
 
 ### Installation
 
+create python environment vision >=3.7
 ```bash
-Python>=3.7
-pytorch==1.8.1 
-torchVision==0.9.1 
-torchaudio===0.8.1
-imageio==2.9.0
-matplotlib==3.4.2
-lpips==0.1.3
-configargparse==1.4
-opencv-contrib-python==4.5.2
-h5py==1.10.6
-open3d==0.15.1
+pip install pytorch==1.8.1 torchVision==0.9.1 torchaudio===0.8.1
+pip install -r environment.txt
 ```
 
 ### Citation
