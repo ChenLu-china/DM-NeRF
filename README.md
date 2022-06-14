@@ -53,6 +53,8 @@ We used `office0, office2, office3, office4, room0, room1, room2`.
 
 Our dataset rendered by Blender(v2.82.7). It contains 8 normal kinds of indoor scenes, whhich are `Bathroom, Bedroom, Dinning, Kitchen, Reception, Rest, Study, Office`.
 
+### Hints
+
 Baisc information of each scenes can renference `./configs/0000/xxxx/xxxx.txt`.
 
 ## Training
@@ -84,6 +86,12 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/sc
 ## Testing and Editor Testing
 
 ## Qualitative Results
+
+<div align=center>
+     <img src="/figs/results.gif" width=100% > <br/></br>
+     <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
+
+</div>
 
 ## Camera and Object Rotating
 
