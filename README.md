@@ -19,7 +19,7 @@ This repository contains the implementation of the paper:
 
 <div align=center>
      <img src="/figs/manipulation.gif" width=70%>  <br/></br>
-     <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
+     <strong><center>Manipulate Objects</center></strong>     <br/><br/>
 </div>
 
 
