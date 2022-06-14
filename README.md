@@ -47,15 +47,15 @@ we used scene0010_00, scene0012_00, scene0024_00, scene0033_00, scene0038_00, sc
 ### Replica
 
 
-we used office0, office2, office3, office4, room0, room1, room2
+we used office0, office2, office3, office4, room0, room1, room2.
 
 
 ### Synthetic Indoor Rooms（Ours）
 
 
-## Train
+## Training
 
-## Evaluation and Editor Evaluatuion
+## Testing and Editor Testing
 
 ## Qualitative Results
 
