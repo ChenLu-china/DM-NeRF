@@ -12,10 +12,15 @@ This repository contains the implementation of the paper:
 <!-- | ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) | -->
 
 <div align=center>
-     <img src="/figs/decompose.gif" width=70% > </br>
+     <img src="/figs/decomposition.gif" width=70% > </br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>
-<!--     <img src="/figs/decompose.gif" width=48% float=right>  -->
 </div>
+
+<div align=center>
+     <img src="/figs/manipulation.gif" width=70%>  </br>
+     <strong><center>Reconstruction and Instances Decomposition</center></strong>
+</div>
+
 
 
 ### Installation
