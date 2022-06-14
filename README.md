@@ -87,7 +87,7 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/sc
 
 ## Baseline
 
-SOTA method Mask-RCNN
+SOTA method Mask R-CNN
 
 ## Qualitative Results
 
