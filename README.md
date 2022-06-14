@@ -12,8 +12,8 @@ This repository contains the implementation of the paper:
 <!-- | ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) | -->
 
 <div align=center>
-     <img src="/figs/decompose.gif" width=70% >
-     <center>Decomposition</center>
+     <img src="/figs/decompose.gif" width=70% > </br>
+     <center>Reconstruction and Decomposition</center>
 <!--     <img src="/figs/decompose.gif" width=48% float=right>  -->
 </div>
 
