@@ -62,12 +62,22 @@ You can change the your path and parameters under `./configs/xxxx/dataset_name/s
 After you set all parameters you want you can train use command, for example:
 
 For scannet:
+
+If you want use full of segementation function, you can run commands like:
 ```bash
 
-CUDA_VISIBLE_DEVICES=0 python train_scans.py --config configs/0050/scene0010_00.txt
-or use nohup
-CUDA_VISIBLE_DEVICES=0 nohup python -u train_scans.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 python train_scans_penalize.py --config configs/0050/scene0010_00.txt
+or use nohup:
+CUDA_VISIBLE_DEVICES=0 nohup python -u train_scans_penalize.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
 
+```
+If you do not segement non-occupied area, you can run commands like:
+
+```bash
+
+CUDA_VISIBLE_DEVICES=0 python train_replica.py --config configs/0050/scene0010_00.txt
+or use nohup:
+CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
 
 ```
 
