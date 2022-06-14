@@ -102,16 +102,16 @@ def config_parser():
     parser.add_argument("--over_penalize", action='store_true',
                         help="aim to penalize unlabeled rays to air")
     parser.add_argument("--tolerance", type=float, default=None,
-                        help="")
+                        help="move the center of Gaussian Distribution to the depth - tolerance")
     parser.add_argument("--deta_w", type=float, default=None,
-                        help="")
+                        help="contorl the Amplitude of Gaussian Distribution")
 
     # visualizer hyper-parameter
     parser.add_argument("--target_label", type=int, default=None,
                         help='sign the instance you want to move')
 
     parser.add_argument("--center_index", type=int, default=None,
-                        help='sign the instance center')
+                        help='sign the instance center wich you want to move')
 
     parser.add_argument("--ori_pose", type=int, default=None,
                         help='sign the instance center')
