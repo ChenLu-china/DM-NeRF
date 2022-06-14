@@ -53,11 +53,11 @@ We used office0, office2, office3, office4, room0, room1, room2.
 ### Synthetic Indoor Rooms（Ours）
 
 
-Baisc information of each dataset can renference /configs/0000/XXXX/XXXX.txt
+Baisc information of each dataset can renference `/configs/0000/XXXX/XXXX.txt`.
 
 ## Training
 
-You can change the your path and parameters under ./configs/xxxx/dataset_name/scene_name.txt
+You can change the your path and parameters under `./configs/xxxx/dataset_name/scene_name.txt`.
 
 After you set all parameters you want you can train use command, for example:
 
