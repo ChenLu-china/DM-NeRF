@@ -61,7 +61,7 @@ Baisc information of each scenes can renference `./configs/0000/xxxx/xxxx.txt`.
 
 You can change the your path and parameters under `./configs/xxxx/dataset_name/scene_name.txt`.
 
-After you set all parameters you want, you can train model use one of above command, for example:
+After you set all parameters you want, you can train model use one of blow command, for example:
 
 For scannet:
 
