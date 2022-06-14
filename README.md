@@ -52,6 +52,11 @@ we used office0, office2, office3, office4, room0, room1, room2
 
 ### Synthetic Indoor Rooms（Ours）
 
+
+## Train
+
+## Evaluation and Editor Evaluatuion
+
 ## Qualitative Results
 
 ## Camera and Object Rotating
