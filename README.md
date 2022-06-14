@@ -35,6 +35,11 @@ pip install -r environment.txt
 ### Datasets
 
 ### Camera and Object Rotating
+
+<div align=center>
+     <img src="/figs/study_room1.gif" width=70% > <br/></br>
+</div>
+
 ### Citation
 If you find our work useful in your research, please consider citing:
 
