@@ -51,7 +51,7 @@ We used `office0, office2, office3, office4, room0, room1, room2`.
 
 ### OMG-SR（Ours）
 
-Our dataset rendered by Blender(v2.82.7). It contains 8 normal kinds of indoor scenes, whhich are `Bathroom, Bedroom, Dinning, Kitchen, Reception, Rest, Study, Office`.
+Our dataset rendered by Blender(v2.82.7). It contains 8 normal kinds of indoor scenes, which are `Bathroom, Bedroom, Dinning, Kitchen, Reception, Rest, Study, Office`.
 
 ### Hints
 
