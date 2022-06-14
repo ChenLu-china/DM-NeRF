@@ -26,7 +26,7 @@ This repository contains the implementation of the paper:
 
 ## Installation
 
-create python environment vision >=3.7
+Create python environment vision >=3.7
 ```bash
 pip install pytorch==1.8.1 torchVision==0.9.1 torchaudio===0.8.1
 pip install -r environment.txt
