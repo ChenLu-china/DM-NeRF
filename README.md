@@ -53,7 +53,7 @@ We used office0, office2, office3, office4, room0, room1, room2.
 ### Synthetic Indoor Rooms（Ours）
 
 
-You can move our dataset 
+Baisc information of each dataset can renference /configs/0000/XXXX/XXXX.txt
 
 ## Training
 
