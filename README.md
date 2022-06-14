@@ -53,6 +53,8 @@ We used office0, office2, office3, office4, room0, room1, room2.
 ### Synthetic Indoor Rooms（Ours）
 
 
+You can move our dataset 
+
 ## Training
 
 You can change the your path and parameters under ./configs/xxxx/dataset_name/scene_name.txt
