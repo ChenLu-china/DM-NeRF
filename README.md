@@ -34,10 +34,12 @@ pip install -r environment.txt
 
 ### Datasets
 
+### Qualitative Results
+
 ### Camera and Object Rotating
 
 <div align=center>
-     <img src="/figs/study_room1.gif" width=40%> <br/></br>
+     <img src="/figs/study_room1.gif" width=30%> <br/></br>
 </div>
 
 ### Citation
