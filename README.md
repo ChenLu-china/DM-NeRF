@@ -12,7 +12,12 @@ This repository contains the implementation of the paper:
 <!-- | ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) | -->
 
 <div align=center>
+<<<<<<< HEAD
      <img src="/figs/decomposition.gif" width=70% >
+     <center>Decomposition</center>>
+=======
+     <img src="/figs/decompose.gif" width=70% >
+>>>>>>> 4c2209ab6da555586bc8f5fc522badece0ad61a9
 <!--     <img src="/figs/decompose.gif" width=48% float=right>  -->
 </div>
 
