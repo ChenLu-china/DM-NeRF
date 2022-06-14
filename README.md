@@ -88,7 +88,7 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/sc
 ## Qualitative Results
 
 <div align=center>
-     <img src="/figs/results.gif" width=100% > <br/></br>
+     <img src="/figs/results.png" width=100% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
 
 </div>
