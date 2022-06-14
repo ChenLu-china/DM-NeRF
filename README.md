@@ -38,7 +38,18 @@ To evaluate our model or train a new model from scratch, you have to obtain the 
 In this paper, we consider 3 different datasets:
 
 ### Scannet
+
+If you need all the pre-processed files of ScanNet, you can access licenses of [ScanNet](https://github.com/ScanNet/ScanNet).
+
+we used scene0010_00, scene0012_00, scene0024_00, scene0033_00, scene0038_00, scene0088_00, scene0113_00, scene0192_00.
+
+
 ### Replica
+
+
+we used office0, office2, office3, office4, room0, room1, room2
+
+
 ### Synthetic Indoor Rooms（Ours）
 
 ## Qualitative Results
