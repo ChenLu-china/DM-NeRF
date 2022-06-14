@@ -13,6 +13,7 @@ This repository contains the implementation of the paper:
 
 <div align=center>
      <img src="/figs/decompose.gif" width=70% >
+     <center>Decomposition</center>
 <!--     <img src="/figs/decompose.gif" width=48% float=right>  -->
 </div>
 
