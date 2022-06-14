@@ -24,7 +24,7 @@ This repository contains the implementation of the paper:
 
 
 
-### Installation
+## Installation
 
 create python environment vision >=3.7
 ```bash
@@ -32,16 +32,23 @@ pip install pytorch==1.8.1 torchVision==0.9.1 torchaudio===0.8.1
 pip install -r environment.txt
 ```
 
-### Datasets
+## Datasets
 
-### Qualitative Results
+To evaluate our model or train a new model from scratch, you have to obtain the respective dataset.
+In this paper, we consider 3 different datasets:
 
-### Camera and Object Rotating
+### Scannet
+### Replica
+### Synthetic Indoor Rooms（Ours）
+
+## Qualitative Results
+
+## Camera and Object Rotating
 
 <div align=center>
      <img src="/figs/study_room1.gif" width=30%> <br/></br>
 </div>
 
-### Citation
+## Citation
 If you find our work useful in your research, please consider citing:
 
