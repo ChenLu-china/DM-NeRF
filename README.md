@@ -14,6 +14,7 @@ This repository contains the implementation of the paper:
 <div align=center>
      <img src="/figs/decomposition.gif" width=70% > </br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>
+     <br/><br/>
 </div>
 
 <div align=center>
