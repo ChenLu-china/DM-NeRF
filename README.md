@@ -46,14 +46,14 @@ We used `scene0010_00, scene0012_00, scene0024_00, scene0033_00, scene0038_00, s
 
 ### Replica
 
-
 We used `office0, office2, office3, office4, room0, room1, room2`.
 
 
 ### Synthetic Indoor Rooms（Ours）
 
+Our dataset rendered by Blender(v2.82.7). It contains 8 normal kinds of indoor scenes, whhich are `Bathroom, Bedroom, Dinning, Kitchen, Reception, Rest, Study, Office`.
 
-Baisc information of each dataset can renference `./configs/0000/xxxx/xxxx.txt`.
+Baisc information of each scenes can renference `./configs/0000/xxxx/xxxx.txt`.
 
 ## Training
 
