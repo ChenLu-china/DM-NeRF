@@ -99,6 +99,54 @@ def get_select_general(rgb, pose, focal, ins_target, N_train):
     target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
     return target_c, target_i, batch_rays
 
+# for scannet image process
+def get_rays_k(H, W, K, c2w):
+    i, j = torch.meshgrid(torch.linspace(0, W - 1, W),
+                          torch.linspace(0, H - 1, H))  # pytorch's meshgrid has indexing='ij'
+    i = i.t()
+    j = j.t()
+    dirs = torch.stack([(i - K[0, 2]) / K[0, 0], (j - K[1, 2]) / K[1, 1], K[2, 2] * torch.ones_like(i)], -1)
+    # Rotate ray directions from camera frame to the world frame
+    # dot product, equals to: [c2w.dot(dir) for dir in dirs]
+    rays_d = torch.sum(dirs[..., np.newaxis, :] * c2w[:3, :3], -1)
+    # Translate camera frame's origin to the world frame. It is the origin of all rays.
+    rays_o = c2w[:3, -1].expand(rays_d.shape)
+    return rays_o, rays_d
+
+
+def get_select_crop(rgb, pose, K, ins_target, N_train, crop_mask):
+    crop_mask = crop_mask.reshape(-1)
+    H, W, C = rgb.shape
+    rays_o, rays_d = get_rays_k(H, W, K, pose)
+    loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
+    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()
+    loc_h, loc_w = loc_h[crop_mask == 1], loc_w[crop_mask == 1]
+    selected_index = np.random.choice(loc_h.shape[0], size=[N_train], replace=False)
+    selected_h, selected_w = loc_h[selected_index], loc_w[selected_index]
+    rays_o = rays_o[selected_h, selected_w]
+    rays_d = rays_d[selected_h, selected_w]
+    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_train, 3)
+    target_c = rgb[selected_h, selected_w]  # (N_train, 3)
+    target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
+    return target_c, target_i, batch_rays
+
+
+######
+
+# for synthetic rooms
+def gt_select_general(rgb, pose, K, ins_target, N_train):
+    H, W, C = rgb.shape
+    rays_o, rays_d = get_rays_k(H, W, K, pose)
+    loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
+    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()
+    selected_index = np.random.choice(loc_h.shape[0], size=[N_train], replace=False)
+    selected_h, selected_w = loc_h[selected_index], loc_w[selected_index]
+    rays_o = rays_o[selected_h, selected_w]
+    rays_d = rays_d[selected_h, selected_w]
+    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_train, 3)
+    target_c = rgb[selected_h, selected_w]  # (N_train, 3)
+    target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
+    return target_c, target_i, batch_rays
 
 def z_val_sample(N_rays, near, far, N_samples):
     near, far = near * torch.ones(size=(N_rays, 1)), far * torch.ones(size=(N_rays, 1))
