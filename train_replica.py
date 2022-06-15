@@ -36,21 +36,29 @@ def train():
 
         ins_loss_coarse, valid_ce_coarse, invalid_ce_coarse, valid_siou_coarse = \
             ins_criterion(all_info['ins_coarse'], target_i, args.ins_num)
-        penalize_coarse = torch.tensor([0])
 
         # fine losses
         rgb_loss_fine = img2mse(all_info['rgb_fine'], target_c)
         psnr_fine = mse2psnr(rgb_loss_fine)
         ins_loss_fine, valid_ce_fine, invalid_ce_fine, valid_siou_fine = \
             ins_criterion(all_info['ins_fine'], target_i, args.ins_num)
-        penalize_fine = torch.tensor([0])
-        # trans = extras['raw'][..., -1]
 
-        # total losses
+        # without penalize loss
         ins_loss = ins_loss_fine + ins_loss_coarse
         rgb_loss = rgb_loss_fine + rgb_loss_coarse
-        penalize_loss = penalize_fine + penalize_coarse
-        total_loss = rgb_loss + ins_loss  # + penalize_loss
+        total_loss = ins_loss + rgb_loss
+
+        # use penalize
+        if args.penalize:
+            penalize_coarse = ins_penalizer(all_info['raw_coarse'], all_info['z_vals_coarse'],
+                                            all_info['depth_coarse'], batch_rays[1], args)
+            penalize_fine = ins_penalizer(all_info['raw_fine'], all_info['z_vals_fine'],
+                                          all_info['depth_fine'], batch_rays[1], args)
+
+            penalize_loss = penalize_fine + penalize_coarse
+            total_loss = total_loss + penalize_loss
+        # trans = extras['raw'][..., -1]
+
         # optimizing
         optimizer.zero_grad()
         total_loss.backward()
@@ -75,6 +83,7 @@ def train():
                 f"[TRAIN] Iter: {i} F_PSNR: {r_psnr_fine} C_PSNR: {r_psnr_coarse} Total_Loss: {r_total_loss} \n"
                 f"RGB_Loss: {r_rgb_loss} Ins_Loss: {r_ins_loss} Ins_SIoU_Loss: {r_val_siou_fine} \n"
                 f"Ins_CE_Loss: {r_val_ce_fine} Ins_in_CE_Loss: {r_invalid_ce_fine}  Reg_Loss: {r_penalize_loss}")
+
         if i % args.i_save == 0:
             path = os.path.join(args.basedir, args.expname, args.log_time, '{:06d}.tar'.format(i))
             save_model = {
@@ -131,5 +140,6 @@ if __name__ == '__main__':
     poses = torch.Tensor(poses).cpu()
 
     train()
+
 
 
