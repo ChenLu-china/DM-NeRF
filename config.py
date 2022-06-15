@@ -99,7 +99,7 @@ def config_parser():
                         help="select how to weakly instance labels can be set as weakly_ins, weakly_img, weakly_click")
     parser.add_argument("--weakly_value", type=float, default=1.0,
                         help="select how to weakly instance labels, 0-1")
-    parser.add_argument("--over_penalize", action='store_true',
+    parser.add_argument("--penalize", action='store_true',
                         help="aim to penalize unlabeled rays to air")
     parser.add_argument("--tolerance", type=float, default=None,
                         help="move the center of Gaussian Distribution to the depth - tolerance")
@@ -157,17 +157,18 @@ def initial():
         args.device = torch.device("cuda:0")
     else:
         args.device = torch.device("cpu")
-
-    # Create log dir and copy the configs file
-    log_dir = os.path.join(args.basedir, args.expname, args.log_time)
-    os.makedirs(log_dir, exist_ok=True)
-    f = os.path.join(log_dir, 'args.txt')
-    with open(f, 'w') as file:
-        for arg in sorted(vars(args)):
-            attr = getattr(args, arg)
-            file.write('{} = {}\n'.format(arg, attr))
-    if args.config is not None:
-        f = os.path.join(log_dir, 'configs.txt')
+        
+    if arg.render == False and arg.eidtor_render == False:
+        # Create log dir and copy the configs file
+        log_dir = os.path.join(args.basedir, args.expname, args.log_time)
+        os.makedirs(log_dir, exist_ok=True)
+        f = os.path.join(log_dir, 'args.txt')
         with open(f, 'w') as file:
-            file.write(open(args.config, 'r').read())
+            for arg in sorted(vars(args)):
+                attr = getattr(args, arg)
+                file.write('{} = {}\n'.format(arg, attr))
+        if args.config is not None:
+            f = os.path.join(log_dir, 'configs.txt')
+            with open(f, 'w') as file:
+                file.write(open(args.config, 'r').read())
     return args
