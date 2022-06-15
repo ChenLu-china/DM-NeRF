@@ -87,7 +87,13 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/sc
 
 For 2D testing, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
 
-You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config configs/0050/scene_name.txt
+You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config configs/0050/scene_name.txt`.
+
+For editor testing:
+
+Change `render=True` to 'edito_render=True', and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/omg-sr/study_room.txt` and `./data/omg-sr/study_room/object_info.json`.
+
+run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config configs/0050/scene_name.txt`.
 
 ## Baseline
 
