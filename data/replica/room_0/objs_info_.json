@@ -4,51 +4,11 @@
   "objects": [
     {
       "obj_name": "cabinet",
-      "obj_gt_id": 3,
-      "tar_id": 8,
+      "obj_gt_id": null,
+      "tar_id": 57,
       "editor_mode": "translation",
       "distance": [-2.4],
-      "obj_center": [
-        -0.519422,
-        -2.16509,
-        1.07392
-      ]
-    },
-    {
-      "obj_name": "chair",
-      "obj_gt_id": 1,
-      "tar_id": 1,
-      "editor_mode": "rotation",
-      "rotation": 360,
-      "obj_center": [
-        -0.349823,
-        0.079827,
-        0.540725
-      ]
-    },
-    {
-      "obj_name": "table_3",
-      "obj_gt_id": 10,
-      "tar_id": 9,
-      "editor_mode": "rotation",
-      "rotation": 360,
-      "obj_center": [
-        1.43618,
-        0.332645,
-        0.417046
-      ]
-    },
-    {
-      "obj_name": "chair_2",
-      "obj_gt_id": 8,
-      "tar_id": 4,
-      "editor_mode": "translation",
-      "distance": [2.8],
-      "obj_center": [
-        1.49072,
-        2.63855,
-        0.333288
-      ]
+      "obj_center": [1.7759442329406738, 0.6290670037269592, -1.2724769115447998]
     }
   ]
 }
