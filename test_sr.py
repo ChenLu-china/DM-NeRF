@@ -1,10 +1,11 @@
+import torch
 import os
 from config import create_nerf, initial
-from datasets.mydata.data_loader import load_editor_poses
-from datasets.load_mydata import *
-from tools.editor_tools import editor_test
+from datasets.sr.data_loader import load_editor_poses
+from datasets.load_sr import *
+from tools.editor_tool.editor_tools import editor_test
 from tools.test_tools import render_test
-from data.synthetic_rooms.poses_generator import generate_poses
+from data.sr.poses_generator import generate_poses
 
 
 def test():
@@ -27,30 +28,45 @@ def test():
             """this operations list can re-design"""
 
             # ori_pose, tar_poses = load_editor_poses(args)
-            trans_dicts = load_editor_poses(args)
+            obj_trans = load_editor_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'editor_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             editor_test(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
-                        trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
+                        save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
+                        objs_trans=obj_trans, view_poses=view_poses, ins_map=ins_map)
     return
 
 
 if __name__ == '__main__':
 
     args = initial()
+
     # load data
-    images, poses, hwk, i_split, instances, ins_colors, args.ins_num = load_data(args)
-    print('Loaded blender', images.shape, hwk, args.datadir)
+    if args.render:
+        images, poses, hwk, i_split, instances, ins_colors, args.ins_num = load_data(args)
+        print('Loaded blender', images.shape, hwk, args.datadir)
+        i_train, i_test = i_split
+        images = torch.Tensor(images[i_test])
+        instances = torch.Tensor(instances[i_test]).type(torch.int16)
+        poses = torch.Tensor(poses[i_test])
+
+    elif args.editor:
+        args.views = 720
+        objs, view_poses, ins_map, poses, hwk, ins_colors, args.ins_num = load_data(args)
+        print('Loaded blender', hwk, args.datadir)
+
+        view_poses = torch.Tensor(view_poses)
+
+        generate_poses(args)
+
     # load transformation matrix
     # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
 
+    args.perturb = False
     H, W, K = hwk
-    i_train, i_test = i_split
 
     position_embedder, view_embedder, model_coarse, model_fine, args = create_nerf(args)
-
-    generate_poses(args)
 
     iteration = 0
     if args.ft_path is not None and args.ft_path != 'None':
@@ -70,9 +86,5 @@ if __name__ == '__main__':
         model_coarse.load_state_dict(ckpt['network_coarse_state_dict'])
         model_fine.load_state_dict(ckpt['network_fine_state_dict'])
 
-    images = torch.Tensor(images[i_test])
-    instances = torch.Tensor(instances[i_test]).type(torch.int16)
-    poses = torch.Tensor(poses[i_test])
-    args.perturb = False
-
     test()
+
