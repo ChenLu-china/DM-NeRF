@@ -91,7 +91,7 @@ You need to add `render=True` and `log_time="your log folder name"` into config 
 
 For editor testing:
 
-Change `render=True` to 'edito_render=True', and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/omg-sr/study_room.txt` and `./data/omg-sr/study_room/object_info.json`.
+Change `render=True` to `edito_render=True`, and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/omg-sr/study_room.txt` and `./data/omg-sr/study_room/object_info.json`.
 
 run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config configs/0050/scene_name.txt`.
 
