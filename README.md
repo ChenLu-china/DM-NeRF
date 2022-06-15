@@ -85,6 +85,10 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/sc
 
 ## Testing and Editor Testing
 
+For 2D testing, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
+
+You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config configs/0050/scene_name.txt
+
 ## Baseline
 
 SOTA method Mask R-CNN
