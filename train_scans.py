@@ -6,7 +6,7 @@ from datasets.loader_scannet import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
 from tools.test_tools import render_test
-from tools.helpers_tools import gt_select_crop, z_val_sample
+from tools.helpers_tools import gt_select_crop, z_val_sample, round_losses
 from tools.render_tools import ins_nerf
 
 np.random.seed(0)
@@ -74,10 +74,15 @@ def train():
         ###################################
 
         if i % args.i_print == 0:
+            r_psnr_fine, r_psnr_coarse, r_total_loss, r_rgb_loss, r_ins_loss, r_val_siou_fine, r_val_ce_fine, \
+            r_invalid_ce_fine, r_penalize_loss = round_losses(psnr_fine.item(), psnr_coarse.item(), total_loss.item(),
+                                                              rgb_loss.item(), ins_loss.item(), valid_siou_fine.item(),
+                                                              valid_ce_fine.item(), invalid_ce_fine.item(),
+                                                              penalize_loss.item())
             print(
-                f"[TRAIN] Iter: {i} F_PSNR: {psnr_fine.item()} C_PSNR: {psnr_coarse.item()} Total_Loss: {total_loss.item()} \n"
-                f"RGB_Loss: {rgb_loss.item()} Ins_Loss: {ins_loss.item()} Ins_SIoU_Loss: {valid_siou_fine.item()} \n"
-                f"Ins_CE_Loss: {valid_ce_fine.item()} Ins_in_CE_Loss: {invalid_ce_fine.item()}  Reg_Loss: {penalize_loss.item()}")
+                f"[TRAIN] Iter: {i} F_PSNR: {r_psnr_fine} C_PSNR: {r_psnr_coarse} Total_Loss: {r_total_loss} \n"
+                f"RGB_Loss: {r_rgb_loss} Ins_Loss: {r_ins_loss} Ins_SIoU_Loss: {r_val_siou_fine} \n"
+                f"Ins_CE_Loss: {r_val_ce_fine} Ins_in_CE_Loss: {r_invalid_ce_fine}  Reg_Loss: {r_penalize_loss}")
         if i % args.i_save == 0:
             path = os.path.join(args.basedir, args.expname, args.log_time, '{:06d}.tar'.format(i))
             save_model = {
@@ -134,4 +139,5 @@ if __name__ == '__main__':
     poses = torch.Tensor(poses).cpu()
 
     train()
+
 
