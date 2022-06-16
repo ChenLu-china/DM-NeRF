@@ -6,7 +6,7 @@ from datasets.loader_scannet import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
 from tools.test_tools import render_test
-from tools.helpers_tools import get_select_crop, z_val_sample, round_losses
+from tools.helpers_tools import gt_select_crop, z_val_sample, round_losses
 from tools.render_tools import ins_nerf
 
 np.random.seed(0)
@@ -26,7 +26,7 @@ def train():
         gt_label = gt_labels[img_i].to(args.device)
         ins_index = ins_indices[img_i]
 
-        target_c, target_i, batch_rays, args.N_ins = get_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
+        target_c, target_i, batch_rays, args.N_ins = gt_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
                                                                     args.N_train)
 
         all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
