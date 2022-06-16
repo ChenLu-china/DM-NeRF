@@ -6,7 +6,7 @@ from datasets.load_replica import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
 from tools.test_tools import render_test
-from tools.helpers_tools import get_select_general, z_val_sample
+from tools.helpers_tools import gt_select_general, z_val_sample
 from tools.render_tools import ins_nerf
 from tools.helpers_tools import round_losses
 
@@ -27,7 +27,7 @@ def train():
         pose = poses[img_i, :3, :4].to(args.device)
         gt_label = gt_labels[img_i].to(args.device)
 
-        target_c, target_i, batch_rays = get_select_general(gt_rgb, pose, focal, gt_label, args.N_train)
+        target_c, target_i, batch_rays = gt_select_general(gt_rgb, pose, focal, gt_label, args.N_train)
 
         all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
 
