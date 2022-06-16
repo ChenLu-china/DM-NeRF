@@ -32,7 +32,11 @@ def ins_criterion(pred_ins, gt_labels, ins_num):
 
     cost_ce, cost_siou, order_row, order_col = hungarian(pred_ins, gt_ins, valid_ins_num, ins_num)
     valid_ce = torch.mean(cost_ce[order_row, order_col[:valid_ins_num]])
-    invalid_ce = torch.mean(pred_ins[:, order_col[valid_ins_num:]])
+    
+    if not (len(order_col) == valid_ins_num):
+        invalid_ce = torch.mean(pred_ins[:, order_col[valid_ins_num:]])
+    else:
+        invalid_ce = torch.tensor([0])
     valid_siou = torch.mean(cost_siou[order_row, order_col[:valid_ins_num]])
 
     ins_loss_sum = valid_ce + invalid_ce + valid_siou
