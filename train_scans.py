@@ -6,7 +6,7 @@ from datasets.loader_scannet import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
 from tools.test_tools import render_test
-from tools.helpers_tools import gt_select_crop, z_val_sample, round_losses
+from tools.helpers_tools import get_select_crop, z_val_sample, round_losses
 from tools.render_tools import ins_nerf
 
 np.random.seed(0)
