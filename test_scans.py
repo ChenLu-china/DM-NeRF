@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # load transformation matrix
     # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
 
-    H, W, focal = hwk
+    H, W, K = hwk
     i_train, i_test = i_split
 
     position_embedder, view_embedder, model_coarse, model_fine, args = create_nerf(args)
