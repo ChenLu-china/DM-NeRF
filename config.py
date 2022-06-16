@@ -158,7 +158,7 @@ def initial():
     else:
         args.device = torch.device("cpu")
         
-    if arg.render == False and arg.eidtor_render == False:
+    if args.render == False and args.editor == False:
         # Create log dir and copy the configs file
         log_dir = os.path.join(args.basedir, args.expname, args.log_time)
         os.makedirs(log_dir, exist_ok=True)
