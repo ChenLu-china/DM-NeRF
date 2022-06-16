@@ -114,22 +114,38 @@ def get_rays_k(H, W, K, c2w):
     return rays_o, rays_d
 
 
-def get_select_crop(rgb, pose, K, ins_target, N_train, crop_mask):
+def gt_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
+    N_ins = int(N_train * 0.3)
+
+    if N_ins > len(ins_index):
+        N_ins = len(ins_index)
+    N_rgb = N_train - N_ins
+
     crop_mask = crop_mask.reshape(-1)
     H, W, C = rgb.shape
     rays_o, rays_d = get_rays_k(H, W, K, pose)
     loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
-    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()
-    loc_h, loc_w = loc_h[crop_mask == 1], loc_w[crop_mask == 1]
-    selected_index = np.random.choice(loc_h.shape[0], size=[N_train], replace=False)
-    selected_h, selected_w = loc_h[selected_index], loc_w[selected_index]
-    rays_o = rays_o[selected_h, selected_w]
-    rays_d = rays_d[selected_h, selected_w]
-    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_train, 3)
-    target_c = rgb[selected_h, selected_w]  # (N_train, 3)
-    target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
-    return target_c, target_i, batch_rays
+    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()  # (H * W)
+    crop_indices = np.where(crop_mask == 1)[0]
 
+    labeled_selected_idx = np.random.choice(ins_index.shape[0], size=[N_ins], replace=False)  # (N_ins,)
+    labeled_idx = ins_index[labeled_selected_idx]
+    labeled_h, labeled_w = loc_h[labeled_idx], loc_w[labeled_idx]
+
+    unlabeled_idx = np.array(list(set(crop_indices) - set(labeled_idx)))
+    unlabeled_selected_idx = np.random.choice(len(unlabeled_idx), size=[N_rgb], replace=False)
+    unlabeled_idx = crop_indices[unlabeled_selected_idx]
+    unlabeled_h, unlabeled_w = loc_h[unlabeled_idx], loc_w[unlabeled_idx]
+
+    selected_h, selected_w = torch.cat((unlabeled_h, labeled_h), dim=0), torch.cat((unlabeled_w, labeled_w), dim=0)
+
+    rays_o = rays_o[selected_h, selected_w]  # (N_rgb, 3)
+    rays_d = rays_d[selected_h, selected_w]  # (N_rgb, 3)
+    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_rgb+N_ins, 3)
+    target_c = rgb[selected_h, selected_w]  # (N_rgb, 3)
+    target_i = ins_target[labeled_h, labeled_w]  # (N_ins, 3)
+
+    return target_c, target_i, batch_rays, N_ins
 
 ######
 
