@@ -73,7 +73,8 @@ def config_parser():
     # datasets options
     parser.add_argument("--testskip", type=int, default=10,
                         help='will load 1/N images from test/val sets, useful for large datasets like deepvoxels')
-
+    parser.add_argument("--resize", action='store_true',
+                        help='will resize image and instance map shape of ScanNet dataset')
     ## blender flags
     parser.add_argument("--white_bkgd", action='store_true',
                         help='set to render synthetic data on a white bkgd (always use for dvoxels)')
@@ -81,7 +82,10 @@ def config_parser():
                         help='set the nearest depth')
     parser.add_argument("--far", type=float,
                         help='set the farest depth')
-
+    parser.add_argument("--crop_width", type=int,
+                        help='set the width of crop')
+    parser.add_argument("--crop_height", type=int,
+                        help='set the height of crop')
     # logging/saving options
     parser.add_argument("--i_print", type=int, default=100,
                         help='frequency of console printout and metric loggin')
