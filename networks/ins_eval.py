@@ -33,12 +33,13 @@ def ins_criterion(pred_ins, gt_labels, ins_num):
 
     cost_ce, cost_siou, order_row, order_col = hungarian(pred_ins, gt_ins, valid_ins_num, ins_num)
     valid_ce = torch.mean(cost_ce[order_row, order_col[:valid_ins_num]])
-    
+
     if not (len(order_col) == valid_ins_num):
         invalid_ce = torch.mean(pred_ins[:, order_col[valid_ins_num:]])
     else:
         invalid_ce = torch.tensor([0])
     valid_siou = torch.mean(cost_siou[order_row, order_col[:valid_ins_num]])
+
 
     ins_loss_sum = valid_ce + invalid_ce + valid_siou
     return ins_loss_sum, valid_ce, invalid_ce, valid_siou
@@ -134,12 +135,12 @@ def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
     # row corresponding ground truth, column corresponding prediction
     # make TP matrix
     column_max_value = torch.sort(IoUs_Metrics, descending=True)
-
     thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
     ap_list = []
     for thre in thre_list:
         tp_list = column_max_value[0] > thre
-        tp_list = tp_list.to(device = device)
+        tp_list = tp_list.to(device=device)
+
         precisions = torch.cumsum(tp_list, dim=0) / (torch.arange(len(tp_list)) + 1)
         recalls = torch.cumsum(tp_list, dim=0).type(torch.float32) / gt_number
 
@@ -152,16 +153,22 @@ def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
     return ap_list
 
 
-def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num):
-    pred_ins = pred_ins[..., :-1]
-    print(pred_ins.shape)
-    print("gt ins num", gt_ins_num)
-    # invalid_h, invalid_w = torch.where(mask == 0)
+def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
+    if mask is None:
+        pred_ins = pred_ins[..., :-1]
+        print(pred_ins.shape)
+        print("gt ins num", gt_ins_num)
+        # invalid_h, invalid_w = torch.where(mask == 0)
 
-    pred_label = torch.argmax(pred_ins, dim=-1)
+        pred_label = torch.argmax(pred_ins, dim=-1)
+        valid_pred_labels = torch.unique(pred_label)
+    else:
+        pred_label = torch.argmax(pred_ins, dim=-1)
 
+        pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
+        valid_pred_labels = torch.unique(pred_label)[:-1]
     # pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
-    valid_pred_labels = torch.unique(pred_label)
+
     valid_pred_num = len(valid_pred_labels)
 
     # change predicted labels to each signal object masks not existed padding as zero

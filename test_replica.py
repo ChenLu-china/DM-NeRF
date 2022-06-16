@@ -1,3 +1,4 @@
+import torch
 import os
 from config import create_nerf, initial
 from datasets.replica.data_loader import load_editor_poses

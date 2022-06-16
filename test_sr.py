@@ -72,7 +72,7 @@ if __name__ == '__main__':
     if args.ft_path is not None and args.ft_path != 'None':
         ckpts = [args.ft_path]
     else:
-        ckpts = [os.path.join(args.basedir, args.expname, args.log_time, "200000.tar")]
+        ckpts = [os.path.join(args.basedir, args.expname, args.log_time, "300000.tar")]
     print('Found ckpts', ckpts)
     if len(ckpts) > 0 and not args.no_reload:
         ckpt_path = ckpts[-1]

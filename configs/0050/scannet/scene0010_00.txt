@@ -18,6 +18,6 @@ near = 0.0
 far = 9.5
 testskip = 1
 
-over_penalize
+penalize
 tolerance = 0.05
 deta_w = 0.05

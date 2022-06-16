@@ -21,7 +21,7 @@ def train():
 
     z_val_coarse = z_val_sample(args.N_train, args.near, args.far, args.N_samples)
     args.N_ins = None
-    for i in range(1, N_iters):
+    for i in range(0, N_iters):
         img_i = np.random.choice(i_train)
         gt_rgb = images[img_i].to(args.device)
         pose = poses[img_i, :3, :4].to(args.device)

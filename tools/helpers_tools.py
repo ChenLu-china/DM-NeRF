@@ -147,6 +147,7 @@ def gt_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
 
     return target_c, target_i, batch_rays, N_ins
 
+
 ######
 
 # for synthetic rooms
