@@ -27,7 +27,7 @@ def train():
         pose = poses[img_i, :3, :4].to(args.device)
         gt_label = gt_labels[img_i].to(args.device)
 
-        target_c, target_i, batch_rays = gt_select_general(gt_rgb, pose, focal, gt_label, args.N_train)
+        target_c, target_i, batch_rays = gt_select_general(gt_rgb, pose, K, gt_label, args.N_train)
 
         all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
 
@@ -109,7 +109,7 @@ def train():
                 test_poses = torch.Tensor(poses[selected_i_test].to(args.device))
                 test_imgs = images[selected_i_test]
                 test_gt_labels = gt_labels[selected_i_test].to(args.device)
-                render_test(position_embedder, view_embedder, model_coarse, model_fine, test_poses, hwf, args,
+                render_test(position_embedder, view_embedder, model_coarse, model_fine, test_poses, hwk, args,
                             gt_imgs=test_imgs, gt_labels=test_gt_labels, ins_rgbs=ins_rgbs, savedir=testsavedir,
                             matched_file=matched_file)
             print('Saved test set')
@@ -122,11 +122,11 @@ if __name__ == '__main__':
     args = initial()
 
     # load data
-    images, poses, hwf, i_split, gt_labels, ins_rgbs, args.ins_num = load_data(args)
-    print('Loaded blender', images.shape, hwf, args.datadir)
+    images, poses, hwk, i_split, gt_labels, ins_rgbs, args.ins_num = load_data(args)
+    print('Loaded blender', images.shape, hwk, args.datadir)
 
     i_train, i_test = i_split
-    H, W, focal = hwf
+    H, W, K = hwk
 
     # Create nerf model
     position_embedder, view_embedder, model_coarse, model_fine, args = create_nerf(args)
