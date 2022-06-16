@@ -12,6 +12,7 @@ img2cross_entropy = nn.CrossEntropyLoss()
 mse2psnr = lambda x: -10. * torch.log(x) / torch.log(torch.Tensor([10.]))
 to8b = lambda x: (255 * np.clip(x, 0, 1)).astype(np.uint8)
 
+device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 
 def ins_criterion(pred_ins, gt_labels, ins_num):
     """
@@ -121,8 +122,8 @@ def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
         """
             This method same as coco
         """
-        mrec = torch.cat((torch.Tensor([0.]).cpu(), rec, torch.Tensor([1.]).cpu()))
-        mprec = torch.cat((torch.Tensor([0.]).cpu(), prec, torch.Tensor([0.]).cpu()))
+        mrec = torch.cat((torch.Tensor([0.]), rec, torch.Tensor([1.])))
+        mprec = torch.cat((torch.Tensor([0.]), prec, torch.Tensor([0.])))
         for i in range(mprec.shape[0] - 1, 0, -1):
             mprec[i - 1] = torch.maximum(mprec[i - 1], mprec[i])
         index = torch.where(mrec[1:] != mrec[:-1])[0]
@@ -138,8 +139,8 @@ def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
     ap_list = []
     for thre in thre_list:
         tp_list = column_max_value[0] > thre
-
-        precisions = torch.cumsum(tp_list, dim=0) / (torch.arange(len(tp_list)).cpu() + 1)
+        tp_list = tp_list.to(device = device)
+        precisions = torch.cumsum(tp_list, dim=0) / (torch.arange(len(tp_list)) + 1)
         recalls = torch.cumsum(tp_list, dim=0).type(torch.float32) / gt_number
 
         # select calculate function
