@@ -7,7 +7,7 @@ import numpy as np
 import torch.nn.functional as F
 from skimage import metrics
 from networks.ins_eval import ins_eval
-from tools.helpers_tools import get_rays, z_val_sample
+from tools.helpers_tools import get_rays_k, z_val_sample
 from networks.ins_eval import to8b
 from tools.render_tools import ins_nerf
 from tools.vis_tools import render_label2img, show_instance_rgb, render_gt_label2img
@@ -44,7 +44,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
         print('=' * 50, i, '=' * 50)
 
         t = time.time()
-        rays_o, rays_d = get_rays(H, W, focal, torch.Tensor(c2w))
+        rays_o, rays_d = get_rays_k(H, W, focal, torch.Tensor(c2w))
         rays_o = torch.reshape(rays_o, [-1, 3]).float()
         rays_d = torch.reshape(rays_d, [-1, 3]).float()
         full_rgb, full_ins, full_disp = None, None, None
