@@ -97,7 +97,10 @@ def ins_nerf(rays, position_embedder, view_embedder, model_coarse, model_fine, z
 
     # fine render part
     rgb_fine, weights_fine, depth_fine, ins_fine = render_train(raw_fine, z_vals_fine, rays_d)
-
+    
+    if args.is_train and args.N_ins is not None:
+        ins_fine = ins_fine[-args.N_ins:]
+        ins_coarse = ins_coarse[-args.N_ins:]
     # return prediction of coarse and fine
     all_info = {'rgb_fine': rgb_fine, 'ins_fine': ins_fine, 'z_vals_fine': z_vals_fine, 'raw_fine': raw_fine,
                 'raw_coarse': raw_coarse, 'rgb_coarse': rgb_coarse, 'ins_coarse': ins_coarse,
