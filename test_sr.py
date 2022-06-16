@@ -3,7 +3,7 @@ import os
 from config import create_nerf, initial
 from datasets.sr.data_loader import load_editor_poses
 from datasets.load_sr import *
-from tools.editor_tool.editor_tools import editor_test
+from tools.editor_tools import editor_test
 from tools.test_tools import render_test
 from data.sr.poses_generator import generate_poses
 
