@@ -52,9 +52,9 @@ def load_data(args):
     # focal = .5 * W / np.tan(.5 * camera_angle_x)
     focal = W / 2.0
     K = np.array([[focal, 0, (W - 1) * 0.5], [0, focal, (H - 1) * 0.5], [0, 0, 1]])
-    hwf = [int(H), int(W), K]
+    hwk = [int(H), int(W), K]
     # ins_img = labeltoimg(torch.LongTensor(instances[80]), instances_colors)
     # rgb8 = to8b(imgs[80])
     # vis_segmentation(rgb8, ins_img)
 
-    return imgs, poses, hwf, i_split, gt_labels, ins_rgbs, ins_info.ins_num
+    return imgs, poses, hwk, i_split, gt_labels, ins_rgbs, ins_info.ins_num
