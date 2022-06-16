@@ -33,7 +33,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
     aps = []
 
     import json
-    gt_color_dict_path = './color_dict.json'
+    gt_color_dict_path = './data/color_dict.json'
     gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
     color_dict = gt_color_dict[dataset_name][scene_name]
     full_map = {}
