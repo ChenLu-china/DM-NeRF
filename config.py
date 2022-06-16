@@ -86,6 +86,7 @@ def config_parser():
                         help='set the width of crop')
     parser.add_argument("--crop_height", type=int,
                         help='set the height of crop')
+
     # logging/saving options
     parser.add_argument("--i_print", type=int, default=100,
                         help='frequency of console printout and metric loggin')
@@ -164,7 +165,9 @@ def initial():
         
     if args.render == False and args.editor == False:
         # Create log dir and copy the configs file
+
         log_dir = os.path.join(args.basedir, args.expname, args.log_time)
+        print(log_dir)
         os.makedirs(log_dir, exist_ok=True)
         f = os.path.join(log_dir, 'args.txt')
         with open(f, 'w') as file:
