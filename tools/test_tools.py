@@ -171,3 +171,8 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
             np.mean(psnrs), np.mean(ssims),
             np.mean(lpipses),
             out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
+
+        
+        
+        
+        
