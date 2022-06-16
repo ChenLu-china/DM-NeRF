@@ -20,6 +20,7 @@ def train():
     N_iters = 500000 + 1
 
     z_val_coarse = z_val_sample(args.N_train, args.near, args.far, args.N_samples)
+    args.N_ins = None
     for i in range(1, N_iters):
         img_i = np.random.choice(i_train)
         gt_rgb = images[img_i].to(args.device)
