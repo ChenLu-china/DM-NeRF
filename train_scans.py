@@ -26,7 +26,7 @@ def train():
         gt_label = gt_labels[img_i].to(args.device)
         ins_index = ins_indices[img_i]
 
-        target_c, target_i, batch_rays, args.N_ins = gt_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
+        target_c, target_i, batch_rays, args.N_ins = get_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
                                                                     args.N_train)
 
         all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
