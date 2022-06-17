@@ -68,32 +68,25 @@ For scannet:
 If you want use full of segementation function, you can run commands like:
 ```bash
 
-CUDA_VISIBLE_DEVICES=0 python train_scans_penalize.py --config configs/0050/scene0010_00.txt
+CUDA_VISIBLE_DEVICES=0 python train_scans.py --config configs/0050/scene0010_00.txt
 or use nohup:
-CUDA_VISIBLE_DEVICES=0 nohup python -u train_scans_penalize.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 nohup python -u train_scans.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
 
 ```
-If you do not segement non-occupied area, you can run commands like:
+If you do not segement non-occupied area, you can delete `penalize` parameter in config file, and run above command.
 
-```bash
-
-CUDA_VISIBLE_DEVICES=0 python train_replica.py --config configs/0050/scene0010_00.txt
-or use nohup:
-CUDA_VISIBLE_DEVICES=0 nohup python -u train_replica.py --config configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
-
-```
 
 ## Testing and Editor Testing
 
 For 2D testing, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
 
-You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config configs/0050/scene_name.txt`.
+You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config test_configs/0050/scene_name.txt`.
 
 For editor testing:
 
-Change `render=True` to `edito_render=True`, and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/omg-sr/study_room.txt` and `./data/omg-sr/study_room/object_info.json`.
+Change `render=True` to `editor =True`, and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/sr/office_study.txt` and `./data/sr/office_study/object_info.json`.
 
-run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config configs/0050/scene_name.txt`.
+run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config editor_test_configs/0050/scene_name.txt`.
 
 ## Baseline
 
