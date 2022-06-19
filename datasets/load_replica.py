@@ -37,13 +37,14 @@ def load_data(args):
     test_ids = list(range(1, total_num, step))
     # test_ids = [x + step // 2 for x in train_ids]
     if args.editor:
-        gt_img, gt_label, ori_pose, ins_rgbs, ins_num = processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
+        objs, view_id, pose, ins_rgbs = processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
         
         if view_id is not None:
             view_poses = np.repeat(poses[view_id][np.newaxis, ...], args.views, axis=0)
         else:
             view_poses = torch.stack(
                 [pose_spherical(angle, -65.0, 7.0) for angle in np.linspace(-180, 180, args.views)], 0)
+        
         ins_num = len(ins_rgbs)
         H, W = int(480), int(640)
         focal = W / 2.0
