@@ -33,8 +33,7 @@ def pose_spherical(theta, phi, radius):
 def load_data(args):
     if args.editor:
         # load color image RGB
-        objs, view_id, ins_map, poses, ins_rgbs, camera_angle_x = processor(args.datadir, args.editor_mode,
-                                                                            testskip=args.testskip).load_gts()
+        objs, view_id, ins_map, poses, ins_rgbs, camera_angle_x = processor(args.datadir, testskip=args.testskip).load_gts()
         if view_id is not None:
             view_poses = np.repeat(poses[view_id][np.newaxis, ...], args.views, axis=0)
         else:
