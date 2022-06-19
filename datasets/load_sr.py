@@ -36,10 +36,10 @@ def load_data(args):
         objs, view_id, ins_map, poses, ins_rgbs, camera_angle_x = processor(args.datadir, args.editor_mode,
                                                                             testskip=args.testskip).load_gts()
         if view_id is not None:
-            view_poses = np.repeat(poses[view_id], args.views, axis=0)
+            view_poses = np.repeat(poses[view_id][np.newaxis, ...], args.views, axis=0)
         else:
             view_poses = torch.stack(
-                [pose_spherical(angle, -65.0, 7.0) for angle in np.linspace(-180, 180, args.views)[:-1]], 0)
+                [pose_spherical(angle, -65.0, 7.0) for angle in np.linspace(-180, 180, args.views)], 0)
         ins_num = len(ins_rgbs)
         H, W = int(400), int(400)
         focal = .5 * W / np.tan(.5 * camera_angle_x)
