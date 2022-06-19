@@ -182,9 +182,6 @@ class ins_processor:
 def load_editor_poses(args):
     load_path = os.path.join(args.datadir, 'transformation_matrix.json')
     with open(load_path, 'r') as rf:
-        editor_poses = json.load(rf)
+        obj_trans = json.load(rf)
     rf.close()
-
-    # ori_pose = np.array(editor_poses['ori_pose'])
-    transformations = editor_poses['transformations']
-    return transformations
+    return obj_trans
