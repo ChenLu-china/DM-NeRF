@@ -13,10 +13,9 @@ def png_i(f):
 
 # Editor testing data loader
 class processor:
-    def __init__(self, basedir, editor_mode, testskip=1):
+    def __init__(self, basedir, testskip=1):
         super(processor, self).__init__()
         self.basedir = basedir
-        self.editor_mode = editor_mode
         self.testskip = testskip
         # self.rgbs, self.pose, self.split = self.load_rgb()
 
