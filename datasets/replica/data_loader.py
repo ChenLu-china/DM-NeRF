@@ -10,6 +10,57 @@ np.random.seed(0)
 def png_i(f):
     return imageio.imread(f)
 
+class processor:
+    def __init__(self, basedir, train_ids, test_ids, testskip=1):
+        super(rgb_processor, self).__init__()
+        self.basedir = basedir
+        self.testskip = testskip
+        self.train_ids = train_ids
+        self.test_ids = test_ids
+        # self.rgbs, self.pose, self.split = self.load_rgb()
+
+    def load_rgb(self):
+        # testskip operation
+
+        objs_info_fname = os.path.join(self.basedir, 'objs_info.json')
+        with open(objs_info_fname, 'r') as f_obj_info:
+            objs_info = json.load(f_obj_info)
+        f_obj_info.close()
+        objs = objs_info["objects"]
+        view_id = objs_info["view_id"]
+        ins_map = objs_info["ins_map"]
+
+        _, _, dataset_name, scene_name = self.basedir.split('/')
+        skip_idx = np.arange(0, len(self.test_ids), self.testskip)
+        selected_test_ids = np.array(self.test_ids)[skip_idx]
+        gt_id = self.train_ids[view_id]
+        print(gt_id)
+        # gt_id = selected_test_ids[view_id[scene_name]]
+        # load poses
+        traj_file = os.path.join(self.basedir, 'traj_w_c.txt')
+        Ts_full = np.loadtxt(traj_file, delimiter=" ").reshape(-1, 4, 4)
+        poses = Ts_full[self.train_ids]
+        ori_pose = poses[view_id[scene_name]]
+
+        # load rgbs
+        rgb_basedir = os.path.join(self.basedir, f'rgb_{gt_id}.png')
+        gt_img = imageio.imread(rgb_basedir)
+
+        ins_basedir = os.path.join(self.basedir, f'semantic_instance_{gt_id}.png')
+        gt_label = imageio.imread(ins_basedir)
+        gt_unique_labels = np.unique(gt_label)
+
+        #
+        # for label in gt_unique_labels:
+        #     vis_mask = gt_label == label
+        #     vis_img(vis_mask)
+
+        color_f = os.path.join(self.basedir, 'ins_rgb.hdf5')
+        with h5py.File(color_f, 'r') as f:
+            ins_rgbs = f['datasets'][:]
+        f.close()
+        ins_num = len(ins_rgbs)
+        return gt_img, gt_label, ori_pose, ins_rgbs, ins_num
 
 class rgb_processor:
     def __init__(self, basedir, train_ids, test_ids, testskip=1):
