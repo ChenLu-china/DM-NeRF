@@ -37,7 +37,7 @@ def load_data(args):
     test_ids = list(range(1, total_num, step))
     # test_ids = [x + step // 2 for x in train_ids]
     if args.editor:
-        objs, view_id, pose, ins_rgbs = processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
+        objs, view_id,ins_map, poses, ins_rgbs = processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
         
         if view_id is not None:
             view_poses = np.repeat(poses[view_id][np.newaxis, ...], args.views, axis=0)
@@ -54,7 +54,7 @@ def load_data(args):
         # ins_img = labeltoimg(torch.LongTensor(gt_labels[40]), ins_rgbs)
         # rgb8 = to8b(imgs[40])
         # vis_segmentation(rgb8, ins_img)
-        return objs, view_poses, ins_map, pose, hwk, ins_rgbs, ins_num
+        return objs, view_poses, ins_map, poses, hwk, ins_rgbs, ins_num
     else:
         imgs, poses, i_split = rgb_processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
         # add another load class which assigns to semantic labels
