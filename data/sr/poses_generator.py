@@ -18,6 +18,7 @@ def generate_poses(objs, args, defined_transformations=None):
     # import you self designed transformation matrix
     save_path = os.path.join(args.datadir, 'transformation_matrix.json')
     out_puts = {}
+    views = args.views
     for obj in objs:
         obj_name = obj["obj_name"]
         ins_center = obj["obj_center"]
