@@ -107,3 +107,13 @@ SOTA method Mask R-CNN
 ## Citation
 If you find our work useful in your research, please consider citing:
 
+## Acknowledgement
+
+In this project we use (parts of) the implementations of the following works:
+
+- [nerf_pytorch](https://github.com/yenchenlin/nerf-pytorch) by Yen-Chen Lin.
+- [ScanNet](https://github.com/ScanNet/ScanNet) by Angela Dai.
+- [3D-BoNet](https://github.com/Yang7879/3D-BoNet) by Bo Yang
+- [Semantic-NeRF](https://shuaifengzhi.com/Semantic-NeRF/) by Shuaifeng Zhi
+
+We thank the respective authors for open sourcing their methods. 
