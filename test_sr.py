@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
         view_poses = torch.Tensor(view_poses)
 
-        generate_poses(args)
+        generate_poses(objs, args)
 
     # load transformation matrix
     # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
