@@ -46,7 +46,7 @@ class processor:
             ins_rgbs = f['datasets'][:]
         f.close()
         
-        return objs, view_id, poses, ins_rgbs
+        return objs, view_id, ins_map, poses, ins_rgbs
 
 class rgb_processor:
     def __init__(self, basedir, train_ids, test_ids, testskip=1):
