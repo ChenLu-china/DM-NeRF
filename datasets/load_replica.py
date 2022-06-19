@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from datasets.replica import data_loader
+from datasets.replica.data_loader import *
 
 trans_t = lambda t: torch.Tensor([
     [1, 0, 0, 0],
@@ -36,15 +36,16 @@ def load_data(args):
     train_ids = list(range(0, total_num, step))
     test_ids = list(range(1, total_num, step))
     # test_ids = [x + step // 2 for x in train_ids]
+    if args.editor:
+        gt_img, gt_label, ori_pose, ins_rgbs, ins_num = processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
+    else:
+        imgs, poses, i_split = rgb_processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
+        # add another load class which assigns to semantic labels
 
-    imgs, poses, i_split = data_loader.rgb_processor(args.datadir, train_ids, test_ids,
-                                                     testskip=args.testskip).load_rgb()
-    # add another load class which assigns to semantic labels
-
-    # load instance labels
-    ins_info = data_loader.ins_processor(args.datadir, train_ids, test_ids, None, None, testskip=args.testskip)
-    gt_labels = ins_info.gt_labels
-    ins_rgbs = ins_info.ins_rgbs
+        # load instance labels
+        ins_info = ins_processor(args.datadir, train_ids, test_ids, None, None, testskip=args.testskip)
+        gt_labels = ins_info.gt_labels
+        ins_rgbs = ins_info.ins_rgbs
 
     # ins_indices = ins_info.ins_indices
     H, W = imgs[0].shape[:2]
