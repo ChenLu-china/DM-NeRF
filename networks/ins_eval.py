@@ -96,7 +96,7 @@ def hungarian(pred_ins, gt_ins, valid_ins_num, ins_num):
     return cost_ce, cost_siou, order_row, order_col
 
 
-def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
+def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='integral'):
     """
     calculate this aims to evaluate the performance of prediction, we calculate AP value for each image, there are
     two functions to achieve it, the one is interpolate method which means that we spare that 11 area, and calculate
@@ -134,7 +134,12 @@ def calculate_ap(IoUs_Metrics, gt_number, function_select='integral'):
     '''begin'''
     # row corresponding ground truth, column corresponding prediction
     # make TP matrix
-    column_max_value = torch.sort(IoUs_Metrics, descending=True)
+    if confidence in not None:
+        column_max_index = torch.argsort(confidence, descending=True)
+        column_max_value = IoUs_Metrics[column_max_index]
+    else:
+        column_max_value = torch.sort(IoUs_Metrics, descending=True)
+    
     thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
     ap_list = []
     for thre in thre_list:
@@ -174,7 +179,7 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     # change predicted labels to each signal object masks not existed padding as zero
     pred_ins = torch.zeros_like(gt_ins)
     pred_ins[..., :valid_pred_num] = F.one_hot(pred_label)[..., valid_pred_labels]
-
+    
     cost_ce, cost_iou, order_row, order_col = hungarian(pred_ins.reshape((-1, ins_num)),
                                                         gt_ins.reshape((-1, ins_num)),
                                                         gt_ins_num, ins_num)
@@ -182,7 +187,15 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     valid_inds = order_col[:gt_ins_num]
     ious_metrics = 1 - cost_iou[order_row, valid_inds]
     # ious_metrics = self.calculate_ious(pred_ins, gt_valid, pred_ins_num, gt_ins_num)
-    ap = calculate_ap(ious_metrics, gt_ins_num, 'integral')
+    
+    # calculate confidence for each predicted mask
+    reorder_pred_ins = pred_ins[order_col[:gt_ins_num]]
+    confidence = torch.ones_like(ious_metrics)
+    for i in range(gt_ins_num):
+        inst_mask = reorder_pred_ins[i, pred_label == i]
+        confidence[i] = torch.mean(inst_mask)
+    
+    ap = calculate_ap(ious_metrics, gt_ins_num, confidence=confidence, function_select='integral')
 
     invalid_mask = valid_inds >= valid_pred_num
     valid_inds[invalid_mask] = 0
