@@ -139,11 +139,12 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
         column_max_value = IoUs_Metrics[column_max_index]
     else:
         column_max_value = torch.sort(IoUs_Metrics, descending=True)
+        column_max_value = column_max_value[0]
     
     thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
     ap_list = []
     for thre in thre_list:
-        tp_list = column_max_value[0] > thre
+        tp_list = column_max_value > thre
         tp_list = tp_list.to(device=device)
 
         precisions = torch.cumsum(tp_list, dim=0) / (torch.arange(len(tp_list)) + 1)
@@ -189,13 +190,13 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     # ious_metrics = self.calculate_ious(pred_ins, gt_valid, pred_ins_num, gt_ins_num)
     
     # calculate confidence for each predicted mask
-    reorder_pred_ins = pred_ins[order_col[:gt_ins_num]]
+    reorder_pred_ins = pred_ins[..., valid_inds]
     confidence = torch.ones_like(ious_metrics)
     for i in range(gt_ins_num):
-        inst_mask = reorder_pred_ins[i, pred_label == i]
+        inst_mask = reorder_pred_ins[i]
         confidence[i] = torch.mean(inst_mask)
     
-    ap = calculate_ap(ious_metrics, gt_ins_num, confidence=confidence, function_select='integral')
+    ap = calculate_ap(ious_metrics, gt_ins_num, confidence=None, function_select='integral')
 
     invalid_mask = valid_inds >= valid_pred_num
     valid_inds[invalid_mask] = 0
