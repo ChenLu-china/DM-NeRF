@@ -17,7 +17,23 @@ This repository contains the implementation of the paper:
 <!--       <strong><center>Reconstruction and Decomposition</center></strong> <br/></br> -->
 </div>
 
+## Qualitative Results
 
+### Objects Segmentation Results
+<div align=center>
+     <img src="/figs/results.png" width=100% > <br/></br>
+</div>
+
+<!-- ## Camera and Object Rotating
+
+<div align=center>
+     <img src="/figs/study_room1.gif" width=50%> <br/></br>
+</div> -->
+
+### Deformable Editing Results
+<div align=center>
+     <img src="/figs/deformable_res.png" width=92% > <br/></br>
+</div>
 
 
 ## Installation
@@ -87,24 +103,6 @@ run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config editor_test_conf
 ## Baseline
 
 SOTA method Mask R-CNN
-
-## Qualitative Results
-
-### Objects Segmentation Results
-<div align=center>
-     <img src="/figs/results.png" width=100% > <br/></br>
-</div>
-
-<!-- ## Camera and Object Rotating
-
-<div align=center>
-     <img src="/figs/study_room1.gif" width=50%> <br/></br>
-</div> -->
-
-### Deformable Editing Results
-<div align=center>
-     <img src="/figs/deformable_res.png" width=92% > <br/></br>
-</div>
 
 ## Citation
 If you find our work useful in your research, please consider citing:
