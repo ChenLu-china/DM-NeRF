@@ -10,9 +10,15 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 
-<div>
+<div float>
 <!--      <img float=left src="/figs/manipulation_.gif" width=50%>  <br/></br> -->
-     <img float=right src="/figs/sin+70.gif" width=30%>  <br/></br>
+     <img float=right src="/figs/sin+70.gif" width=50%>  <br/></br>
+     <strong><center>Objects Manipulation</center></strong>     <br/><br/>
+</div>
+
+<div float>
+     <img float=left src="/figs/manipulation_.gif" width=50%>  <br/></br>
+<!--      <img float=right src="/figs/sin+70.gif" width=30%>  <br/></br> -->
      <strong><center>Objects Manipulation</center></strong>     <br/><br/>
 </div>
 
