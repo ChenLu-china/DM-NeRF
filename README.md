@@ -26,7 +26,7 @@ This repository contains the implementation of the paper:
      <img src="/figs/sin+70.gif" width=50%>  <br/></br>
      <img src="/figs/sin+75_180.gif" width=50%>  <br/></br>
      <img src="/figs/sin+75_360.gif" width=50%>  <br/></br>
-     <strong><center>Objects Manipulation</center></strong>     <br/><br/>
+     <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/>
 </div>
 
 
