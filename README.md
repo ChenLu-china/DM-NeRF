@@ -13,9 +13,8 @@ This repository contains the implementation of the paper:
      <img float=left src="/figs/manipulation_.gif" width=45%> &nbsp&nbsp&nbsp&nbsp <img float=right src="/figs/sin+70.gif" width=40%>
 </div>
 
-<div float>
-    <img src="/figs/sin+75_180.gif" width=40%>
-    <img src="/figs/sin+75_360.gif" width=40%>
+<div align=center>
+    <img src="/figs/sin+75_180.gif" width=40%>&nbsp&nbsp&nbsp&nbsp<img src="/figs/sin+75_360.gif" width=40%>
 </div>
 
 
