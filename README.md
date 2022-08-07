@@ -10,7 +10,8 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/decomposition.gif" width=60%>
+     <img float=left src="/figs/decomposition.gif" width=50%> <br>
+      <strong><center>Reconstruction and Decomposition</center></strong>
 </div>
 
 <div align=center>
