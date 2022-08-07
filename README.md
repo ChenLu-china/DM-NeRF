@@ -29,8 +29,8 @@ This repository contains the implementation of the paper:
 #### Rigid Transformation
 
 <div align=center>
-     <img src="/figs/edit_result1.png" width=75% > <br/>
-     <img src="/figs/edit_result2.png" width=75% > <br/>
+     <img src="/figs/edit_result1.png" width=80% > <br/>
+     <img src="/figs/edit_result2.png" width=80% > <br/>
 </div>
 
 #### Deformable Manipulation
