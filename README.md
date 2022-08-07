@@ -10,24 +10,10 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/Decomposition.gif" width=50%> <br/></br>
-      <strong><center>Reconstruction and Decomposition</center></strong> <br/></br>
+     <img float=left src="/figs/Decomposition.gif" width=45%>&nbsp<img src="/figs/75_180_360.gif" width=50%> <br/></br>
+<!--       <strong><center>Reconstruction and Decomposition</center></strong> <br/></br> -->
 </div>
 
-
-
-<div align=center>
-     <img float=right src="/figs/Sin_Deformed.gif" width=50%> <br/></br>
-     <strong><center>Object Deformable Transformation</center></strong> <br/></br>
-</div>
-
-<div align=center>
-<!--      <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp  -->
-     <img src="/figs/75_180_180.gif" width=40%> &nbsp
-     <img src="/figs/75_180_360.gif" width=40%> <br/></br>
-     <strong><center>View and Objects Transformation</center></strong> <br/></br>
-     
-</div>
 
 
 
