@@ -4,14 +4,13 @@
 This repository contains the implementation of the paper:
 
 **OMG: 3D Scene Geometry Decomposition and Manipulation from 2D Images** <br />
-[Bing Wang](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen](https://chenlu-china.github.io/), [Bo Yang<sup>*</sup>](https://yang7879.github.io/) <br />
+[Bing Wang<sup>*</sup>](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen<sup>*</sup>](https://chenlu-china.github.io/), [Bo Yang](https://yang7879.github.io/) <br />
 [**Paper**]() | [**Supplementary**]() | [**Video**]()
 
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/decomposition_.gif" width=30%> &nbsp&nbsp&nbsp&nbsp
-     <img float=left src="/figs/manipulation_.gif" width=45%> 
+     <img float=left src="/figs/decomposition.gif" width=60%>
 </div>
 
 <div align=center>
