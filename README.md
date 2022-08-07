@@ -20,14 +20,14 @@ This repository contains the implementation of the paper:
 
 </div>
 
-<div align=center>
+<div>
      <img float=left src="/figs/manipulation.gif" width=50%>  <br/></br>
-      <img float=right src="/figs/sin+70.gif" width=50%>  <br/></br>
+     <img float=right src="/figs/sin+70.gif" width=50%>  <br/></br>
      <strong><center>Objects Manipulation</center></strong>     <br/><br/>
 </div>
 
+
 <div align=center>
-    
      <img src="/figs/sin+75_180.gif" width=50%>  <br/></br>
      <img src="/figs/sin+75_360.gif" width=50%>  <br/></br>
      <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/>
