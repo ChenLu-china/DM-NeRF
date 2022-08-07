@@ -10,13 +10,14 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/manipulation_.gif" width=60%> 
+     <img float=left src="/figs/decomposition.gif" width=450%> 
+     <img float=left src="/figs/manipulation_.gif" width=45%> 
 </div>
 
 <div align=center>
-     <img float=right src="/figs/sin+70_180.gif" width=30%>
-    <img src="/figs/sin+75_180.gif" width=30%> &nbsp
-     <img src="/figs/sin+75_360.gif" width=30%>&nbsp 
+     <img float=right src="/figs/sin+70_180.gif" width=30%> &nbsp 
+     <img src="/figs/sin+75_180.gif" width=30%> &nbsp 
+     <img src="/figs/sin+75_360.gif" width=30%>
      
 </div>
 
