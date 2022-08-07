@@ -8,8 +8,8 @@ from networks.ins_nerf import get_embedder, Instance_NeRF
 def config_parser():
     parser = configargparse.ArgumentParser()
 
-    parser.add_argument('--config', is_config_file=True, type=str, default='configs/replica/office_0.txt',
-                        help='configs file path')
+    parser.add_argument('--config', is_config_file=True, type=str, default='train_configs/replica/office_0.txt',
+                        help='train_configs file path')
     parser.add_argument("--expname", type=str, default='office_0',
                         help='experiment name')
     parser.add_argument("--log_time", default=None,
@@ -164,7 +164,7 @@ def initial():
         args.device = torch.device("cpu")
         
     if args.render == False and args.editor == False:
-        # Create log dir and copy the configs file
+        # Create log dir and copy the train_configs file
 
         log_dir = os.path.join(args.basedir, args.expname, args.log_time)
         print(log_dir)
@@ -175,7 +175,7 @@ def initial():
                 attr = getattr(args, arg)
                 file.write('{} = {}\n'.format(arg, attr))
         if args.config is not None:
-            f = os.path.join(log_dir, 'configs.txt')
+            f = os.path.join(log_dir, 'train_configs.txt')
             with open(f, 'w') as file:
                 file.write(open(args.config, 'r').read())
     return args
