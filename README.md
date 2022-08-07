@@ -14,6 +14,13 @@ This repository contains the implementation of the paper:
       <strong><center>Reconstruction and Decomposition</center></strong> <br/></br>
 </div>
 
+
+
+<div align=center>
+     <img float=right src="/figs/Sin_Deformed.gif" width=50%> <br/></br>
+     <strong><center>Object Deformable Transformation</center></strong> <br/></br>
+</div>
+
 <div align=center>
      <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp 
      <img src="/figs/75_180_180.gif" width=30%> &nbsp
@@ -21,13 +28,6 @@ This repository contains the implementation of the paper:
      <strong><center>View and Objects Transformation</center></strong> <br/></br>
      
 </div>
-
-<div align=center>
-     <img float=right src="/figs/Sin_Deformed.gif" width=50%> <br/></br>
-     <strong><center>Object Deformable Transformation</center></strong> <br/></br>
-</div>
-
-
 
 
 <!-- <div align=center>
