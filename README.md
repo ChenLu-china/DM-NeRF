@@ -10,7 +10,7 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/decomposition_.gif" width=45%> 
+     <img float=left src="/figs/decomposition_.gif" width=30%> 
      <img float=left src="/figs/manipulation_.gif" width=45%> 
 </div>
 
