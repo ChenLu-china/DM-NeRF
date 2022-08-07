@@ -13,8 +13,7 @@ This repository contains the implementation of the paper:
 ## Decomposition and Manipulation:
 
 <div align=center>
-     <img src="/figs/Decomposition.gif" width=70% > <br/></br>
-     <img float=left src="/figs/Decomposition.gif" width=40%>&nbsp<img src="/figs/sin+75_360.gif" width=53%> <br/></br>
+     <img float=left src="/figs/Decomposition.gif" width=40%>&nbsp<img float=right src="/figs/sin+75_360.gif" width=53%> <br/></br>
 </div>
 
 ## Qualitative Results
