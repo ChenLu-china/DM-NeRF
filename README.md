@@ -13,8 +13,8 @@ This repository contains the implementation of the paper:
 <div float>
 <!--      <img float=left src="/figs/manipulation.gif" width=50%>  <br/></br> -->
      <img src="/figs/sin+70.gif" width=30%>
-     <img src="/figs/sin+75_180.gif" width=50%>
-     <img src="/figs/sin+75_360.gif" width=50%>
+     <img src="/figs/sin+75_180.gif" width=30%>
+     <img src="/figs/sin+75_360.gif" width=30%>
      <strong><center>Objects Manipulation</center></strong>     <br/><br/>
 </div>
 
