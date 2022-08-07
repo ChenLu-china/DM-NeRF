@@ -9,18 +9,27 @@ This repository contains the implementation of the paper:
 
 **Demo:** <br />
 
-<!-- | ![2](./figs/decompose.gif)   | ![z](./figs/decompose.gif) | -->
+<!--  ![2](./figs/decomposition.gif)   | ![z](./figs/fig_scannet_scene0015_sem.gif) | -->
+![img](./figs/sin+70.gif) | ![img](./figs/sin+75_180.gif) | ![img](./figs/sin+75_360.gif)
 
-<div align=center>
-     <img src="/figs/decomposition.gif" width=70% > <br/></br>
+<!-- <div align=center>
+     <img src="/figs/decomposition.gif" width=50% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
 
 </div>
 
-<div align=center>
-     <img src="/figs/manipulation.gif" width=70%>  <br/></br>
+<div>
+     <img float=left src="/figs/manipulation.gif" width=50%>  <br/></br>
+     <img float=right src="/figs/sin+70.gif" width=50%>  <br/></br>
      <strong><center>Objects Manipulation</center></strong>     <br/><br/>
 </div>
+
+
+<div align=center>
+     <img src="/figs/sin+75_180.gif" width=50%>  <br/></br>
+     <img src="/figs/sin+75_360.gif" width=50%>  <br/></br>
+     <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/>
+</div> -->
 
 
 
@@ -113,7 +122,8 @@ In this project we use (parts of) the implementations of the following works:
 
 - [nerf_pytorch](https://github.com/yenchenlin/nerf-pytorch) by Yen-Chen Lin.
 - [ScanNet](https://github.com/ScanNet/ScanNet) by Angela Dai.
-- [3D-BoNet](https://github.com/Yang7879/3D-BoNet) by Bo Yang
-- [Semantic-NeRF](https://shuaifengzhi.com/Semantic-NeRF/) by Shuaifeng Zhi
+- [3D-BoNet](https://github.com/Yang7879/3D-BoNet) by Bo Yang.
+- [Semantic-NeRF](https://shuaifengzhi.com/Semantic-NeRF/) by Shuaifeng Zhi.
+- [Mask R-CNN](https://github.com/matterport/Mask_RCNN)by Kaiming He.
 
 We thank the respective authors for open sourcing their methods. 
