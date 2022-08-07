@@ -26,10 +26,9 @@ This repository contains the implementation of the paper:
 
 ### Normal and Deformable Editing Results
 <div align=center>
-     
-     <img src="/figs/edit_result1.png" width=80% > <br/></br>
-     <img src="/figs/edit_result2.png" width=80% > <br/></br>
-     <img src="/figs/deformable_res.png" width=80% > <br/></br>
+     <img src="/figs/edit_result1.png" width=80% > <br/>
+     <img src="/figs/edit_result2.png" width=80% > <br/>
+     <img src="/figs/deformable_res.png" width=80% > <br/>
 </div>
 
 
