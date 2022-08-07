@@ -10,20 +10,22 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/manipulation_.gif" width=60%> 
+     <img float=left src="/figs/decomposition.gif" width=450%> 
+     <img float=left src="/figs/manipulation_.gif" width=45%> 
 </div>
 
 <div align=center>
-    <img src="/figs/sin+75_180.gif" width=30%> &nbsp&nbsp&nbsp&nbsp
-<!--      <img src="/figs/sin+75_360.gif" width=30%>&nbsp&nbsp&nbsp&nbsp  -->
-     <img float=right src="/figs/sin+70_180.gif" width=30%>
+     <img float=right src="/figs/sin+70_180.gif" width=30%> &nbsp 
+     <img src="/figs/sin+75_180.gif" width=30%> &nbsp 
+     <img src="/figs/sin+75_360.gif" width=30%>
+     
 </div>
 
 
 
 
 <!-- <div align=center>
-     <img src="/figs/decomposition.gif" width=50% > <br/></br>
+     <img src="/figs/decomposition.gif" width=50% height = 70% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
 
 </div>
