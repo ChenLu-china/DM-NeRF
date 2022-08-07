@@ -134,7 +134,7 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
     '''begin'''
     # row corresponding ground truth, column corresponding prediction
     # make TP matrix
-    if confidence in not None:
+  if confidence is not None:
         column_max_index = torch.argsort(confidence, descending=True)
         column_max_value = IoUs_Metrics[column_max_index]
     else:
@@ -161,7 +161,7 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
 
 def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     if mask is None:
-        pred_ins = pred_ins[..., :-1]
+        # pred_ins = pred_ins[..., :-1]
         print(pred_ins.shape)
         print("gt ins num", gt_ins_num)
         # invalid_h, invalid_w = torch.where(mask == 0)
@@ -176,7 +176,21 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     # pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
 
     valid_pred_num = len(valid_pred_labels)
+    
+    # prepare confidence masks and confidence scores
+    pred_conf_mask = np.max(pred_ins.numpy(), axis=-1)
 
+    pred_conf_list = []
+    valid_pred_labels = valid_pred_labels.numpy().tolist()
+    for label in valid_pred_labels:
+        index = torch.where(pred_label == label)
+        ssm = pred_conf_mask[index[0], index[1]]
+        pred_obj_conf = np.median(ssm)  # 中位数
+        # pred_obj_conf = ssm.sum() / len(index[0])  # 平均数
+        # pred_obj_conf = np.max(ssm) # 最大数
+        pred_conf_list.append(pred_obj_conf)
+    pred_conf_scores = torch.from_numpy(np.array(pred_conf_list))
+    
     # change predicted labels to each signal object masks not existed padding as zero
     pred_ins = torch.zeros_like(gt_ins)
     pred_ins[..., :valid_pred_num] = F.one_hot(pred_label)[..., valid_pred_labels]
@@ -187,19 +201,20 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
 
     valid_inds = order_col[:gt_ins_num]
     ious_metrics = 1 - cost_iou[order_row, valid_inds]
-    # ious_metrics = self.calculate_ious(pred_ins, gt_valid, pred_ins_num, gt_ins_num)
     
-    # calculate confidence for each predicted mask
-    reorder_pred_ins = pred_ins[..., valid_inds]
-    confidence = torch.ones_like(ious_metrics)
-    for i in range(gt_ins_num):
-        inst_mask = reorder_pred_ins[i]
-        confidence[i] = torch.mean(inst_mask)
+    # prepare confidence values
+    confidence = torch.zeros(size=[gt_ins_num])
+    for i, valid_ind in enumerate(valid_inds):
+        if valid_ind < valid_pred_num:
+            confidence[i] = pred_conf_scores[valid_ind]
+        else:
+            confidence[i] = 0
     
-    ap = calculate_ap(ious_metrics, gt_ins_num, confidence=None, function_select='integral')
+    ap = calculate_ap(ious_metrics, gt_ins_num, confidence=confidence, function_select='integral')
 
     invalid_mask = valid_inds >= valid_pred_num
     valid_inds[invalid_mask] = 0
+    valid_pred_labels = torch.from_numpy(np.array(valid_pred_labels))
     return_labels = valid_pred_labels[valid_inds].cpu().numpy()
     return_labels[invalid_mask] = -1
 
