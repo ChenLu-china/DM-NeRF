@@ -20,7 +20,7 @@ This repository contains the implementation of the paper:
 
 ### Scene Decomposition
 <div align=center>
-     <img src="/figs/results.png" width=90% > <br/></br>
+     <img src="/figs/results.png" width=85% > <br/></br>
      
 </div>
 
