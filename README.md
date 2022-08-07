@@ -13,7 +13,7 @@ This repository contains the implementation of the paper:
 | --------------------------------------- | ------------------------------------- |
 | ![2](./figs/manipulation.gif)   | ![z](./figs/sin+70.gif) |
 | ![2](./figs/sin+75_180.gif)   | ![z](./figs/sin+75_360.gif) |
-<!-- 
+
 <!-- <div align=center>
      <img src="/figs/decomposition.gif" width=50% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
@@ -29,8 +29,8 @@ This repository contains the implementation of the paper:
      <img src="/figs/sin+70.gif" width=50%>  <br/></br>
      <img src="/figs/sin+75_180.gif" width=50%>  <br/></br>
      <img src="/figs/sin+75_360.gif" width=50%>  <br/></br>
-     <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/> -->
-</div> --> -->
+     <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/>
+</div> -->
 
 
 
