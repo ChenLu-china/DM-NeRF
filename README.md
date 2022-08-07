@@ -104,7 +104,7 @@ SOTA method Mask R-CNN
 </div>
 
 ## Video Demo (Youtube)
-<p align="center"> <a href=""><img src="./figs/DM-NeRF" width="80%"></a> </p>
+<p align="center"> <a href="https://www.youtube.com/watch?v=jLJqpZ3PyGs"><img src="./figs/DM-NeRF" width="80%"></a> </p>
 
 
 ## Citation
