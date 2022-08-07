@@ -10,19 +10,22 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <!--  ![2](./figs/decomposition.gif)   | ![z](./figs/fig_scannet_scene0015_sem.gif) | -->
-![img](./figs/sin+70.gif) | ![img](./figs/sin+75_180.gif) | ![img](./figs/sin+75_360.gif)
+<!-- ![img](./figs/sin+70.gif) | ![img](./figs/sin+75_180.gif) | ![img](./figs/sin+75_360.gif) -->
 
+
+
+<div>
+<!--      <img float=left src="/figs/manipulation.gif" width=50%>  <br/></br> -->
+     <img float=right src="/figs/sin+70_.gif" width=100%>  <br/></br>
+     <strong><center>Objects Manipulation</center></strong>     <br/><br/>
+</div>
 <!-- <div align=center>
      <img src="/figs/decomposition.gif" width=50% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
 
 </div>
 
-<div>
-     <img float=left src="/figs/manipulation.gif" width=50%>  <br/></br>
-     <img float=right src="/figs/sin+70.gif" width=50%>  <br/></br>
-     <strong><center>Objects Manipulation</center></strong>     <br/><br/>
-</div>
+
 
 
 <div align=center>
