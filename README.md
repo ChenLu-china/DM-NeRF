@@ -10,7 +10,7 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <!--  ![2](./figs/decomposition.gif)   | ![z](./figs/fig_scannet_scene0015_sem.gif) | -->
-![img](./figs/sin+70.gif) ![img](./figs/sin+75_180.gif) ![img](./figs/sin+75_360.gif)
+![img](./figs/sin+70.gif) | ![img](./figs/sin+75_180.gif) | ![img](./figs/sin+75_360.gif)
 
 <!-- <div align=center>
      <img src="/figs/decomposition.gif" width=50% > <br/></br>
