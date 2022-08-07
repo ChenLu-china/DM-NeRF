@@ -103,6 +103,10 @@ SOTA method Mask R-CNN
      <img src="/figs/deformable_res.png" width=92% > <br/></br>
 </div>
 
+## Video Demo (Youtube)
+<p align="center"> <a href=""><img src="./figs/DM-NeRF" width="80%"></a> </p>
+
+
 ## Citation
 If you find our work useful in your research, please consider citing:
 
