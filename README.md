@@ -25,11 +25,20 @@ This repository contains the implementation of the paper:
 </div>
 
 ### Object Manipulation
+
+#### Rigid Transformation
+
 <div align=center>
      <img src="/figs/edit_result1.png" width=80% > <br/>
      <img src="/figs/edit_result2.png" width=80% > <br/>
+</div>
+
+#### Deformable Manipulation
+
+<div align=center>
      <img src="/figs/deformable_res.png" width=80% > <br/>
 </div>
+
 
 
 ## Installation
