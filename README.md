@@ -18,13 +18,13 @@ This repository contains the implementation of the paper:
 
 ## Qualitative Results
 
-### Objects Decomposition Results
+### Scene Decomposition
 <div align=center>
      <img src="/figs/results.png" width=90% > <br/></br>
      
 </div>
 
-### Normal and Deformable Editing Results
+### Object Manipulation
 <div align=center>
      <img src="/figs/edit_result1.png" width=80% > <br/>
      <img src="/figs/edit_result2.png" width=80% > <br/>
