@@ -86,6 +86,7 @@ run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config editor_test_conf
 SOTA method Mask R-CNN
 
 ## Qualitative Results
+
 ### Objects Segmentation Results
 <div align=center>
      <img src="/figs/results.png" width=100% > <br/></br>
@@ -96,10 +97,12 @@ SOTA method Mask R-CNN
 <div align=center>
      <img src="/figs/study_room1.gif" width=50%> <br/></br>
 </div> -->
+
 ### Deformable Results
 <div align=center>
      <img src="/figs/deformable_res.png" width=92% > <br/></br>
 </div>
+
 ## Citation
 If you find our work useful in your research, please consider citing:
 
