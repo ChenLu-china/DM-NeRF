@@ -14,16 +14,17 @@ This repository contains the implementation of the paper:
 </div>
 
 <div align=center>
-    <img src="/figs/sin+75_180.gif" width=30%> &nbsp&nbsp&nbsp&nbsp
-<!--      <img src="/figs/sin+75_360.gif" width=30%>&nbsp&nbsp&nbsp&nbsp  -->
      <img float=right src="/figs/sin+70_180.gif" width=30%>
+    <img src="/figs/sin+75_180.gif" width=30%> &nbsp
+     <img src="/figs/sin+75_360.gif" width=30%>&nbsp 
+     
 </div>
 
 
 
 
 <!-- <div align=center>
-     <img src="/figs/decomposition.gif" width=50% > <br/></br>
+     <img src="/figs/decomposition.gif" width=50% height = 70% > <br/></br>
      <strong><center>Reconstruction and Instances Decomposition</center></strong>     <br/><br/>
 
 </div>
