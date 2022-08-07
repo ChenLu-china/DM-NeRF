@@ -14,8 +14,15 @@ This repository contains the implementation of the paper:
 </div>
 
 <div align=center>
+     <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp 
+     <img src="/figs/75_180_180.gif" width=30%> &nbsp
+     <img src="/figs/75_180_360.gif" width=30%>
+     
+</div>
+
+<div align=center>
      <img float=right src="/figs/Sin_Deformed.gif" width=40%> &nbsp 
-     <img src="/figs/sin+75_180.gif" width=30%> &nbsp 
+<!--      <img src="/figs/sin+75_180.gif" width=30%> &nbsp  -->
 <!--      <img src="/figs/sin+75_360.gif" width=30%> -->
      
 </div>
