@@ -10,7 +10,7 @@ This repository contains the implementation of the paper:
 ## Video (Youtube)
 <p align="center"> <a href="https://www.youtube.com/watch?v=jLJqpZ3PyGs"><img src="./figs/DM-NeRF.png" width="80%"></a> </p>
 
-## Demo:
+## Decomposition and Manipulation:
 
 ### Reconstruction and Decomposition
 <div align=center>
