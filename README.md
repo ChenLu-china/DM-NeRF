@@ -3,7 +3,7 @@
 
 This repository contains the implementation of the paper:
 
-**OMG: 3D Scene Geometry Decomposition and Manipulation from 2D Images** <br />
+**DM-NeRF: 3D Scene Geometry Decomposition and Manipulation from 2D Images** <br />
 [Bing Wang<sup>*</sup>](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen<sup>*</sup>](https://chenlu-china.github.io/), [Bo Yang](https://yang7879.github.io/) <br />
 [**Paper**]() | [**Supplementary**]() | [**Video**](https://www.youtube.com/watch?v=jLJqpZ3PyGs)
 
