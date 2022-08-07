@@ -10,7 +10,7 @@ This repository contains the implementation of the paper:
 ## Video Demo (Youtube)
 <p align="center"> <a href="https://www.youtube.com/watch?v=jLJqpZ3PyGs"><img src="./figs/DM-NeRF.png" width="80%"></a> </p>
 
-**Demo:** <br />
+## Demo:
 
 <div align=center>
      <img float=left src="/figs/Decomposition.gif" width=40%>&nbsp&nbsp&nbsp<img src="/figs/sin+75_360.gif" width=53.5%> <br/></br>
