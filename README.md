@@ -113,11 +113,11 @@ SOTA method Mask R-CNN
      <img src="/figs/results.png" width=100% > <br/></br>
 </div>
 
-## Camera and Object Rotating
+<!-- ## Camera and Object Rotating
 
 <div align=center>
      <img src="/figs/study_room1.gif" width=50%> <br/></br>
-</div>
+</div> -->
 
 ## Citation
 If you find our work useful in your research, please consider citing:
