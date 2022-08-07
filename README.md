@@ -9,12 +9,12 @@ This repository contains the implementation of the paper:
 
 **Demo:** <br />
 
-<div float>
-     <img float=left src="/figs/manipulation_.gif" width=50%> 
-     <img float=right src="/figs/sin+70.gif" width=50%>
+<div align=center>
+     <img float=left src="/figs/manipulation_.gif" width=40%> 
+     <img float=right src="/figs/sin+70.gif" width=40%>
 </div>
 <div float>
-<!--      <img float=left src="/figs/manipulation_.gif" width=50%>  <br/></br> -->
+<!--      <img float=left src="/figs/manipulation_.gif" width=40%>  <br/></br> -->
     
 </div>
 
