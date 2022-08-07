@@ -130,6 +130,6 @@ In this project we use (parts of) the implementations of the following works:
 - [ScanNet](https://github.com/ScanNet/ScanNet) by Angela Dai.
 - [3D-BoNet](https://github.com/Yang7879/3D-BoNet) by Bo Yang.
 - [Semantic-NeRF](https://shuaifengzhi.com/Semantic-NeRF/) by Shuaifeng Zhi.
-- [Mask R-CNN](https://github.com/matterport/Mask_RCNN)by Kaiming He.
+- [Mask R-CNN](https://github.com/matterport/Mask_RCNN) by Kaiming He.
 
 We thank the respective authors for open sourcing their methods. 
