@@ -20,7 +20,7 @@ This repository contains the implementation of the paper:
 
 ### Decomposition Results
 <div align=center>
-     <img src="/figs/results.png" width=80% > <br/></br>
+     <img src="/figs/results.png" width=85% > <br/></br>
 </div>
 
 <!-- ## Camera and Object Rotating
