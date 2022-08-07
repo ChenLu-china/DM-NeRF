@@ -7,7 +7,7 @@ This repository contains the implementation of the paper:
 [Bing Wang<sup>*</sup>](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen<sup>*</sup>](https://chenlu-china.github.io/), [Bo Yang](https://yang7879.github.io/) <br />
 [**Paper**]() | [**Supplementary**]() | [**Video**](https://www.youtube.com/watch?v=jLJqpZ3PyGs)
 
-## Video Demo (Youtube)
+## Video (Youtube)
 <p align="center"> <a href="https://www.youtube.com/watch?v=jLJqpZ3PyGs"><img src="./figs/DM-NeRF.png" width="80%"></a> </p>
 
 ## Demo:
