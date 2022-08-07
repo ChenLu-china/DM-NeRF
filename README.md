@@ -12,6 +12,13 @@ This repository contains the implementation of the paper:
 
 ## Demo:
 
+### Reconstruction and Decomposition
+<div align=center>
+     <img src="/figs/Decomposition.gif" width=100% > <br/></br>
+</div>
+
+### Reconstruction and Manipulation
+
 <div align=center>
      <img float=left src="/figs/Decomposition.gif" width=40%>&nbsp&nbsp&nbsp<img src="/figs/sin+75_360.gif" width=53.5%> <br/></br>
 <!--       <strong><center>Reconstruction and Decomposition</center></strong> <br/></br> -->
