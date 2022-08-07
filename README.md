@@ -17,8 +17,7 @@ This repository contains the implementation of the paper:
 <div align=center>
      <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp 
      <img src="/figs/75_180_180.gif" width=30%> &nbsp
-     <img src="/figs/75_180_360.gif" width=30%> <br/>
-     
+     <img src="/figs/75_180_360.gif" width=30%> 
      <strong><center>View and Objects Transformation</center></strong> <br/>
      
 </div>
