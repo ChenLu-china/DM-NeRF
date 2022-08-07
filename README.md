@@ -22,6 +22,13 @@ This repository contains the implementation of the paper:
      <strong><center>Objects Manipulation</center></strong>     <br/><br/>
 </div>
 
+<div align=center>
+     <img src="/figs/sin+70.gif" width=70%>  <br/></br>
+     <img src="/figs/sin+75_180.gif" width=70%>  <br/></br>
+     <img src="/figs/sin+75_360.gif" width=70%>  <br/></br>
+     <strong><center>Objects Manipulation</center></strong>     <br/><br/>
+</div>
+
 
 
 ## Installation
