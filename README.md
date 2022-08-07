@@ -1,4 +1,4 @@
-# OMG: 3D Scene Geometry Decomposition and Manipulation from 2D Images
+# DM-NeRF: 3D Scene Geometry Decomposition and Manipulation from 2D Images
 
 
 This repository contains the implementation of the paper:
