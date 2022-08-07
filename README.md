@@ -10,7 +10,7 @@ This repository contains the implementation of the paper:
 **Demo:** <br />
 
 <div align=center>
-     <img float=left src="/figs/decomposition.gif" width=50%> <br/></br>
+     <img float=left src="/figs/Decomposition.gif" width=50%> <br/></br>
       <strong><center>Reconstruction and Decomposition</center></strong> <br/></br>
 </div>
 
@@ -22,26 +22,12 @@ This repository contains the implementation of the paper:
 </div>
 
 <div align=center>
-     <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp 
-     <img src="/figs/75_180_180.gif" width=30%> &nbsp
-     <img src="/figs/75_180_360.gif" width=30%> <br/></br>
+<!--      <img float=right src="/figs/70_180_180.gif" width=30%> &nbsp  -->
+     <img src="/figs/75_180_180.gif" width=40%> &nbsp
+     <img src="/figs/75_180_360.gif" width=40%> <br/></br>
      <strong><center>View and Objects Transformation</center></strong> <br/></br>
      
 </div>
-
-
-<!-- <div align=center>
-     <img src="/figs/decomposition.gif" width=50% height = 70% > <br/></br>
-     <strong><center>Reconstruction and Instances Decomposition</center></strong>  <br/></br>
-
-</div>
-
-
-<div align=center>
-     <img src="/figs/sin+75_180.gif" width=50%>  <br/></br>
-     <img src="/figs/sin+75_360.gif" width=50%>  <br/></br>
-     <strong><center>View Transformation and Objects Manipulation</center></strong>     <br/><br/>
-</div> -->
 
 
 
