@@ -18,9 +18,9 @@ This repository contains the implementation of the paper:
 
 ## Qualitative Results
 
-### Objects Segmentation Results
+### Objects Decomposition Results
 <div align=center>
-     <img src="/figs/results.png" width=100% > <br/></br>
+     <img src="/figs/results.png" width=80% > <br/></br>
 </div>
 
 <!-- ## Camera and Object Rotating
@@ -31,7 +31,7 @@ This repository contains the implementation of the paper:
 
 ### Deformable Editing Results
 <div align=center>
-     <img src="/figs/deformable_res.png" width=92% > <br/></br>
+     <img src="/figs/deformable_res.png" width=80% > <br/></br>
 </div>
 
 
