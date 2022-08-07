@@ -18,28 +18,20 @@ This repository contains the implementation of the paper:
 
 ## Qualitative Results
 
-### Decomposition Results
+### Objects Decomposition Results
 <div align=center>
-     <img src="/figs/results.png" width=85% > <br/></br>
+     <img src="/figs/results.png" width=80% > <br/></br>
+     
 </div>
 
-<!-- ## Camera and Object Rotating
-
+### Normal and Deformable Editing Results
 <div align=center>
-     <img src="/figs/study_room1.gif" width=50%> <br/></br>
-</div> -->
-
-### Manipulation Results
-
-### Rigid Transformation
-<div align=center>
+     
+     <img src="/figs/edit_result1.png" width=80% > <br/></br>
+     <img src="/figs/edit_result2.png" width=80% > <br/></br>
      <img src="/figs/deformable_res.png" width=80% > <br/></br>
 </div>
 
-### Deformable Transformation
-<div align=center>
-     <img src="/figs/deformable_res.png" width=80% > <br/></br>
-</div>
 
 ## Installation
 
