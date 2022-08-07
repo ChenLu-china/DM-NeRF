@@ -98,7 +98,7 @@ SOTA method Mask R-CNN
 </div> -->
 ### Deformable Results
 <div align=center>
-     <img src="/figs/deformable_res.png" width=70% > <br/></br>
+     <img src="/figs/deformable_res.png" width=100% > <br/></br>
 </div>
 ## Citation
 If you find our work useful in your research, please consider citing:
