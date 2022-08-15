@@ -5,10 +5,10 @@ This repository contains the implementation of the paper:
 
 **DM-NeRF: 3D Scene Geometry Decomposition and Manipulation from 2D Images** <br />
 [Bing Wang<sup>*</sup>](https://www.cs.ox.ac.uk/people/bing.wang/), [Lu Chen<sup>*</sup>](https://chenlu-china.github.io/), [Bo Yang](https://yang7879.github.io/) <br />
-[**Paper**]() | [**Supplementary**]() | [**Video**](https://www.youtube.com/watch?v=jLJqpZ3PyGs)
+[**Paper**]() | [**Supplementary**]() | [**Video**](https://www.youtube.com/watch?v=yQtpPfM5dTA)
 
 ## Video (Youtube)
-<p align="center"> <a href="https://www.youtube.com/watch?v=jLJqpZ3PyGs"><img src="./figs/DM-NeRF.png" width="80%"></a> </p>
+<p align="center"> <a href="https://www.youtube.com/watch?v=yQtpPfM5dTA"><img src="./figs/DM-NeRF.png" width="80%"></a> </p>
 
 ## Decomposition and Manipulation:
 
