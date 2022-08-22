@@ -1,6 +1,6 @@
 expname = bathroom
-basedir = ./logs/dmsr
-datadir = ./data/dmsr/bathroom
+basedir = ./logs_005
+datadir = ./data/synthetic_rooms/bathroom
 
 lrate_decay = 500
 
@@ -13,6 +13,9 @@ N_test = 4096
 near = 3.1
 far = 11.0
 testskip = 1
+
+render = True
+log_time = 202203010929
 
 over_penalize
 tolerance = 0.05

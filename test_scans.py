@@ -2,7 +2,7 @@ import os
 import torch
 from config import create_nerf, initial
 from datasets.replica.data_loader import load_editor_poses
-from datasets.loader_scannet import *
+from datasets.scannet.loader_scannet import *
 from tools.editor_tools import editor_test
 from tools.test_tools import render_test
 

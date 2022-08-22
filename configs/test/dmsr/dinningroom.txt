@@ -1,6 +1,6 @@
-expname = bathroom
-basedir = ./logs/dmsr
-datadir = ./data/dmsr/bathroom
+expname = dinningroom
+basedir = ./logs_005
+datadir = ./data/synthetic_rooms/dinningroom
 
 lrate_decay = 500
 
@@ -10,9 +10,13 @@ N_train = 3072
 N_test = 4096
 
 
-near = 3.1
-far = 11.0
+near = 1.5
+far = 8.0
 testskip = 1
+
+
+render = True
+log_time = 202203010928
 
 over_penalize
 tolerance = 0.05

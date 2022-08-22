@@ -1,6 +1,6 @@
-expname = bathroom
-basedir = ./logs/dmsr
-datadir = ./data/dmsr/bathroom
+expname = bedroom
+basedir = ./logs_005
+datadir = ./data/synthetic_rooms/bedroom
 
 lrate_decay = 500
 
@@ -10,9 +10,12 @@ N_train = 3072
 N_test = 4096
 
 
-near = 3.1
-far = 11.0
+near = 3.8
+far = 13.0
 testskip = 1
+
+render = True
+log_time = 202203010929
 
 over_penalize
 tolerance = 0.05

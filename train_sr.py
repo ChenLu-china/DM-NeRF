@@ -2,7 +2,7 @@ import torch
 import os
 import numpy as np
 from config import initial, create_nerf
-from datasets.load_sr import load_data
+from datasets.sr.load_sr import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
 from tools.test_tools import render_test
