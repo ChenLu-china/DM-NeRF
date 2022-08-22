@@ -2,13 +2,13 @@ import torch
 import os
 import numpy as np
 from config import initial, create_nerf
-from datasets.sr.load_sr import load_data
+from datasets.dmsr.load_dmsr import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
 from networks.ins_penalizer import ins_penalizer
-from tools.test_tools import render_test
-from tools.helpers_tools import gt_select_general, z_val_sample
-from tools.render_tools import ins_nerf
-from tools.helpers_tools import round_losses
+from networks.test import render_test
+from networks.helpers import gt_select_general, z_val_sample
+from networks.render import ins_nerf
+from networks.helpers import round_losses
 
 np.random.seed(0)
 torch.cuda.manual_seed(3)

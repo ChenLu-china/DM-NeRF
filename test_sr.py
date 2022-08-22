@@ -1,9 +1,9 @@
 import os
 from config import create_nerf, initial
-from datasets.sr.data_loader import load_editor_poses
-from datasets.sr.load_sr import *
-from tools.editor_tools import editor_test
-from tools.test_tools import render_test
+from datasets.dmsr.data_loader import load_editor_poses
+from datasets.dmsr.load_dmsr import *
+from networks.editor import editor_test
+from networks.test import render_test
 from tools.poses_generator import generate_poses
 
 
