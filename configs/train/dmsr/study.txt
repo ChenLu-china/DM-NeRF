@@ -1,6 +1,6 @@
-expname = livingroom_rest
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/livingroom_rest
+expname = office_study
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/study
 
 lrate_decay = 500
 
@@ -10,13 +10,9 @@ N_train = 3072
 N_test = 4096
 
 
-near = 3.6
+near = 4.0
 far = 15.0
 testskip = 1
-
-render = True
-log_time = 202203010926
-
 
 over_penalize
 tolerance = 0.05

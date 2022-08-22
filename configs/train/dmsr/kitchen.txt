@@ -1,6 +1,6 @@
 expname = kitchen
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/kitchen
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/kitchen
 
 lrate_decay = 500
 
@@ -13,10 +13,6 @@ N_test = 4096
 near = 0.0
 far = 15.0
 testskip = 1
-
-render = True
-log_time = 202203010928
-
 
 over_penalize
 tolerance = 0.05

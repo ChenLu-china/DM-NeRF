@@ -1,6 +1,6 @@
-expname = bedroom
+expname = livingroom_rest
 basedir = ./logs/dmsr
-datadir = ./data/dmsr/bedroom
+datadir = ./data/dmsr/restroom
 
 lrate_decay = 500
 
@@ -10,8 +10,8 @@ N_train = 3072
 N_test = 4096
 
 
-near = 3.8
-far = 13.0
+near = 3.6
+far = 15.0
 testskip = 1
 
 over_penalize
