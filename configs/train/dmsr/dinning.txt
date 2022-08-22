@@ -1,4 +1,4 @@
-expname = dinningroom
+expname = dinning
 basedir = ./logs/dmsr
 datadir = ./data/dmsr/dinning
 

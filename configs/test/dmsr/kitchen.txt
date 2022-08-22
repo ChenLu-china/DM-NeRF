@@ -1,6 +1,6 @@
 expname = kitchen
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/kitchen
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/kitchen
 
 lrate_decay = 500
 

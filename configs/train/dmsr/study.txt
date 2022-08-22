@@ -1,4 +1,4 @@
-expname = office_study
+expname = study
 basedir = ./logs/dmsr
 datadir = ./data/dmsr/study
 

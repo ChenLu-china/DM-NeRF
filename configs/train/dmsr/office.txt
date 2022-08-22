@@ -1,4 +1,4 @@
-expname = office_reception
+expname = office
 basedir = ./logs/dmsr
 datadir = ./data/dmsr/office
 

@@ -1,6 +1,6 @@
-expname = dinningroom
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/dinningroom
+expname = study
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/study
 
 lrate_decay = 500
 
@@ -10,13 +10,12 @@ N_train = 3072
 N_test = 4096
 
 
-near = 1.5
-far = 8.0
+near = 4.0
+far = 15.0
 testskip = 1
 
-
 render = True
-log_time = 202203010928
+log_time = 202203031813
 
 over_penalize
 tolerance = 0.05

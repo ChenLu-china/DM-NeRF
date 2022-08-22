@@ -1,6 +1,6 @@
-expname = livingroom_rest
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/livingroom_rest
+expname = restroom
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/restroom
 
 lrate_decay = 500
 

@@ -1,4 +1,4 @@
-expname = livingroom_rest
+expname = restroom
 basedir = ./logs/dmsr
 datadir = ./data/dmsr/restroom
 

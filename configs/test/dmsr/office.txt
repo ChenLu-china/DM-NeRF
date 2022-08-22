@@ -1,6 +1,6 @@
-expname = office_reception
-basedir = ./logs_005
-datadir = ./data/synthetic_rooms/office_reception
+expname = office
+basedir = ./logs/dmsr
+datadir = ./data/dmsr/office
 
 lrate_decay = 500
 
