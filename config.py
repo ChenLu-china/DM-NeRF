@@ -130,6 +130,9 @@ def config_parser():
     parser.add_argument("--scale", type=bool, default=False,
                         help='do the scale down or scale up operation')
 
+    # 3D color mesh extraction
+    parser.add_argument("--mesh", action='store_true',
+                        help='generate a 3d point cloud file')
     return parser
 
 
