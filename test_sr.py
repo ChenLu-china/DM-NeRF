@@ -4,7 +4,7 @@ from datasets.sr.data_loader import load_editor_poses
 from datasets.sr.load_sr import *
 from tools.editor_tools import editor_test
 from tools.test_tools import render_test
-from data.sr.poses_generator import generate_poses
+from tools.poses_generator import generate_poses
 
 
 def test():
