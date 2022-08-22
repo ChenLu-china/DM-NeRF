@@ -7,10 +7,10 @@ import numpy as np
 import torch.nn.functional as F
 from skimage import metrics
 from networks.ins_eval import ins_eval
-from tools.helpers_tools import get_rays_k, z_val_sample, get_rays
+from networks.helpers import get_rays_k, z_val_sample
 from networks.ins_eval import to8b
-from tools.render_tools import ins_nerf
-from tools.vis_tools import render_label2img, show_instance_rgb, render_gt_label2img
+from networks.render import ins_nerf
+from tools.vis_tools import render_label2img, render_gt_label2img
 import cv2
 
 def render_test(position_embedder, view_embedder, model_coarse, model_fine, render_poses, hwk, args, gt_imgs=None,

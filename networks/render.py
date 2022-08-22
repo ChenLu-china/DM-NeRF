@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from tools.helpers_tools import sample_pdf
+from networks.helpers import sample_pdf
 
 DEBUG = False
 

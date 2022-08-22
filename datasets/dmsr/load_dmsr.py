@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-from datasets.sr.data_loader import rgb_processor, ins_processor, processor
-from datasets.sr.loader_vis import vis_segmentation, to8b, labeltoimg, vis_selected_pixels
+from datasets.dmsr.data_loader import rgb_processor, ins_processor, processor
+from datasets.dmsr.loader_vis import vis_segmentation, to8b, labeltoimg, vis_selected_pixels
 
 trans_t = lambda t: torch.Tensor([
     [1, 0, 0, 0],
