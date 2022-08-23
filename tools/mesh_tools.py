@@ -49,15 +49,11 @@ def operate_cube(x, y, z, N=256):
 def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, trimesh_scene, ins_rgbs, save_dir,
               ins_map=None):
     _, _, dataset_name, scene_name = args.datadir.split('/')
+    gt_color_dict_path = './data/color_dict.json'
+    gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
+    color_dict = gt_color_dict[dataset_name][scene_name]
 
     if dataset_name == 'dmsr':
-
-        gt_color_dict_path = './data/color_dict.json'
-        gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
-        color_dict = gt_color_dict[dataset_name][scene_name]
-        print(color_dict)
-        print(ins_map)
-        print(ins_rgbs)
         level = 0.45  # level = 0
         threshold = 0.2
         grid_dim = 256
@@ -209,8 +205,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         print("--------end----------")
 
     elif dataset_name == 'replica':
-
-        level = 0.05  # level = 0
+        level = 0.45  # level = 0
         threshold = 0.2
         grid_dim = 256
 
@@ -220,7 +215,15 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         scene_extents = extents
         grid_query_pts, scene_scale = grid_within_bound([-1.0, 1.0], scene_extents, scene_transform, grid_dim=grid_dim)
         grid_query_pts = grid_query_pts.cuda().reshape(-1, 3)  # Num_rays, 1, 3-xyz
-        print(grid_query_pts.shape)
+
+        # print(grid_query_pts.cpu().numpy())
+        print("x_min:", np.min(grid_query_pts.cpu().numpy()[..., 0]))
+        print("x_max:", np.max(grid_query_pts.cpu().numpy()[..., 0]))
+        print("y_min:", np.min(grid_query_pts.cpu().numpy()[..., 1]))
+        print("y_max:", np.max(grid_query_pts.cpu().numpy()[..., 1]))
+        print("z_min:", np.min(grid_query_pts.cpu().numpy()[..., 2]))
+        print("z_max:", np.max(grid_query_pts.cpu().numpy()[..., 2]))
+
         N = grid_query_pts.shape[0]
         raw = None
 
@@ -272,7 +275,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         scene_scale = scene_extents / 2.0
         # Transform to scene coordinates
         mesh_canonical.apply_scale(scene_scale)
-        # mesh_canonical.apply_transform(scene_transform)
+        mesh_canonical.apply_transform(scene_transform)
         # mesh.show()
         exported = trimesh.exchange.export.export_mesh(mesh_canonical,
                                                        os.path.join(save_dir, 'mesh_canonical.ply'))
@@ -334,15 +337,15 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
                 else:
                     full_ins = torch.cat((full_ins, all_info['ins_fine']), dim=0)
         ins = full_ins.cpu().numpy()
-        print(ins.shape)
         pred_label = np.argmax(ins, axis=-1)
 
         ins_color = render_label2rgb(pred_label, ins_rgbs)
+        # ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
         print(ins_color)
-        o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color / 255.0)
+        o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color[:, [2, 1, 0]] / 255.0)
         o3d.io.write_triangle_mesh(
-            os.path.join(mesh_recon_save_dir, 'ins_mesh_canonical_dim{}neart_{}.ply'.format(grid_dim, args.near)),
+            os.path.join(mesh_recon_save_dir, 'semantic_mesh_canonical_dim{}neart_{}.ply'.format(grid_dim, args.near)),
             o3d_mesh_canonical_clean)
-        print("Saving Marching Cubes mesh to instance_mesh_canonical_dim{}neart_{}.ply".format(grid_dim, args.near))
+        print("Saving Marching Cubes mesh to semantic_mesh_canonical_dim{}neart_{}.ply".format(grid_dim, args.near))
 
         print("--------end----------")
