@@ -134,13 +134,13 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
     '''begin'''
     # row corresponding ground truth, column corresponding prediction
     # make TP matrix
-  if confidence is not None:
+    if confidence is not None:
         column_max_index = torch.argsort(confidence, descending=True)
         column_max_value = IoUs_Metrics[column_max_index]
     else:
         column_max_value = torch.sort(IoUs_Metrics, descending=True)
         column_max_value = column_max_value[0]
-    
+
     thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
     ap_list = []
     for thre in thre_list:
