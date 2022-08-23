@@ -178,7 +178,7 @@ def initial():
                 attr = getattr(args, arg)
                 file.write('{} = {}\n'.format(arg, attr))
         if args.config is not None:
-            f = os.path.join(log_dir, 'train_configs.txt')
+            f = os.path.join(log_dir, 'configs.txt')
             with open(f, 'w') as file:
                 file.write(open(args.config, 'r').read())
     return args
