@@ -56,6 +56,7 @@ This repository contains the implementation of the paper:
         ar-status="not-presenting">
     </model-viewer>
 </div>
+
 ## Installation
 
 Create python environment vision >=3.7
