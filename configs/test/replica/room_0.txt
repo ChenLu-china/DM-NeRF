@@ -14,7 +14,7 @@ near = 0.0
 far = 6.5
 testskip = 4
 
-mesh = True
+render = True
 log_time = 202202181700
 
 over_penalize
