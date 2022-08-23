@@ -50,13 +50,15 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
               ins_map=None):
     _, _, dataset_name, scene_name = args.datadir.split('/')
 
-    if dataset_name == 'synthetic_rooms':
+    if dataset_name == 'dmsr':
 
         gt_color_dict_path = './data/color_dict.json'
         gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
         color_dict = gt_color_dict[dataset_name][scene_name]
-
-        level = 0.2  # level = 0
+        print(color_dict)
+        print(ins_map)
+        print(ins_rgbs)
+        level = 0.45  # level = 0
         threshold = 0.2
         grid_dim = 256
 
@@ -64,7 +66,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         # print(to_origin_transform, extents)
         T_extent_to_scene = np.linalg.inv(to_origin_transform)
         scene_transform = T_extent_to_scene
-        scene_extents = np.array([1.9, 7.0, 8.])
+        scene_extents = np.array([1.9, 7.0, 7.])
         grid_query_pts, scene_scale = grid_within_bound([-1.0, 1.0], scene_extents, scene_transform, grid_dim=grid_dim)
         grid_query_pts = grid_query_pts[:, :, [0, 2, 1]]
         grid_query_pts[:, :, 1] = grid_query_pts[:, :, 1] * -1
@@ -72,13 +74,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         print(extents)
         print(np.max(query, axis=0), np.min(query, axis=0))
         grid_query_pts = grid_query_pts.cuda().reshape(-1, 3)  # Num_rays, 1, 3-xyz
-
-        # print("x_min:", np.min(grid_query_pts.cpu().numpy()[..., 0]))
-        # print("x_max:", np.max(grid_query_pts.cpu().numpy()[..., 0]))
-        # print("y_min:", np.min(grid_query_pts.cpu().numpy()[..., 1]))
-        # print("y_max:", np.max(grid_query_pts.cpu().numpy()[..., 1]))
-        # print("z_min:", np.min(grid_query_pts.cpu().numpy()[..., 2]))
-        # print("z_max:", np.max(grid_query_pts.cpu().numpy()[..., 2]))
 
         N = grid_query_pts.shape[0]
         raw = None
@@ -173,14 +168,10 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
             np.asarray(selected_mesh.vertex_normals))  # use negative normal directions as ray marching directions
         rays_d = rays_d[:, [0, 2, 1]]
         rays_d[:, 1] = rays_d[:, 1] * -1
-        # near = 0.1 * torch.ones_like(rays_d[:, :1])
-        # far = 10.0 * torch.ones_like(rays_d[:, :1])
 
         vertices_ = vertices_[:, [0, 2, 1]]
         vertices_[:, 1] = vertices_[:, 1] * -1
         rays_o = torch.FloatTensor(vertices_) - rays_d * 0.03 * args.near
-        # rays_o = intersect(vertices_, rays_d, np.array([0, 0, 0.9]), 7.5)
-        # grid_query_pts = torch.FloatTensor(vertices_).cuda()
 
         print(np.max(vertices_, axis=0), np.min(vertices_, axis=0))
 
@@ -194,7 +185,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
                 N_test = args.N_test
                 if step + N_test > N:
                     N_test = N - step
-                    z_val_coarse = z_val_sample(N_test, args.near, args.far, args.N_samples)
+                    z_val_coarse = z_val_sample(N_test, 0.01, 15, args.N_samples)
                 rays_io = rays_o[step:step + N_test]  # (chuck, 3)
                 rays_id = rays_d[step:step + N_test]  # (chuck, 3)
                 batch_rays = torch.stack([rays_io, rays_id], dim=0)
@@ -205,138 +196,17 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
                     full_ins = all_info['ins_fine']
                 else:
                     full_ins = torch.cat((full_ins, all_info['ins_fine']), dim=0)
-        ins = full_ins.cpu().numpy()
-        print(ins.shape)
-        pred_label = np.argmax(ins, axis=-1)
-        print(np.unique(pred_label))
-        ins_color = render_label2rgb(pred_label, ins_rgbs)
-        # ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
-        print(ins_color)
+        print(full_ins.shape)
+        pred_label = torch.argmax(full_ins, dim=-1)
+        ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
 
-        # raw = None
-        # for step in range(0, N, args.N_test):
-        #     N_test = args.N_test
-        #     if step + N_test > N:
-        #         N_test = N - step
-        #     in_pcd = grid_query_pts[step:step + N_test]
-        #     embedded = position_embedder.embed(in_pcd)
-        #     viewdirs = torch.zeros_like(in_pcd)
-        #     embedded_dirs = view_embedder.embed(viewdirs)
-        #     embedded = torch.cat([embedded, embedded_dirs], -1)
-        #     raw_fine = model_fine(embedded)
-        #     if raw is None:
-        #         raw = raw_fine
-        #     else:
-        #         raw = torch.cat((raw, raw_fine), dim=0)
-        #
-        # raw = raw.cpu().numpy()
-        #
-        # ins = raw[..., 4:-1]
-        # print(ins.shape)
-        # pred_label = np.argmax(ins, axis=-1)
-        # print(np.unique(pred_label))
-        # ins_color = render_label2rgb(pred_label, ins_rgbs)
-        # # ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
-        # print(ins_color)
-
-        o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color / 255.0)
+        o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color[:, [2, 1, 0]] / 255.0)
         o3d.io.write_triangle_mesh(
             os.path.join(mesh_recon_save_dir, 'ins_mesh_canonical_dim{}neart_{}.ply'.format(grid_dim, args.near)),
             o3d_mesh_canonical_clean)
         print("Saving Marching Cubes mesh to instance_mesh_canonical_dim{}neart_{}.ply".format(grid_dim, args.near))
 
         print("--------end----------")
-
-        # # query_pcd = operate_hemisphere(N=256, radius=3.5)
-        # query_pcd = operate_cube([-3.5, 3.5], [-3.5, 3.5], [-3.5, 3.5], 256)
-        # print(query_pcd.shape)
-        # query_pcd = torch.from_numpy(query_pcd).to(args.device)
-        # query_pcd = query_pcd.reshape([-1, 3])
-        # N = query_pcd.shape[0]
-        # raw = None
-        #
-        # for step in range(0, N, args.N_test):
-        #     N_test = args.N_test
-        #     if step + N_test > N:
-        #         N_test = N - step
-        #     in_pcd = query_pcd[step:step + N_test]
-        #     embedded = position_embedder.embed(in_pcd)
-        #     viewdirs = torch.zeros_like(in_pcd)
-        #     embedded_dirs = view_embedder.embed(viewdirs)
-        #     embedded = torch.cat([embedded, embedded_dirs], -1)
-        #     raw_fine = model_fine(embedded)
-        #     if raw is None:
-        #         raw = raw_fine
-        #     else:
-        #         raw = torch.cat((raw, raw_fine), dim=0)
-        #
-        # raw = raw.cpu().numpy()
-        # sigma = np.maximum(raw[..., 3], 0.)
-        # print(raw.shape)
-        # sigma = sigma.reshape(256, 256, 256)
-        # vertices, faces, vertex_normals, _ = ski_measure.marching_cubes(sigma, level=0.45,
-        #                                                                 gradient_direction='ascent')
-        # dim = sigma.shape[0]
-        # print("******************")
-        # print(dim)
-        # print(vertices)
-        # print("******************")
-        # vertices = vertices / (dim - 1)
-        # mesh = trimesh.Trimesh(vertices=vertices, vertex_normals=vertex_normals, faces=faces)
-        # o3d_mesh = trimesh_to_open3d(mesh)
-        # # o3d_mesh_clean = clean_mesh(o3d_mesh, keep_single_cluster=False,
-        # #                                                    min_num_cluster=400)
-        # o3d_mesh_clean = o3d_mesh
-        # print("pred ins:")
-        # vertices_ = np.array(o3d_mesh_clean.vertices).reshape([-1, 3]).astype(np.float32)
-        # print(vertices_)
-        # triangles = np.asarray(o3d_mesh_clean.triangles)  # (n, 3) int
-        # N_vertices = vertices_.shape[0]
-        #
-        # o3d_mesh_clean.compute_vertex_normals()
-        # rays_d = - torch.FloatTensor(np.asarray(o3d_mesh_clean.vertex_normals))
-        # # near = 1 * torch.ones_like(rays_d[:, :1])
-        # # far = args.far * torch.ones_like(rays_d[:, :1])
-        # # rays_o = torch.FloatTensor(vertices_) - rays_d * near * args.near
-        # rays_o = intersect(vertices_, rays_d, np.array([0, 0, 0]), 7.5)
-        #
-        # # viewdirs = rays_d
-        # # viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True).float()
-        #
-        # full_ins = None
-        # N = rays_o.shape[0]
-        # print(N)
-        # z_val_coarse = z_val_sample(args.N_test, args.near, args.far, args.N_samples)
-        # with torch.no_grad():
-        #     for step in range(0, N, args.N_test):
-        #         N_test = args.N_test
-        #         if step + N_test > N:
-        #             N_test = N - step
-        #             z_val_coarse = z_val_sample(N_test, args.near, args.far, args.N_samples)
-        #         rays_io = rays_o[step:step + N_test]  # (chuck, 3)
-        #         rays_id = rays_d[step:step + N_test]  # (chuck, 3)
-        #         batch_rays = torch.stack([rays_io, rays_id], dim=0)
-        #         batch_rays = batch_rays.to(args.device)
-        #         all_info = ins_nerf(batch_rays, position_embedder, view_embedder,
-        #                             model_coarse, model_fine, z_val_coarse, args)
-        #         if full_ins is None:
-        #             full_ins = all_info['ins_fine']
-        #         else:
-        #             full_ins = torch.cat((full_ins, all_info['ins_fine']), dim=0)
-        # mesh_savedir = os.path.join(save_dir, 'mesh.ply')
-        # exported = trimesh.exchange.export.export_mesh(mesh, mesh_savedir)
-        # # include_index = np.where(sigma >= threshold)
-        # # show_query_pcd = query_pcd[include_index]
-        # # show_raw = raw[include_index]
-        # ins = full_ins.cpu().numpy()
-        # print(ins.shape)
-        # pred_label = np.argmax(ins, axis=-1)
-        #
-        # ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
-        # print(ins_color)
-        # o3d_mesh_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color)
-        # o3d.io.write_triangle_mesh(
-        #     os.path.join(save_dir, 'ins_mesh.ply'), o3d_mesh_clean)
 
     elif dataset_name == 'replica':
 
