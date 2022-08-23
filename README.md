@@ -41,7 +41,7 @@ This repository contains the implementation of the paper:
 
 ## Instance 3D Reconstruction from Posed Images
 
-<div>
+<div align=center>
     <model-viewer 
         max-camera-orbit="Infinity 157.5deg 30m" 
         orientation="0deg -60deg 0deg" 
