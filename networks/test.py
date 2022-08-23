@@ -104,22 +104,31 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
 
             # preprocess unique labels
             # semantic instance segmentation evaluation part
-            gt_label = gt_labels[i].cpu()
-            valid_gt_labels = torch.unique(gt_label)[:-1]
-            valid_gt_num = len(valid_gt_labels)
-            gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
             # Matching test prediction results, function one is using Hungarian Matching method directly, function two
             # is using another method, specifically implementation is blow:
-            gt_label_nnnn = valid_gt_labels.cpu().numpy()
-            if valid_gt_num > 0:
-                if crop_mask is not None:
+            gt_label = gt_labels[i].cpu()
+            if crop_mask is not None:
+                valid_gt_labels = torch.unique(gt_label)[:-1]
+                valid_gt_num = len(valid_gt_labels)
+                gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
+                gt_label_nnnn = valid_gt_labels.cpu().numpy()
+                if valid_gt_num > 0:
                     mask = (gt_label < args.ins_num).type(torch.float32)
                     pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num, mask)
                 else:
-                    pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num)
+                    pred_label = -1 * torch.ones([H, W])
+                    ap = torch.tensor([1.0])
             else:
-                pred_label = -1 * torch.ones([H, W])
-                ap = torch.tensor([1.0])
+                print("no crop_mask")
+                valid_gt_labels = torch.unique(gt_label)
+                valid_gt_num = len(valid_gt_labels)
+                gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
+                gt_label_nnnn = valid_gt_labels.cpu().numpy()
+                if valid_gt_num > 0:
+                    pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num)
+                else:
+                    pred_label = -1 * torch.ones([H, W])
+                    ap = torch.tensor([1.0])
 
             ins_map = {}
             for idx, pred_label_replica in enumerate(pred_matched_order):
