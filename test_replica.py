@@ -67,9 +67,9 @@ if __name__ == '__main__':
         model_coarse.load_state_dict(ckpt['network_coarse_state_dict'])
         model_fine.load_state_dict(ckpt['network_fine_state_dict'])
 
-    images = torch.Tensor(images[i_train])
-    instances = torch.Tensor(instances[i_train]).type(torch.int16)
-    poses = torch.Tensor(poses[i_train])
+    images = torch.Tensor(images[i_test])
+    instances = torch.Tensor(instances[i_test]).type(torch.int16)
+    poses = torch.Tensor(poses[i_test])
     args.perturb = False
 
     test()
