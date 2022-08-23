@@ -39,7 +39,7 @@ This repository contains the implementation of the paper:
      <img src="/figs/deformable_res.png" width=80% > <br/>
 </div>
 
-
+#### Instance 3D Reconstruction from Posed Images
 
 ## Installation
 
