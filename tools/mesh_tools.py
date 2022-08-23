@@ -7,8 +7,8 @@ import numpy as np
 import trimesh
 import torch.nn.functional as F
 from tools.vis_tools import *
-from tools.render_tools import ins_nerf
-from tools.helpers_tools import z_val_sample
+from networks.render import ins_nerf
+from networks.helpers import z_val_sample
 
 
 def operate_hemisphere(N=256, radius=7.5):
