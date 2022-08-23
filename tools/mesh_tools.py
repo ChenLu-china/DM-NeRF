@@ -11,41 +11,6 @@ from networks.render import ins_nerf
 from networks.helpers import z_val_sample
 
 
-def operate_hemisphere(N=256, radius=7.5):
-    x = np.linspace(-radius, radius, N)
-    y = np.linspace(-radius, radius, N)
-    z = np.linspace(-radius, radius, N)
-
-    query_pts = np.stack(np.meshgrid(x, y, z), -1).astype(np.float32)
-    x0, y0, z0 = (0, 0, 0)
-    r = np.sqrt((query_pts[..., 0] - x0) ** 2 + (query_pts[..., 1] - y0) ** 2 + (query_pts[..., 2] - z0) ** 2)
-    query_pts = query_pts[r < radius]
-    hemisphere_pts = query_pts[query_pts[:, -1] >= 0]
-    return hemisphere_pts
-
-    # sphere = o3d.geometry.TriangleMesh.create_sphere(radius=7.5, resolution=20)
-    # # pcd = sphere.sample_points_uniformly(number_of_points=10000)
-    # voxel_grid = o3d.geometry.VoxelGrid.create_from_triangle_mesh(sphere, voxel_size=0.1)
-    # point_cloud_np = np.asarray(
-    #     [voxel_grid.origin + pt.grid_index * voxel_grid.voxel_size for pt in voxel_grid.get_voxels()])
-    # point_cloud_np = point_cloud_np[point_cloud_np[:, -1] > 0]
-    point_cloud_color = np.zeros_like(hemisphere_pts)
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(hemisphere_pts)
-    pcd.colors = o3d.utility.Vector3dVector(point_cloud_color)
-    # print(point_cloud_np)
-    o3d.visualization.draw_geometries([pcd])
-
-
-def operate_cube(x, y, z, N=256):
-    t_x = np.linspace(x[0], x[1], N)
-    t_y = np.linspace(y[0], y[1], N)
-    t_z = np.linspace(z[0], z[1], N)
-
-    query_pts = np.stack(np.meshgrid(t_x, t_y, t_z), -1).astype(np.float32)
-    return query_pts
-
-
 def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, trimesh_scene, ins_rgbs, save_dir,
               ins_map=None):
     _, _, dataset_name, scene_name = args.datadir.split('/')
@@ -215,14 +180,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         scene_extents = extents
         grid_query_pts, scene_scale = grid_within_bound([-1.0, 1.0], scene_extents, scene_transform, grid_dim=grid_dim)
         grid_query_pts = grid_query_pts.cuda().reshape(-1, 3)  # Num_rays, 1, 3-xyz
-
-        # print(grid_query_pts.cpu().numpy())
-        print("x_min:", np.min(grid_query_pts.cpu().numpy()[..., 0]))
-        print("x_max:", np.max(grid_query_pts.cpu().numpy()[..., 0]))
-        print("y_min:", np.min(grid_query_pts.cpu().numpy()[..., 1]))
-        print("y_max:", np.max(grid_query_pts.cpu().numpy()[..., 1]))
-        print("z_min:", np.min(grid_query_pts.cpu().numpy()[..., 2]))
-        print("z_max:", np.max(grid_query_pts.cpu().numpy()[..., 2]))
 
         N = grid_query_pts.shape[0]
         raw = None
