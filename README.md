@@ -39,8 +39,23 @@ This repository contains the implementation of the paper:
      <img src="/figs/deformable_res.png" width=80% > <br/>
 </div>
 
-#### Instance 3D Reconstruction from Posed Images
+## Instance 3D Reconstruction from Posed Images
 
+<div>
+    <model-viewer 
+        max-camera-orbit="Infinity 157.5deg 30m" 
+        orientation="0deg -60deg 0deg" 
+        camera-orbit="0deg 75deg 17m" 
+        alt="Instance Reconstruction from Posed Images" 
+        src="img/sem_room0.glb" 
+        poster="img/sem_room0_poster.png" 
+        style="width: 100%; height: 600px; background-color: #404040" 
+        exposure=".8" 
+        auto-rotate="" 
+        camera-controls="" 
+        ar-status="not-presenting">
+    </model-viewer>
+</div>
 ## Installation
 
 Create python environment vision >=3.7
