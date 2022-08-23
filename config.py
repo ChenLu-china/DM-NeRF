@@ -104,7 +104,7 @@ def config_parser():
                         help="select how to weakly instance labels can be set as weakly_ins, weakly_img, weakly_click")
     parser.add_argument("--weakly_value", type=float, default=1.0,
                         help="select how to weakly instance labels, 0-1")
-    parser.add_argument("--penalize", action='store_true',
+    parser.add_argument("--over_penalize", action='store_true',
                         help="aim to penalize unlabeled rays to air")
     parser.add_argument("--tolerance", type=float, default=None,
                         help="move the center of Gaussian Distribution to the depth - tolerance")
