@@ -47,7 +47,7 @@ This repository contains the implementation of the paper:
         orientation="0deg -60deg 0deg" 
         camera-orbit="0deg 75deg 17m" 
         alt="Instance Reconstruction from Posed Images" 
-        src="img/sem_room0.glb" 
+        src="/figs/ins_mesh_study.ply" 
         poster="img/sem_room0_poster.png" 
         style="width: 100%; height: 600px; background-color: #404040" 
         exposure=".8" 
