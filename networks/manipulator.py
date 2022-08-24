@@ -4,11 +4,14 @@ import imageio
 import numpy as np
 import time
 import json
+import lpips
+import cv2
 import torch.nn.functional as F
 from networks.helpers import get_rays_k, sample_pdf
 from networks.decomposition_evaluator import to8b
-from tools.visualiser import render_label2img
-import cv2
+from tools.visualiser import editor_label2img, render_label2img, render_gt_label2img
+from skimage import metrics
+from networks.decomposition_evaluator import ins_eval
 
 
 def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
@@ -335,7 +338,192 @@ def editor_ins(position_embedder, view_embedder, model_coarse, model_fine, ori_r
     return final_rgb, final_ins, tar_rgb, tar_ins_accu
 
 
-def editor_test(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, save_dir, ins_rgbs, args,
+def editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, trans_dicts, save_dir,
+                ins_rgbs, args, gt_rgbs=None, gt_labels=None):
+    """
+            the first step to find the
+    """
+
+    """move_object must between 1 to args.class_number"""
+    _, _, dataset_name, _, scene_name = args.datadir.split('/')
+    H, W, K = hwk
+    if gt_rgbs is not None:
+        gt_rgbs_cpu = gt_rgbs.cpu().numpy()
+        gt_rgbs_gpu = gt_rgbs.to(args.device)
+        lpips_vgg = lpips.LPIPS(net='vgg').to(args.device)
+        gt_ins = torch.zeros(size=(H, W, args.ins_num))
+
+    ori_rgbs = []
+    ins_imgs = []
+    psnrs, ssims, lpipses, aps = [], [], [], []
+
+    gt_color_dict_path = './data/color_dict.json'
+    gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
+    color_dict = gt_color_dict[dataset_name][scene_name]
+    full_map = {}
+
+    trans_dict = trans_dicts[0]
+    trans = torch.Tensor(trans_dict['transformation'])
+    save_dir = os.path.join(save_dir, trans_dict["mode"])
+    os.makedirs(save_dir, exist_ok=True)
+
+    # original
+    for i, ori_pose in enumerate(ori_poses):
+        time_0 = time.time()
+        ori_rays_o, ori_rays_d = get_rays_k(H, W, K, torch.Tensor(ori_pose))
+        ori_rays_o = torch.reshape(ori_rays_o, [-1, 3]).float()
+        ori_rays_d = torch.reshape(ori_rays_d, [-1, 3]).float()
+
+        tar_pose = trans @ ori_pose
+        tar_rays_o, tar_rays_d = get_rays_k(H, W, K, torch.Tensor(tar_pose))
+        tar_rays_o = torch.reshape(tar_rays_o, [-1, 3]).float()
+        tar_rays_d = torch.reshape(tar_rays_d, [-1, 3]).float()
+        full_rgb, full_ins, full_tar_rgb = None, None, None
+
+        """doing editor"""
+        for step in range(0, H * W, args.N_test):
+            N_test = args.N_test
+            if step + N_test > H * W:
+                N_test = H * W - step
+            # original view rays render
+            ori_rays_io = ori_rays_o[step:step + N_test]  # (chuck, 3)
+            ori_rays_id = ori_rays_d[step:step + N_test]  # (chuck, 3)
+            ori_batch_rays = torch.stack([ori_rays_io, ori_rays_id], dim=0)
+            # target view rays render
+            tar_rays_io = tar_rays_o[step:step + N_test]  # (chuck, 3)
+            tar_rays_id = tar_rays_d[step:step + N_test]  # (chuck, 3)
+            tar_batch_rays = torch.stack([tar_rays_io, tar_rays_id], dim=0)
+            # edit render
+            ori_rgb, ins, tar_rgb, tar_ins = editor_ins(position_embedder, view_embedder, model_coarse, model_fine,
+                                                        ori_batch_rays,
+                                                        tar_batch_rays, args)
+            # all_info = ins_nerf(tar_batch_rays, position_embedder, view_embedder, model_fine, model_coarse, args)
+            if full_rgb is None and full_ins is None:
+                full_rgb, full_ins, full_tar_rgb, full_tar_ins = ori_rgb, ins, tar_rgb, tar_ins
+            else:
+                full_rgb = torch.cat((full_rgb, ori_rgb), dim=0)
+                full_ins = torch.cat((full_ins, ins), dim=0)
+                full_tar_rgb = torch.cat((full_tar_rgb, tar_rgb), dim=0)
+                full_tar_ins = torch.cat((full_tar_ins, tar_ins), dim=0)
+
+        """editor finish"""
+        ori_rgb = full_rgb.reshape([H, W, full_rgb.shape[-1]])
+        ins = full_ins.reshape([H, W, full_ins.shape[-1]])
+
+        # label = torch.argmax(ins, dim=-1)
+        # label = label.reshape([H, W])
+        # ins_img = editor_label2img(label, ins_rgbs, color_dict, args.ins_num)
+        # ins_file = os.path.join(ori_ins_dict, f'ins_{trans_dict["mode"]}_{str(i).zfill(3)}.png')
+        # imageio.imwrite(ins_file, ins_img)
+
+        """calculating step for our dataset"""
+        if gt_rgbs is not None:
+            print("The", i, 'Image\n')
+            psnr = metrics.peak_signal_noise_ratio(ori_rgb.cpu().numpy(), gt_rgbs_cpu[i], data_range=1)
+            ssim = metrics.structural_similarity(ori_rgb.cpu().numpy(), gt_rgbs_cpu[i], multichannel=True, data_range=1)
+            lpips_i = lpips_vgg(ori_rgb.permute(2, 0, 1).unsqueeze(0), gt_rgbs_gpu[i].permute(2, 0, 1).unsqueeze(0))
+            psnrs.append(psnr)
+            ssims.append(ssim)
+            lpipses.append(lpips_i.item())
+            print("RGB Evaluation standard:")
+            print(f"PSNR: {psnr} SSIM: {ssim} LPIPS: {lpips_i.item()}")
+
+            # calculate ap
+            # preprocess unique labels
+            # semantic instance segmentation evaluation part
+            gt_label = gt_labels[i]
+            valid_gt_labels = torch.unique(gt_label)
+            valid_gt_num = len(valid_gt_labels)
+            gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
+
+            # Matching test prediction results, function one is using Hungarian Matching method directly, function two
+            # is using another method, specifically implementation is blow:
+            gt_label_nnnn = valid_gt_labels.cpu().numpy()
+            if valid_gt_num > 0:
+                # mask = (gt_label < args.ins_num).type(torch.float32)
+                pred_label, ap, pred_matched_order = ins_eval(ins[..., :-1].cpu(), gt_ins, valid_gt_num, args.ins_num)
+            else:
+                pred_label = -1 * torch.ones([H, W])
+                ap = torch.tensor([1.0])
+
+            ins_map = {}
+            for idx, pred_label_replica in enumerate(pred_matched_order):
+                if pred_label_replica != -1:
+                    ins_map[str(pred_label_replica)] = int(gt_label_nnnn[idx])
+
+            full_map[i] = ins_map
+
+            aps.append(ap)
+            print(f"Instance Evaluation standard:")
+            print(f"AP: {ap}")
+
+        # get predicted rgb
+        ori_rgb_s = ori_rgb.cpu().numpy()
+        ori_rgb_s = ori_rgb_s.reshape([H, W, 3])
+        ori_rgb_s = to8b(ori_rgb_s)
+
+        # get target rgb
+        tar_rgb = full_tar_rgb.reshape([H, W, full_tar_rgb.shape[-1]])
+        tar_rgb = tar_rgb.cpu().numpy()
+        tar_rgb = tar_rgb.reshape([H, W, 3])
+        tar_rgb = to8b(tar_rgb)
+
+        # get predicted ins color
+        label = torch.argmax(ins, dim=-1)
+        label = label.reshape([H, W])
+        ins_img = render_label2img(label, ins_rgbs, color_dict, ins_map)
+
+        # get target ins color
+        gt_img = to8b(gt_rgbs[i].cpu().numpy())
+        gt_ins_img = render_gt_label2img(gt_label, ins_rgbs, color_dict)
+
+        # save images
+        ori_rgbs.append(ori_rgb_s)
+        ins_imgs.append(ins_img)
+        img_file = os.path.join(save_dir, f'{i}_rgb.png')
+        imageio.imwrite(img_file, ori_rgb_s)
+        ins_file = os.path.join(save_dir, f'{i}_ins.png')
+        cv2.imwrite(ins_file, ins_img)
+        gt_img_file = os.path.join(save_dir, f'{i}_rgb_gt.png')
+        imageio.imwrite(gt_img_file, gt_img)
+        gt_ins_file = os.path.join(save_dir, f'{i}_ins_gt.png')
+        cv2.imwrite(gt_ins_file, gt_ins_img)
+        time_1 = time.time()
+        print(f'IMAGE[{i}] TIME: {np.round(time_1 - time_0, 6)} second')
+
+    """save all results"""
+    if gt_rgbs is not None:
+        # show_rgbs_file = os.path.join(args.basedir, args.expname, args.log_time, 'instance_rgbs.png')
+        # show_instance_rgb(ins_rgbs, show_rgbs_file)
+
+        map_result_file = os.path.join(save_dir, 'matching_log.json')
+        with open(map_result_file, 'w') as f:
+            json.dump(full_map, f)
+
+        aps = np.array(aps)
+        output = np.stack([psnrs, ssims, lpipses, aps[:, 0], aps[:, 1], aps[:, 2], aps[:, 3], aps[:, 4], aps[:, 5]])
+        output = output.transpose([1, 0])
+        out_ap = np.mean(aps, axis=0)
+        mean_output = np.array(
+            [np.nanmean(psnrs), np.nanmean(ssims), np.nanmean(lpipses), out_ap[0], out_ap[1], out_ap[2], out_ap[3],
+             out_ap[4], out_ap[5]])
+        mean_output = mean_output.reshape([1, 9])
+        output = np.concatenate([output, mean_output], 0)
+        test_result_file = os.path.join(save_dir, 'test_results.txt')
+        np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
+        print(
+            'PSNR: {:.4f} SSIM: {:.4f}  LPIPS: {:.4f} APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
+                np.mean(psnrs), np.mean(ssims),
+                np.mean(lpipses),
+                out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
+
+    print("finished!!!!!!!")
+    return
+    # # generation video
+    # imageio.mimwrite(os.path.join(save_dir, f'editor_video.mp4'), ori_rgbs, fps=len(ori_rgbs) // 6, quality=8)
+
+
+def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, save_dir, ins_rgbs, args,
                 objs, objs_trans, view_poses, ins_map):
     """
             the first step to find the
@@ -473,4 +661,3 @@ def editor_test(position_embedder, view_embedder, model_coarse, model_fine, ori_
         print(f"Image{i}: {time_1 - time_0}")
     print("finished!!!!!!!")
     return
-
