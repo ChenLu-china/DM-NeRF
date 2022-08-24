@@ -77,10 +77,6 @@ Replica
 ScanNet
 
 
-### Hints
-
-Baisc information of each scenes can renference `./configs/0000/xxxx/xxxx.txt`.
-
 ## Training
 
 You can change the your path and parameters under `./train_configs/xxxx/dataset_name/scene_name.txt`.
