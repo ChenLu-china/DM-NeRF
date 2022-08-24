@@ -1,5 +1,5 @@
 from config import create_nerf, initial
-from datasets.replica.load_replica import *
+from datasets.replica.replica_loader import *
 from networks.editor import editor_test
 from networks.test import render_test
 
@@ -10,7 +10,11 @@ def test():
     args.is_train = False
     with torch.no_grad():
         if args.render:
+            print("###########################################")
+            print()
             print('RENDER ONLY')
+            print()
+            print("###########################################")
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'renderonly_{}_{:06d}'.format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -20,7 +24,11 @@ def test():
                         matched_file=mathed_file)
             print('Done rendering', testsavedir)
         elif args.editor:
+            print("###########################################")
+            print()
             print('EDIT RENDER ONLY')
+            print()
+            print("###########################################")
             """this operations list can re-design"""
 
             # ori_pose, tar_poses = load_editor_poses(args)

@@ -1,8 +1,7 @@
 import os
 import torch
 from config import create_nerf, initial
-from datasets.replica.data_loader import load_editor_poses
-from datasets.scannet.loader_scannet import *
+from datasets.scannet.scannet_loader import *
 from networks.editor import editor_test
 from networks.test import render_test
 

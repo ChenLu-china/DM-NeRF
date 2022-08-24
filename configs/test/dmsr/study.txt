@@ -14,7 +14,8 @@ near = 4.0
 far = 15.0
 testskip = 1
 
-render = True
+editor_demo = True
+views = 8
 log_time = 202203031813
 
 over_penalize

@@ -146,7 +146,6 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
     for thre in thre_list:
         tp_list = column_max_value > thre
         tp_list = tp_list.to(device=device)
-
         precisions = torch.cumsum(tp_list, dim=0) / (torch.arange(len(tp_list)) + 1)
         recalls = torch.cumsum(tp_list, dim=0).type(torch.float32) / gt_number
 

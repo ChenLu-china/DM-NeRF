@@ -54,8 +54,9 @@ def matching_labeltoimg(predicted_labels, rgbs):
     ra_se_im_t = ra_se_im_t.astype(np.uint8)
     return ra_se_im_t
 
+
 def render_gt_label2img(gt_labels, rgbs, color_dict):
-    unique_labels =  torch.unique(gt_labels)
+    unique_labels = torch.unique(gt_labels)
     gt_labels = gt_labels.cpu()
     unique_labels = unique_labels.cpu()
     h, w = gt_labels.shape
@@ -67,6 +68,7 @@ def render_gt_label2img(gt_labels, rgbs, color_dict):
             ra_se_im_t[gt_labels == label] = rgbs[color_dict[str(label_cpu)]]
     ra_se_im_t = ra_se_im_t.astype(np.uint8)
     return ra_se_im_t
+
 
 # vis instance at testing phrase
 def render_label2img(predicted_labels, rgbs, color_dict, ins_map):
@@ -121,6 +123,7 @@ def show_instance_rgb(ins_rgbs, save_rgbs_file):
     plt.savefig(save_rgbs_file)
     # plt.show()
     return
+
 
 # 3d mesh part
 def make_3D_grid(occ_range, dim, transform=None, scale=None):
@@ -247,21 +250,19 @@ def render_label2rgb(predicted_labels, rgbs):
     return ra_in_im_t.astype(np.uint8)
 
 
-
 def render_label2world(predicted_labels, rgbs, color_dict, ins_map):
-    unique_labels = np.unique(predicted_labels)
-    # predicted_labels = predicted_labels.cpu()
-    # unique_labels = unique_labels.cpu()
+    unique_labels = torch.unique(predicted_labels)
+    predicted_labels = predicted_labels.cpu()
+    unique_labels = unique_labels.cpu()
     N = predicted_labels.shape[0]
-    print(N)
     ra_se_im_t = np.zeros(shape=(N, 3))
     for index, label in enumerate(unique_labels):
         # label_cpu = str(int(label.cpu()))
-        print(index)
         label_cpu = str(int(label))
         gt_keys = ins_map.keys()
         if label_cpu in gt_keys:
             gt_label_cpu = ins_map[label_cpu]
             ra_se_im_t[predicted_labels == label] = rgbs[color_dict[str(gt_label_cpu)]]
+
     ra_se_im_t = ra_se_im_t.astype(np.uint8)
     return ra_se_im_t

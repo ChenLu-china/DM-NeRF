@@ -121,8 +121,14 @@ def config_parser():
     parser.add_argument("--ori_pose", type=int, default=None,
                         help='sign the instance center')
     # editor parameter
-    parser.add_argument("--editor", action='store_true',
+    parser.add_argument("--editor_demo", action='store_true',
                         help='do not optimize, reload weights and render out render_poses path')
+    parser.add_argument("--editor_val", action='store_true',
+                        help='do not optimize, reload weights and render out render_poses path')
+    parser.add_argument("--editor_mode", type=str, default='rotation',
+                        help='select operation mode includes translation, rotation, scale, multi')
+    parser.add_argument("--views", type=int, default=720,
+                        help="the amount of generated view")
     parser.add_argument("--translation", type=bool, default=False,
                         help='do the shift operation')
     parser.add_argument("--rotation", type=bool, default=False,
@@ -165,20 +171,18 @@ def initial():
         args.device = torch.device("cuda:0")
     else:
         args.device = torch.device("cpu")
-        
-    if args.render == False and args.editor == False:
-        # Create log dir and copy the train_configs file
 
-        log_dir = os.path.join(args.basedir, args.expname, args.log_time)
-        print(log_dir)
-        os.makedirs(log_dir, exist_ok=True)
-        f = os.path.join(log_dir, 'args.txt')
+
+    log_dir = os.path.join(args.basedir, args.expname, args.log_time)
+    print(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
+    f = os.path.join(log_dir, 'args.txt')
+    with open(f, 'w') as file:
+        for arg in sorted(vars(args)):
+            attr = getattr(args, arg)
+            file.write('{} = {}\n'.format(arg, attr))
+    if args.config is not None:
+        f = os.path.join(log_dir, 'configs.txt')
         with open(f, 'w') as file:
-            for arg in sorted(vars(args)):
-                attr = getattr(args, arg)
-                file.write('{} = {}\n'.format(arg, attr))
-        if args.config is not None:
-            f = os.path.join(log_dir, 'configs.txt')
-            with open(f, 'w') as file:
-                file.write(open(args.config, 'r').read())
+            file.write(open(args.config, 'r').read())
     return args

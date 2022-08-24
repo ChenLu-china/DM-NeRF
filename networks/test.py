@@ -129,7 +129,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
                 else:
                     pred_label = -1 * torch.ones([H, W])
                     ap = torch.tensor([1.0])
-
+            # get ins_map
             ins_map = {}
             for idx, pred_label_replica in enumerate(pred_matched_order):
                 if pred_label_replica != -1:

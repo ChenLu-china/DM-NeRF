@@ -6,6 +6,14 @@ import cv2
 from datasets.scannet.loader_vis import vis_load
 
 
+def load_editor_poses(args):
+    load_path = os.path.join(args.datadir, 'transformation_matrix.json')
+    with open(load_path, 'r') as rf:
+        obj_trans = json.load(rf)
+    rf.close()
+    return obj_trans
+
+
 def resize(data, H=480, W=640):
     imgs_half_res = None
     if len(data.shape) == 3:

@@ -36,13 +36,7 @@ class processor:
             ins_rgbs = f['datasets'][:]
         f.close()
 
-        objs_info_fname = os.path.join(self.basedir, 'objs_info.json')
-        with open(objs_info_fname, 'r') as f_obj_info:
-            objs_info = json.load(f_obj_info)
-        f_obj_info.close()
-        objs = objs_info["objects"]
-        view_id = objs_info["view_id"]
-        ins_map = objs_info["ins_map"]
+
         return objs, view_id, ins_map, poses, ins_rgbs, angle_x
 
 
@@ -98,7 +92,15 @@ class rgb_processor:
         # all_pose_ = np.linalg.inv(all_pose)
         i_split = [np.arange(counts[i], counts[i + 1]) for i in range(2)]
 
-        return all_rgb, all_pose, i_split, angle_x
+        objs_info_fname = os.path.join(self.basedir, 'objs_info.json')
+        with open(objs_info_fname, 'r') as f_obj_info:
+            objs_info = json.load(f_obj_info)
+        f_obj_info.close()
+        objs = objs_info["objects"]
+        view_id = objs_info["view_id"]
+        ins_map = objs_info["ins_map"]
+
+        return all_rgb, all_pose, i_split, angle_x, objs, view_id, ins_map
 
 
 class ins_processor:

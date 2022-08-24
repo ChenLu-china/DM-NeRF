@@ -32,8 +32,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         grid_query_pts = grid_query_pts[:, :, [0, 2, 1]]
         grid_query_pts[:, :, 1] = grid_query_pts[:, :, 1] * -1
         query = grid_query_pts.numpy()[:, 0, :]
-        print(extents)
-        print(np.max(query, axis=0), np.min(query, axis=0))
         grid_query_pts = grid_query_pts.cuda().reshape(-1, 3)  # Num_rays, 1, 3-xyz
 
         N = grid_query_pts.shape[0]
@@ -82,7 +80,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
         mesh_canonical = mesh.copy()
 
         vertices_ = np.array(mesh_canonical.vertices).reshape([-1, 3]).astype(np.float32)
-        print(np.max(vertices_, axis=0), np.min(vertices_, axis=0))
 
         mesh_canonical.apply_translation([-0.5, -0.5, -0.5])
         mesh_canonical.apply_scale(2)
@@ -138,8 +135,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
 
         full_ins = None
         N = rays_o.shape[0]
-        print(N)
-        print(rays_o.shape)
         z_val_coarse = z_val_sample(args.N_test, 0.01, 15, args.N_samples)
         with torch.no_grad():
             for step in range(0, N, args.N_test):
@@ -157,7 +152,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
                     full_ins = all_info['ins_fine']
                 else:
                     full_ins = torch.cat((full_ins, all_info['ins_fine']), dim=0)
-        print(full_ins.shape)
         pred_label = torch.argmax(full_ins, dim=-1)
         ins_color = render_label2world(pred_label, ins_rgbs, color_dict, ins_map)
 
