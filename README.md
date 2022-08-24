@@ -101,10 +101,11 @@ For decomposition operation:
 You need to add `render=True` and `log_time="your log folder name"` into config txt.
 
 And then run:
+
 ```bash 
 
-CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt
-     
+CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/test/dmsr/study.txt
+
 ```
 
 ### Manipulation
@@ -127,7 +128,7 @@ Change `render = True` to `mani_demo = True`, edit objs_info.json to assign obje
 
 You can move view poses by given `view_id = null`, but given `views` a number in config file.
 
-More explanation, `ins_map` is a global matching list statistic from matching_logs.json, 
+More explanation, `ins_map` is a global matching list statistic from matching_logs.json.
 
 You can run:
 
