@@ -79,36 +79,38 @@ ScanNet
 
 ## Training
 
-You can change the your path and parameters under `./train_configs/xxxx/dataset_name/scene_name.txt`.
-
 After you set all parameters you want, you can train model use one of blow command, for example:
-
-For scannet:
 
 If you want use full of segementation function, you can run commands like:
 ```bash
 
-CUDA_VISIBLE_DEVICES=0 python train_scannet.py --config train_configs/0050/scene0010_00.txt
-or use nohup:
-CUDA_VISIBLE_DEVICES=0 nohup python -u train_scannet.py --config train_configs/0050/scene0010_00.txt > logs_0050/scene0010_00.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/train/dmsr/study.txt
 
 ```
-If you do not segement non-occupied area, you can delete `penalize` parameter in config file, and run above command.
+If you do not segement emptiness area, you can delete `penalize` parameter in config file, and run above command.
 
 
 ## Evaluation
 
 ### Decomposition
 
-For decomposition, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
+We used PSNR, SSIM, LPIPS, and mAPs to evaluate our tasks:
 
-You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config test_configs/0050/scene_name.txt`.
+For decomposition operation:
+
+You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config 
+
+configs/test/dmsr/study.txt`.
 
 ### Manipulation
 
-For editor testing:
+Manipulation operation includes two parts, evaluation and demo:
 
-Change `render=True` to `editor =True`, and eidt a object_info.json to assign objects you want to edior, specific format can renference `./editor_configs/sr/office_study.txt` and `./data/sr/office_study/object_info.json`.
+We only provide manipulated ground truth of DM-SR dataset for manipulation evaluation
+
+Change `render = True` to `mani_eval = True`, and add 'target_label' and 'editor_mode' to assign which object manipulated and which manipulated operation 
+
+you want, specific format can renference `.configs/manipulation/dmsr/editor_multi/study.txt`.
 
 run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config editor_test_configs/0050/scene_name.txt`.
 
