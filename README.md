@@ -104,14 +104,15 @@ You need to add `render=True` and `log_time="your log folder name"` into config 
 
 Manipulation operation includes two parts, evaluation and demo generation:
 
-We only provide manipulated ground truth of DM-SR dataset for manipulation evaluation
+We only provide manipulated ground truth of DM-SR dataset for manipulation evaluation.
 
 Change `render = True` to `mani_eval = True`, add `target_label` and `editor_mode` to assign which object manipulated and which manipulated operation you want, specific format can renference `./configs/manipulation/dmsr/editor_multi/study.txt`.
 
 ```bash
 
 run CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr/manipulation_multi/study.txt
-```.
+
+```
 
 Change `render = True` to `mani_demo = True`, edit objs_info.json to assign objects manipulation, file path is `./data/dmsr/study/objs_info.json`.
 
@@ -123,7 +124,7 @@ More explanation, `ins_map` is a global matching list statistic from matching_lo
 
 run CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/test/dmsr/study.txt
 
-```.
+```
 
 ## Baseline
 
