@@ -36,21 +36,6 @@ def get_rays(H, W, focal, c2w):
     return rays_o, rays_d
 
 
-def round_losses(psnr_fine, psnr_coarse, total_loss, rgb_loss, ins_loss, valid_siou_fine, valid_ce_fine,
-                 invalid_ce_fine, penalize_loss):
-    r_psnr_fine = round(psnr_fine, 6)
-    r_psnr_coarse = round(psnr_coarse, 6)
-    r_total_loss = round(total_loss, 6)
-    r_rgb_loss = round(rgb_loss, 6)
-    r_ins_loss = round(ins_loss, 6)
-    r_val_siou_fine = round(valid_siou_fine, 6)
-    r_val_ce_fine = round(valid_ce_fine, 6)
-    r_invalid_ce_fine = round(invalid_ce_fine, 6)
-    r_penalize_loss = round(penalize_loss, 6)
-
-    return r_psnr_fine, r_psnr_coarse, r_total_loss, r_rgb_loss, r_ins_loss, r_val_siou_fine, r_val_ce_fine, r_invalid_ce_fine, r_penalize_loss
-
-
 def get_rays_np(H, W, focal, c2w):
     i, j = np.meshgrid(np.arange(W, dtype=np.float32), np.arange(H, dtype=np.float32), indexing='xy')
     dirs = np.stack([(i - W * .5) / focal, -(j - H * .5) / focal, -np.ones_like(i)], -1)

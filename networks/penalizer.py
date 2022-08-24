@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-def empty_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
+def emptiness_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
     # initial gaussian distribution algorithm
     Gaussian_Distribution = lambda delta_dist, deta_h, deta_w: torch.exp(
         -(delta_dist ** 2) / (2 * (deta_w ** 2))) / (deta_h * torch.sqrt(torch.Tensor([2 * np.pi]))) + 1e-8
@@ -58,6 +58,6 @@ def empty_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
 
 def ins_penalizer(raw, z_vals, depth, rays_d, args):
     depth = depth[..., None].detach()
-    valid_penalize_loss = empty_penalizer(raw, z_vals, depth, rays_d, args.tolerance, args.deta_w)
+    valid_penalize_loss = emptiness_penalizer(raw, z_vals, depth, rays_d, args.tolerance, args.deta_w)
 
     return valid_penalize_loss
