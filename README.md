@@ -103,7 +103,7 @@ You need to add `render=True` and `log_time="your log folder name"` into config 
 And then run:
 ```bash 
 
-     CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt
+CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt
      
 ```
 
@@ -119,7 +119,7 @@ You can run:
 
 ```bash
 
- CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr/manipulation_multi/study.txt
+CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr/manipulation_multi/study.txt
 
 ```
 
@@ -133,7 +133,7 @@ You can run:
 
 ```bash
 
-run CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/test/dmsr/study.txt
+CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/test/dmsr/study.txt
 
 ```
 
