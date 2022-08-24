@@ -98,9 +98,7 @@ We used PSNR, SSIM, LPIPS, and mAPs to evaluate our tasks:
 
 For decomposition operation:
 
-You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config 
-
-configs/test/dmsr/study.txt`.
+You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt`.
 
 ### Manipulation
 
@@ -110,7 +108,7 @@ We only provide manipulated ground truth of DM-SR dataset for manipulation evalu
 
 Change `render = True` to `mani_eval = True`, and add 'target_label' and 'editor_mode' to assign which object manipulated and which manipulated operation 
 
-you want, specific format can renference `.configs/manipulation/dmsr/editor_multi/study.txt`.
+you want, specific format can renference `./configs/manipulation/dmsr/editor_multi/study.txt`.
 
 run 
 
