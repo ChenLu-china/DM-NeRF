@@ -136,10 +136,8 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
 
         pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
         valid_pred_labels = torch.unique(pred_label)[:-1]
-    # pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
 
     valid_pred_num = len(valid_pred_labels)
-
     # prepare confidence masks and confidence scores
     pred_conf_mask = np.max(pred_ins.numpy(), axis=-1)
 

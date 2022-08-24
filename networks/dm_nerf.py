@@ -5,7 +5,6 @@ import torch.nn.functional as F
 torch.autograd.set_detect_anomaly(True)
 
 
-# Positional encoding (section 5.1)
 class Embedder:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
@@ -53,7 +52,6 @@ def get_embedder(multires, i=0):
     }
 
     embedder = Embedder(**embed_kwargs)
-    # embed = lambda x, eo=embedder_obj: eo.embed(x)
     return embedder, embedder.out_dim
 
 

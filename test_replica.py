@@ -10,25 +10,26 @@ def test():
     args.is_train = False
     with torch.no_grad():
         if args.render:
-            print('RENDER ONLY')
-            testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'renderonly_{}_{:06d}'.format('test' if args.render_test else 'path', iteration))
+            print('Rendering......')
+            testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'render_{}_{:06d}'
+                                       .format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
             mathed_file = os.path.join(testsavedir, 'matching_log.txt')
             render_test(position_embedder, view_embedder, model_coarse, model_fine, poses, hwf, args,
                         gt_imgs=images, gt_labels=instances, ins_rgbs=ins_colors, savedir=testsavedir,
                         matched_file=mathed_file)
-            print('Done rendering', testsavedir)
+            print('Rendering Done', testsavedir)
         elif args.mani_demo:
-            print('EDIT RENDER ONLY')
+            print('Manipulating......')
             """this operations list can re-design"""
             trans_dicts = load_mani_poses(args)
             ori_pose = poses[args.ori_pose]
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'mani_testset_{:06d}'.format(iteration))
+                                       'mani_demo_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwf,
                              trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
+            print('Manipulating Done', testsavedir)
     return
 
 

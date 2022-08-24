@@ -17,9 +17,9 @@ def test():
     args.is_train = False
     with torch.no_grad():
         if args.render:
-            print('RENDER ONLY')
-            testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'renderonly_{}_{:06d}'.format('test' if args.render_test else 'path', iteration))
+            print('Rendering......')
+            testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'render_{}_{:06d}'
+                                       .format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
             mathed_file = os.path.join(testsavedir, 'matching_log.txt')
             i_train, i_test = i_split
@@ -29,10 +29,10 @@ def test():
             render_test(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk, args,
                         gt_imgs=in_images, gt_labels=in_instances, ins_rgbs=ins_colors, savedir=testsavedir,
                         matched_file=mathed_file)
-            print('Done rendering', testsavedir)
+            print('Rendering Done', testsavedir)
 
         elif args.mani_eval:
-            print('EDIT EVALUATION ONLY')
+            print('Manipulating......')
             """this operations list can re-design"""
             in_images = torch.Tensor(images)
             in_instances = torch.Tensor(instances).type(torch.int8)
@@ -40,39 +40,38 @@ def test():
             pose_generator.generate_poses_eval(args)
             trans_dicts = loader_eval.load_mani_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'mani_testset_{:06d}'.format(iteration))
+                                       'mani_eval_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator.manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
                                          trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args,
-                                         gt_rgbs=in_images
-                                         , gt_labels=in_instances)
-
-            pass
+                                         gt_rgbs=in_images, gt_labels=in_instances)
+            print('Manipulating Done', testsavedir)
 
         elif args.mani_demo:
-            print('EDIT DEMO ONLY')
+            print('Manipulating......')
             """this operations list can re-design"""
             print('Loaded blender', hwk, args.datadir)
             int_view_poses = torch.Tensor(view_poses)
             pose_generator.generate_poses_demo(objs, args)
             obj_trans = loader.load_mani_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'mani_testset_{:06d}'.format(iteration))
+                                       'mani_demo_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator.manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
                                          save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
                                          objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
+            print('Manipulating Done', testsavedir)
 
         elif args.mesh:
-            print("MESH ONLY")
+            print("Meshing......")
             mesh_file = os.path.join(args.datadir, "mesh.ply")
             assert os.path.exists(mesh_file)
             trimesh_scene = trimesh.load(mesh_file, process=False)
-            meshsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'mesh_testset_{:06d}'.format(iteration))
+            meshsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'mesh_{:06d}'.format(iteration))
             os.makedirs(meshsavedir, exist_ok=True)
-            mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, trimesh_scene, ins_colors,
-                      meshsavedir, ins_map)
+            mesh_main(position_embedder, view_embedder, model_coarse, model_fine,
+                      args, trimesh_scene, ins_colors, meshsavedir, ins_map)
+            print('Meshing Done', meshsavedir)
     return
 
 

@@ -95,9 +95,7 @@ def get_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
     return target_c, target_i, batch_rays, N_ins
 
 
-######
-
-# for synthetic rooms
+# for other rooms
 def get_select_full(rgb, pose, K, ins_target, N_train):
     H, W, C = rgb.shape
     rays_o, rays_d = get_rays_k(H, W, K, pose)
