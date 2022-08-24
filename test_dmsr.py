@@ -6,8 +6,8 @@ from tools import poses_generator_val
 from tools import poses_generator_demo
 from datasets.dmsr import dmsr_loader_val
 from datasets.dmsr import dmsr_loader
-from networks import val_manipulator
-from networks import demo_manipulator
+from networks import manipulator
+from networks import manipulator
 from networks.tester import render_test
 from tools.mesh_generator import mesh_main
 import trimesh
@@ -49,9 +49,9 @@ def test():
             trans_dicts = dmsr_loader_val.load_editor_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'editor_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            val_manipulator.editor_test(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
-                                        trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args, gt_rgbs=in_images
-                                        , gt_labels=in_instances)
+            manipulator.editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
+                                         trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args, gt_rgbs=in_images
+                                         , gt_labels=in_instances)
             
             pass
 
@@ -72,9 +72,9 @@ def test():
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'editor_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            demo_manipulator.editor_test(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
-                                         save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
-                                         objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
+            manipulator.editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
+                                    save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
+                                    objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
 
         elif args.mesh:
             print("###########################################")
