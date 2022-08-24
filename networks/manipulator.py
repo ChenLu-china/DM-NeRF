@@ -16,12 +16,6 @@ from tools.visualizer import manipulator_label2img, render_label2img, render_gt_
 
 
 def exchanger(ori_raw, tar_raws, ori_raw_pred, tar_raw_preds, move_labels):
-    """
-    :param q_pre_label:
-    :param e_pre_label:
-    :param t_label:
-    :return operation_mask: -1 means not exchange, 0 means eliminate, 1 means exchange
-    """
     ori_pred_ins = ori_raw[..., 4:]
     ori_pred_ins = torch.sigmoid(ori_pred_ins)
     ori_pred_label = torch.argmax(ori_pred_ins, dim=-1)  # 0-32
@@ -91,18 +85,6 @@ def exchanger(ori_raw, tar_raws, ori_raw_pred, tar_raw_preds, move_labels):
 
 
 def manipulator_render(raw, z_vals, rays_d):
-    """Transforms model's predictions to semantically meaningful values.
-    Args:
-        raw: [num_rays, num_samples along ray, 4]. Prediction from model.
-        z_vals: [num_rays, num_samples along ray]. Integration time.
-        rays_d: [num_rays, 3]. Direction of each ray.
-    Returns:
-        rgb_map: [num_rays, 3]. Estimated RGB color of a ray.
-        disp_map: [num_rays]. Disparity map. Inverse of depth map.
-        acc_map: [num_rays]. Sum of weights along each ray.
-        weights: [num_rays, num_samples]. Weights assigned to each sampled color.
-        depth_map: [num_rays]. Estimated distance to object.
-    """
     raw2alpha = lambda raw, dists, act_fn=F.relu: 1. - torch.exp(-act_fn(raw) * dists)
 
     dists = z_vals[..., 1:] - z_vals[..., :-1]
@@ -380,7 +362,7 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
         np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
         print('PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f} '.format(np.mean(psnrs), np.mean(ssims), np.mean(lpipses)))
         print('APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'
-              .format(out_ap[0], out_ap[1], out_ap[2], out_ap[3],out_ap[4], out_ap[5]))
+              .format(out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
     return
 
 
@@ -398,7 +380,8 @@ def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine,
     os.makedirs(save_dir, exist_ok=True)
 
     # original
-    deform_v = np.concatenate((np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2), np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
+    deform_v = np.concatenate(
+        (np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2), np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
 
     for i, ori_pose in enumerate(view_poses):
         # operate objects at same time
