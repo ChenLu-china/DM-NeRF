@@ -84,7 +84,7 @@ After you set all parameters you want, you can train model use one of blow comma
 If you want use full of segementation function, you can run commands like:
 ```bash
 
-CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/train/dmsr/study.txt
+CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/train/dmsr/study.txt
 
 ```
 If you do not segement emptiness area, you can delete `penalize` parameter in config file, and run above command.
@@ -104,7 +104,7 @@ configs/test/dmsr/study.txt`.
 
 ### Manipulation
 
-Manipulation operation includes two parts, evaluation and demo:
+Manipulation operation includes two parts, evaluation and demo generation:
 
 We only provide manipulated ground truth of DM-SR dataset for manipulation evaluation
 
@@ -112,7 +112,13 @@ Change `render = True` to `mani_eval = True`, and add 'target_label' and 'editor
 
 you want, specific format can renference `.configs/manipulation/dmsr/editor_multi/study.txt`.
 
-run `CUDA_VISIBLE_DEVICES=0 python editor_test_xxxx.py --config editor_test_configs/0050/scene_name.txt`.
+run 
+
+```bash
+
+CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/train/dmsr/study.txt
+
+```.
 
 ## Baseline
 
