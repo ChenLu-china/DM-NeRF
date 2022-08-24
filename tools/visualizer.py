@@ -21,7 +21,7 @@ def ins2img(predicted_onehot, rgbs):
 
 
 # vis instance map after shift
-def editor_label2img(predicted_labels, rgbs):
+def manipulator_label2img(predicted_labels, rgbs):
     predicted_labels = predicted_labels.cpu()
     unique_labels = torch.unique(predicted_labels)
     rgb = [0, 0, 0]
@@ -36,7 +36,7 @@ def editor_label2img(predicted_labels, rgbs):
 
 
 # vis instance map after matching
-def matching_labeltoimg(predicted_labels, rgbs):
+def matching_label2img(predicted_labels, rgbs):
     unique_labels = torch.unique(predicted_labels).long()
     predicted_labels = predicted_labels.cpu()
     unique_labels = unique_labels.cpu()
@@ -85,23 +85,6 @@ def render_label2img(predicted_labels, rgbs, color_dict, ins_map):
             ra_se_im_t[predicted_labels == label] = rgbs[color_dict[str(gt_label_cpu)]]
     ra_se_im_t = ra_se_im_t.astype(np.uint8)
     return ra_se_im_t
-
-
-# visualize input isntance map and rgb image into one image
-def vis_segmentation(img, seg_img):
-    plt.figure()
-    plt.imshow(img)
-    plt.imshow(seg_img, alpha=0.7)
-    plt.axis('off')
-    plt.show()
-
-
-def vis_img(img):
-    plt.figure()
-    plt.imshow(img)
-    plt.axis('off')
-    plt.show()
-    return
 
 
 # get all instance rgbs and corresponding labels
@@ -171,33 +154,6 @@ def grid_within_bound(occ_range, extents, transform, grid_dim):
     grid_pc = grid_pc.view(-1, 1, 3)
 
     return grid_pc, scene_scale
-
-
-def intersect(oris, dirs, centre, radius):
-    print("intersect")
-    """The ray t value of the first intersection point of the
-    ray with self, or None if no intersection occurs"""
-    dirs = dirs.cpu().numpy()
-    centres = np.broadcast_to(centre, np.shape(oris))
-    q = centres - oris
-    vDotQ = np.sum(dirs * q, axis=-1, keepdims=True)
-    squareDiffs = np.sum(q * q, axis=-1, keepdims=True) - radius * radius
-    discrim = vDotQ * vDotQ - squareDiffs
-    discrim = np.clip(discrim, 0.0, None)
-    root = np.sqrt(discrim)
-    t0 = (vDotQ - root)
-    t1 = (vDotQ + root)
-    ts = np.concatenate((t0, t1), axis=-1)
-    ts = np.sort(ts, axis=-1)
-    p0 = oris + dirs * ts[:, :1]
-    p1 = oris + dirs * ts[:, 1:]
-    p = p1 - p0
-    dir_diff = np.sum(p * dirs, axis=-1)
-    rays_o = np.zeros_like(oris)
-    rays_o[dir_diff > 0] = p0[dir_diff > 0]
-    rays_o[dir_diff <= 0] = p1[dir_diff <= 0]
-
-    return torch.from_numpy(rays_o)
 
 
 def trimesh_to_open3d(src):

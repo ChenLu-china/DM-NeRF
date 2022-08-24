@@ -92,8 +92,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
     exported = trimesh.exchange.export.export_mesh(mesh_canonical,
                                                    os.path.join(save_dir, 'mesh_canonical.ply'))
     print("Saving Marching Cubes mesh to mesh_canonical.ply !")
-    exported = trimesh.exchange.export.export_mesh(mesh_canonical, os.path.join(save_dir, 'mesh.ply'))
-    print("Saving Marching Cubes mesh to mesh.ply !")
 
     o3d_mesh = trimesh_to_open3d(mesh)
     o3d_mesh_canonical = trimesh_to_open3d(mesh_canonical)
@@ -156,8 +154,8 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
 
     o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color[:, [2, 1, 0]] / 255.0)
     o3d.io.write_triangle_mesh(
-        os.path.join(mesh_recon_save_dir, 'ins_mesh_canonical_dim{}neart_{}.ply'.format(grid_dim, args.near)),
+        os.path.join(mesh_recon_save_dir, 'color_mesh_decomposition.ply'),
         o3d_mesh_canonical_clean)
-    print("Saving Marching Cubes mesh to instance_mesh_canonical_dim{}neart_{}.ply".format(grid_dim, args.near))
+    print("Saving Marching Cubes mesh to color_mesh_decomposition.ply")
 
     print("--------end----------")
