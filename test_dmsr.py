@@ -83,8 +83,7 @@ if __name__ == '__main__':
     if args.mani_eval:
         images, poses, hwk, instances, ins_colors, args.ins_num = loader_eval.load_data(args)
     else:
-        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader.load_data(
-            args)
+        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader.load_data(args)
     print('Loaded blender', images.shape, hwk, args.datadir)
 
     args.perturb = False

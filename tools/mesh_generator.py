@@ -21,7 +21,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
     grid_dim = 256
 
     to_origin_transform, extents = trimesh.bounds.oriented_bounds(trimesh_scene)
-    # print(to_origin_transform, extents)
     T_extent_to_scene = np.linalg.inv(to_origin_transform)
     scene_transform = T_extent_to_scene
     scene_extents = np.array([1.9, 7.0, 7.])
@@ -89,30 +88,19 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
 
     exported = trimesh.exchange.export.export_mesh(mesh_canonical,
                                                    os.path.join(save_dir, 'mesh.ply'))
-    print("Saving Marching Cubes mesh to mesh_canonical.ply !")
+    print("Saving Marching Cubes mesh to mesh.ply !")
 
     o3d_mesh = trimesh_to_open3d(mesh)
     o3d_mesh_canonical = trimesh_to_open3d(mesh_canonical)
 
     print('Removing noise ...')
-    print(
-        f'Original Mesh has {len(o3d_mesh_canonical.vertices) / 1e6:.2f} M vertices and {len(o3d_mesh_canonical.triangles) / 1e6:.2f} M faces.')
-    o3d_mesh_canonical_clean = clean_mesh(o3d_mesh_canonical, keep_single_cluster=False,
-                                          min_num_cluster=400)
+    print(f'Original Mesh has {len(o3d_mesh_canonical.vertices) / 1e6:.2f} M vertices and {len(o3d_mesh_canonical.triangles) / 1e6:.2f} M faces.')
+    o3d_mesh_canonical_clean = clean_mesh(o3d_mesh_canonical, keep_single_cluster=False, min_num_cluster=400)
 
     vertices_ = np.array(o3d_mesh_canonical_clean.vertices).reshape([-1, 3]).astype(np.float32)
     triangles = np.asarray(o3d_mesh_canonical_clean.triangles)  # (n, 3) int
     N_vertices = vertices_.shape[0]
-    print(
-        f'Denoised Mesh has {len(o3d_mesh_canonical_clean.vertices) / 1e6:.2f} M vertices and {len(o3d_mesh_canonical_clean.triangles) / 1e6:.2f} M faces.')
-
-    print("###########################################")
-    print()
-    print("Using Normals for colour predictions!")
-    print()
-    print("###########################################")
-
-    ## use normal vector method as suggested by the author, see https://github.com/bmild/nerf/issues/44
+    print(f'Denoised Mesh has {len(o3d_mesh_canonical_clean.vertices) / 1e6:.2f} M vertices and {len(o3d_mesh_canonical_clean.triangles) / 1e6:.2f} M faces.')
 
     selected_mesh = o3d_mesh_canonical_clean
     rays_d = - torch.FloatTensor(
@@ -152,6 +140,4 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
     o3d.io.write_triangle_mesh(
         os.path.join(save_dir, 'color_mesh.ply'),
         o3d_mesh_canonical_clean)
-    print("Saving Marching Cubes mesh to color_mesh_decomposition.ply")
-
-    print("--------end----------")
+    print("Saving Marching Cubes mesh to color_mesh.ply")

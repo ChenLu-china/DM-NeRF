@@ -133,8 +133,6 @@ class ins_processor:
                 skip = self.testskip
             indices = np.loadtxt(os.path.join(self.data_dir, f'{s}_split_idx.txt')).astype(np.int16)
             file_train = os.path.join(self.data_dir, s)
-            # ins_fnames = [os.path.join(file_train, f'{s}_ins_full', f'{index}.png') for index in indices]
-            # gt_labels = np.array([self.ins_png_i(f) for f in ins_fnames])
 
             ins_fnames = [os.path.join(file_train, f'{s}_ins', f'{index}.npz') for index in indices]
             gt_labels = np.array([self.ins_npz_i(f) for f in ins_fnames])
@@ -156,13 +154,6 @@ class ins_processor:
         return gt_labels, ins_rgbs, ins_num
 
     def selected_pixels(self, full_ins, ins_num, crop_mask):
-        """
-        Explanation:
-        This function aims to process the instance image, the main idea is using fixed 0.1(this value can private change)
-        pixels, this part comes from each object, if the pixels of one object less than average threshold, we select all
-        the pixels, others are selected follow weight ratio. All in all, we wish every image contain fixed number of
-        semantic instance pixel easy for us to train and calculate cost matrix for one iteration.
-        """
 
         def weakly_img():
             """select ins label regard img as unit"""
@@ -206,11 +197,5 @@ def load_data(args):
     hwk = [int(H), int(W), intrinsic]
     crop_mask = crop_data(H, W, crop_size)
     ins_indices = ins_processor.selected_pixels(gt_labels, ins_num, crop_mask)
-    # gt_img = ins2img(gt_labels[0], ins_rgbs)
-    # gt_img = ins2img_full(gt_labels[0], ins_rgbs)
-    # vis_segmentation(imgs[0], gt_img)
-    # img = imgs[0]
-    # img[crop_mask == 0] = [1, 1, 1]
-    # vis_crop(img)
 
     return imgs, poses, hwk, i_split, gt_labels, ins_rgbs, ins_num, ins_indices, crop_mask

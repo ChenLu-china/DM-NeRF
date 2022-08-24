@@ -84,7 +84,6 @@ class rgb_processor:
         self.testskip = testskip
         self.train_ids = train_ids
         self.test_ids = test_ids
-        # self.rgbs, self.pose, self.split = self.load_rgb()
 
     def load_rgb(self):
         # testskip operation
@@ -127,7 +126,6 @@ class ins_processor:
         # load operation
         self.gt_labels, self.ins_rgbs = self.load_semantic_instance()
         self.ins_num = len(self.ins_rgbs)
-        # self.unique_labels = np.unique(self.gt_labels)
 
     def load_semantic_instance(self):
         skip_idx = np.arange(0, len(self.test_ids), self.testskip)
@@ -158,7 +156,6 @@ def load_data(args):
     total_num = 900
     step = 5
     train_ids = list(range(0, total_num, step))
-    # test_ids = list(range(1, total_num, step))
     test_ids = [x + step // 2 for x in train_ids]
     if args.editor:
         objs, view_id, ins_map, poses, ins_rgbs = processor(args.datadir, train_ids, test_ids,
@@ -176,9 +173,6 @@ def load_data(args):
         K = np.array([[focal, 0, (W - 1) * 0.5], [0, focal, (H - 1) * 0.5], [0, 0, 1]])
         hwk = [int(H), int(W), K]
 
-        # ins_img = labeltoimg(torch.LongTensor(gt_labels[40]), ins_rgbs)
-        # rgb8 = to8b(imgs[40])
-        # vis_segmentation(rgb8, ins_img)
         return objs, view_poses, ins_map, poses, hwk, ins_rgbs, ins_num
     else:
         imgs, poses, i_split = rgb_processor(args.datadir, train_ids, test_ids, testskip=args.testskip).load_rgb()
@@ -189,15 +183,10 @@ def load_data(args):
         gt_labels = ins_info.gt_labels
         ins_rgbs = ins_info.ins_rgbs
 
-        # ins_indices = ins_info.ins_indices
         H, W = imgs[0].shape[:2]
-        # camera_angle_x = np.pi / 3.0
-        # focal = .5 * W / np.tan(.5 * camera_angle_x)
+
         focal = W / 2.0
         K = np.array([[focal, 0, (W - 1) * 0.5], [0, focal, (H - 1) * 0.5], [0, 0, 1]])
         hwk = [int(H), int(W), K]
-        # ins_img = labeltoimg(torch.LongTensor(instances[80]), instances_colors)
-        # rgb8 = to8b(imgs[80])
-        # vis_segmentation(rgb8, ins_img)
 
         return imgs, poses, hwk, i_split, gt_labels, ins_rgbs, ins_info.ins_num
