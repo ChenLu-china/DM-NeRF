@@ -1,9 +1,7 @@
 import os
 import torch
 from config import create_nerf, initial
-# from datasets.dmsr.dmsr_loader import *
-from tools import poses_generator_val
-from tools import poses_generator_demo
+from tools import pose_generator
 from datasets.dmsr import dmsr_loader_val
 from datasets.dmsr import dmsr_loader
 from networks import manipulator
@@ -37,7 +35,7 @@ def test():
                         matched_file=mathed_file)
             print('Done rendering', testsavedir)
 
-        elif args.editor_val:
+        elif args.editor_eval:
             print('EDIT EVALUATION ONLY')
             """this operations list can re-design"""
 
@@ -45,7 +43,7 @@ def test():
             in_images = torch.Tensor(images)
             in_instances = torch.Tensor(instances).type(torch.int8)
             in_poses = torch.Tensor(poses)
-            poses_generator_val.generate_poses(args)
+            pose_generator.generate_poses_eval(args)
             trans_dicts = dmsr_loader_val.load_editor_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'editor_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -67,7 +65,7 @@ def test():
             # ori_pose, tar_poses = load_editor_poses(args)
             print('Loaded blender', hwk, args.datadir)
             int_view_poses = torch.Tensor(view_poses)
-            poses_generator_demo.generate_poses(objs, args)
+            pose_generator.generate_poses_demo(objs, args)
             obj_trans = dmsr_loader.load_editor_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'editor_testset_{:06d}'.format(iteration))

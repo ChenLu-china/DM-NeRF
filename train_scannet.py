@@ -3,8 +3,8 @@ import os
 import numpy as np
 from config import initial, create_nerf
 from datasets.scannet.loader_scannet import load_data
-from networks.decomposition_evaluator import ins_criterion, img2mse, mse2psnr
-from networks.emptiness_penalizer import ins_penalizer
+from networks.evaluator import ins_criterion, img2mse, mse2psnr
+from networks.penalizer import ins_penalizer
 from networks.tester import render_test
 from networks.helpers import gt_select_crop, z_val_sample, round_losses
 from networks.render import ins_nerf

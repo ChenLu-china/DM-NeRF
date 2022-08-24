@@ -6,11 +6,11 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 from skimage import metrics
-from networks.decomposition_evaluator import ins_eval
+from networks.evaluator import ins_eval
 from networks.helpers import get_rays_k, z_val_sample
-from networks.decomposition_evaluator import to8b
+from networks.evaluator import to8b
 from networks.render import ins_nerf
-from tools.visualiser import render_label2img, render_gt_label2img
+from tools.visualizer import render_label2img, render_gt_label2img
 import cv2
 
 def render_test(position_embedder, view_embedder, model_coarse, model_fine, render_poses, hwk, args, gt_imgs=None,

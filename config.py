@@ -123,7 +123,7 @@ def config_parser():
     # editor parameter
     parser.add_argument("--editor_demo", action='store_true',
                         help='do not optimize, reload weights and render out render_poses path')
-    parser.add_argument("--editor_val", action='store_true',
+    parser.add_argument("--editor_eval", action='store_true',
                         help='do not optimize, reload weights and render out render_poses path')
     parser.add_argument("--editor_mode", type=str, default='rotation',
                         help='select operation mode includes translation, rotation, scale, multi')

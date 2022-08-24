@@ -8,10 +8,10 @@ import lpips
 import cv2
 import torch.nn.functional as F
 from networks.helpers import get_rays_k, sample_pdf
-from networks.decomposition_evaluator import to8b
-from tools.visualiser import editor_label2img, render_label2img, render_gt_label2img
+from networks.evaluator import to8b
+from tools.visualizer import editor_label2img, render_label2img, render_gt_label2img
 from skimage import metrics
-from networks.decomposition_evaluator import ins_eval
+from networks.evaluator import ins_eval
 
 
 def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
