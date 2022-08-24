@@ -117,44 +117,6 @@ class ins_processor:
         f.close()
         return gt_labels, ins_rgbs
 
-    def selected_pixels(self, full_ins):
-        """
-        Explanation:
-        This function aims to process the instance image, the main idea is using fixed 0.1(this value can private change)
-        pixels, this part comes from each object, if the pixels of one object less than average threshold, we select all
-        the pixels, others are selected follow weight ratio. All in all, we wish every image contain fixed number of
-        semantic instance pixel easy for us to train and calculate cost matrix for one iteration.
-        """
-
-        def weakly_ins():
-            """select ins label regard object as unit"""
-            ins_hws = None
-            amounts = label_amounts.astype(np.int32)
-            for index, label in enumerate(unique_labels):
-                if label != self.ins_num:
-                    ins_indices = np.where(ins == label)[0]
-                    select_indices = np.random.choice(label_amounts[index], size=[amounts[index]], replace=False)
-                    ins_hw = ins_indices[select_indices]
-                    if ins_hws is None:
-                        ins_hws = ins_hw
-                    else:
-                        ins_hws = np.concatenate((ins_hws, ins_hw), 0)
-            return ins_hws
-
-        # begin weakly
-        N, H, W = full_ins.shape
-        full_ins = np.reshape(full_ins, [N, -1])  # (N, H*W)
-        all_ins_hws = []
-
-        for i in range(N):
-            ins = full_ins[i]
-            unique_labels, label_amounts = np.unique(ins, return_counts=True)
-            # need a parameter
-            hws = weakly_ins()
-            all_ins_hws.append(hws)
-
-        return all_ins_hws
-
 
 def load_mani_poses(args):
     load_path = os.path.join(args.datadir, 'transformation_matrix.json')
@@ -174,9 +136,5 @@ def load_data(args):
     focal = .5 * W / np.tan(.5 * camera_angle_x)
     K = np.array([[focal, 0, W * 0.5], [0, -focal, H * 0.5], [0, 0, -1]])
     hwk = [int(H), int(W), K]
-
-    # ins_img = labeltoimg(torch.LongTensor(gt_labels[40]), ins_rgbs)
-    # rgb8 = to8b(imgs[40])
-    # vis_segmentation(rgb8, ins_img)
 
     return imgs, poses, hwk, gt_labels, ins_rgbs, ins_num

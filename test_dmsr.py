@@ -3,9 +3,8 @@ import torch
 import trimesh
 
 from networks import manipulator
-from datasets.dmsr import loader
 from tools import pose_generator
-from datasets.dmsr import loader_eval
+from datasets import loader_dmsr_mani, loader_dmsr
 from networks.tester import render_test
 from config import create_nerf, initial
 from tools.mesh_generator import mesh_main
@@ -38,7 +37,7 @@ def test():
             in_instances = torch.Tensor(instances).type(torch.int8)
             in_poses = torch.Tensor(poses)
             pose_generator.generate_poses_eval(args)
-            trans_dicts = loader_eval.load_mani_poses(args)
+            trans_dicts = loader_dmsr_mani.load_mani_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'mani_eval_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -53,7 +52,7 @@ def test():
             print('Loaded blender', hwk, args.datadir)
             int_view_poses = torch.Tensor(view_poses)
             pose_generator.generate_poses_demo(objs, args)
-            obj_trans = loader.load_mani_poses(args)
+            obj_trans = loader_dmsr.load_mani_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'mani_demo_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -81,9 +80,9 @@ if __name__ == '__main__':
 
     # load data
     if args.mani_eval:
-        images, poses, hwk, instances, ins_colors, args.ins_num = loader_eval.load_data(args)
+        images, poses, hwk, instances, ins_colors, args.ins_num = loader_dmsr_mani.load_data(args)
     else:
-        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader.load_data(args)
+        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader_dmsr.load_data(args)
     print('Loaded blender', images.shape, hwk, args.datadir)
 
     args.perturb = False

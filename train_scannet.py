@@ -6,7 +6,7 @@ from networks.render import dm_nerf
 from networks.tester import render_test
 from config import initial, create_nerf
 from networks.penalizer import ins_penalizer
-from datasets.scannet.loader import load_data
+from datasets.loader_scannet import load_data
 from networks.helpers import get_select_crop, z_val_sample
 from networks.evaluator import ins_criterion, img2mse, mse2psnr
 

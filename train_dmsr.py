@@ -5,7 +5,7 @@ import numpy as np
 from networks.render import dm_nerf
 from config import initial, create_nerf
 from networks.tester import render_test
-from datasets.dmsr.loader import load_data
+from datasets.loader_dmsr import load_data
 from networks.penalizer import ins_penalizer
 from networks.helpers import get_select_full, z_val_sample
 from networks.evaluator import ins_criterion, img2mse, mse2psnr
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     args = initial()
 
     # load data
-    images, poses, hwk, i_split, gt_labels, ins_rgbs, args.ins_num = load_data(args)
+    images, poses, hwk, i_split, gt_labels, ins_rgbs, args.ins_num, objs, view_poses, ins_map = load_data(args)
     print('Loaded blender', images.shape, hwk, args.datadir)
 
     i_train, i_test = i_split

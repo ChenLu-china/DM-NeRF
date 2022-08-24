@@ -1,4 +1,4 @@
-from datasets.replica.loader import *
+from datasets.loader_replica import *
 from config import create_nerf, initial
 from networks.tester import render_test
 from networks.manipulator import manipulator_demo

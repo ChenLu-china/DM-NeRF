@@ -137,8 +137,8 @@ def manipulator_nerf(rays, position_embedder, view_embedder, model, N_samples=No
 def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_rays, f_tar_rays, args):
     # extract parameter
     N_samples, N_importance, near, far = args.N_samples, args.N_importance, args.near, args.far
-    ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_coarse,
-                                           N_samples, near, far)
+    ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder,
+                                           model_coarse, N_samples, near, far)
 
     # ori
     _, ori_weights, _, _ = manipulator_render(ori_raw, ori_z_vals, ori_rays[1])
@@ -205,8 +205,8 @@ def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_
     return final_rgb, final_ins, tar_rgb, tar_ins_accum
 
 
-def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, trans_dicts, save_dir,
-                     ins_rgbs, args, gt_rgbs=None, gt_labels=None):
+def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses,
+                     hwk, trans_dicts, save_dir, ins_rgbs, args, gt_rgbs=None, gt_labels=None):
     """move_object must between 1 to args.class_number"""
     _, _, dataset_name, _, scene_name = args.datadir.split('/')
     H, W, K = hwk
@@ -363,8 +363,8 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
     return
 
 
-def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, objs_trans, save_dir,
-                     ins_rgbs, objs, view_poses, ins_map, args):
+def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses,
+                     hwk, objs_trans, save_dir, ins_rgbs, objs, view_poses, ins_map, args):
 
     _, _, dataset_name, scene_name = args.datadir.split('/')
     H, W, K = hwk
@@ -377,8 +377,8 @@ def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine,
     os.makedirs(save_dir, exist_ok=True)
 
     # original
-    deform_v = np.concatenate(
-        (np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2), np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
+    deform_v = np.concatenate((np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2),
+                               np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
 
     for i, ori_pose in enumerate(view_poses):
         # operate objects at same time

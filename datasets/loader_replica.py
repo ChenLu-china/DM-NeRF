@@ -157,7 +157,7 @@ def load_data(args):
     step = 5
     train_ids = list(range(0, total_num, step))
     test_ids = [x + step // 2 for x in train_ids]
-    if args.editor:
+    if args.editor_demo:
         objs, view_id, ins_map, poses, ins_rgbs = processor(args.datadir, train_ids, test_ids,
                                                             testskip=args.testskip).load_rgb()
 

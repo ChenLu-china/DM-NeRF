@@ -40,7 +40,6 @@ class rgb_processor:
         super(rgb_processor, self).__init__()
         self.basedir = basedir
         self.testskip = testskip
-        # self.rgbs, self.pose, self.split = self.load_rgb()
 
     def load_rgb(self):
         splits = ['train', 'test']
@@ -83,7 +82,6 @@ class rgb_processor:
         if all_pose.shape[-1] == 16:
             all_pose = all_pose.reshape((all_pose.shape[0], 4, 4))
 
-        # all_pose_ = np.linalg.inv(all_pose)
         i_split = [np.arange(counts[i], counts[i + 1]) for i in range(2)]
 
         objs_info_fname = os.path.join(self.basedir, 'objs_info.json')
@@ -135,44 +133,6 @@ class ins_processor:
         f.close()
         return gt_labels, ins_rgbs
 
-    def selected_pixels(self, full_ins):
-        """
-        Explanation:
-        This function aims to process the instance image, the main idea is using fixed 0.1(this value can private change)
-        pixels, this part comes from each object, if the pixels of one object less than average threshold, we select all
-        the pixels, others are selected follow weight ratio. All in all, we wish every image contain fixed number of
-        semantic instance pixel easy for us to train and calculate cost matrix for one iteration.
-        """
-
-        def weakly_ins():
-            """select ins label regard object as unit"""
-            ins_hws = None
-            amounts = label_amounts.astype(np.int32)
-            for index, label in enumerate(unique_labels):
-                if label != self.ins_num:
-                    ins_indices = np.where(ins == label)[0]
-                    select_indices = np.random.choice(label_amounts[index], size=[amounts[index]], replace=False)
-                    ins_hw = ins_indices[select_indices]
-                    if ins_hws is None:
-                        ins_hws = ins_hw
-                    else:
-                        ins_hws = np.concatenate((ins_hws, ins_hw), 0)
-            return ins_hws
-
-        # begin weakly
-        N, H, W = full_ins.shape
-        full_ins = np.reshape(full_ins, [N, -1])  # (N, H*W)
-        all_ins_hws = []
-
-        for i in range(N):
-            ins = full_ins[i]
-            unique_labels, label_amounts = np.unique(ins, return_counts=True)
-            # need a parameter
-            hws = weakly_ins()
-            all_ins_hws.append(hws)
-
-        return all_ins_hws
-
 
 def png_i(f):
     return imageio.imread(f)
@@ -211,8 +171,5 @@ def load_data(args):
     focal = .5 * W / np.tan(.5 * camera_angle_x)
     K = np.array([[focal, 0, W * 0.5], [0, -focal, H * 0.5], [0, 0, -1]])
     hwk = [int(H), int(W), K]
-    # ins_img = labeltoimg(torch.LongTensor(gt_labels[80]), ins_rgbs)
-    # rgb8 = to8b(imgs[80])
-    # vis_segmentation(rgb8, ins_img)
-    # vis_selected_pixels(gt_labels, ins_indices, ins_rgbs)
+
     return imgs, poses, hwk, i_split, gt_labels, ins_rgbs, ins_info.ins_num, objs, view_poses, ins_map

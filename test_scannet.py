@@ -1,7 +1,6 @@
-import os
 import torch
 
-from datasets.scannet.loader import *
+from datasets.loader_scannet import *
 from networks.tester import render_test
 from config import create_nerf, initial
 from networks.manipulator import manipulator_demo
