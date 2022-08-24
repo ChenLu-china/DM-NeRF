@@ -15,7 +15,7 @@ def test():
                                        .format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
             mathed_file = os.path.join(testsavedir, 'matching_log.txt')
-            render_test(position_embedder, view_embedder, model_coarse, model_fine, poses, hwf, args,
+            render_test(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk, args,
                         gt_imgs=images, gt_labels=instances, ins_rgbs=ins_colors, savedir=testsavedir,
                         matched_file=mathed_file)
             print('Rendering Done', testsavedir)
@@ -27,7 +27,7 @@ def test():
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'mani_demo_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwf,
+            manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwk,
                              trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
             print('Manipulating Done', testsavedir)
     return
@@ -37,10 +37,10 @@ if __name__ == '__main__':
 
     args = initial()
     # load data
-    images, poses, hwf, i_split, instances, ins_colors, args.ins_num = load_data(args)
-    print('Loaded blender', images.shape, hwf, args.datadir)
+    images, poses, hwk, i_split, instances, ins_colors, args.ins_num = load_data(args)
+    print('Loaded blender', images.shape, hwk, args.datadir)
 
-    H, W, focal = hwf
+    H, W, K = hwk
     i_train, i_test = i_split
 
     position_embedder, view_embedder, model_coarse, model_fine, args = create_nerf(args)
