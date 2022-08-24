@@ -114,7 +114,9 @@ Manipulation operation includes two parts, evaluation and demo generation:
 
 We only provide manipulated ground truth of DM-SR dataset for manipulation evaluation.
 
-Change `render = True` to `mani_eval = True`, add `target_label` and `editor_mode` to assign which object manipulated and which manipulated operation you want, specific format can renference `./configs/manipulation/dmsr/editor_multi/study.txt`.
+Change `render = True` to `mani_eval = True`, add `target_label` and `editor_mode` to assign which object manipulated and 
+
+which manipulated operation you want, specific format can renference `./configs/manipulation/dmsr/editor_multi/study.txt`.
 
 You can run:
 
