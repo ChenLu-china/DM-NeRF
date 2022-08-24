@@ -126,7 +126,9 @@ CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr
 
 ```
 
-Change `render = True` to `mani_demo = True`, edit objs_info.json to assign objects manipulation, file path is `./data/dmsr/study/objs_info.json`.
+Change `render = True` to `mani_demo = True`, edit objs_info.json to assign objects manipulation, file path is 
+
+`./data/dmsr/study/objs_info.json`.
 
 You can move view poses by given `view_id = null`, but given `views` a number in config file.
 
