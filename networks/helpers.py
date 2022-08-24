@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 
-round_number = 6
 # shift helper
 # Rotation matrix tools
 r_x = lambda roll: np.array([
