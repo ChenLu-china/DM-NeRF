@@ -59,7 +59,7 @@ This repository contains the implementation of the paper:
 
 ## Installation
 
-Create python environment vision >=3.7
+Create python >=3.7
 ```bash
 pip install pytorch==1.8.1 torchVision==0.9.1 torchaudio===0.8.1
 pip install -r environment.txt
@@ -70,21 +70,12 @@ pip install -r environment.txt
 To evaluate our model or train a new model from scratch, you have to obtain the respective dataset.
 In this paper, we consider 3 different datasets:
 
-### Scannet
+DM-SR
 
-If you need all the pre-processed files of ScanNet, you can access licenses of [ScanNet](https://github.com/ScanNet/ScanNet).
+Replica
 
-We used `scene0010_00, scene0012_00, scene0024_00, scene0033_00, scene0038_00, scene0088_00, scene0113_00, scene0192_00`.
+ScanNet
 
-
-### Replica
-
-We used `office0, office2, office3, office4, room0, room1, room2`.
-
-
-### OMG-SR（Ours）
-
-Our dataset rendered by Blender(v2.82.7). It contains 8 normal kinds of indoor scenes, which are `Bathroom, Bedroom, Dinning, Kitchen, Reception, Rest, Study, Office`.
 
 ### Hints
 
@@ -109,11 +100,15 @@ CUDA_VISIBLE_DEVICES=0 nohup python -u train_scannet.py --config train_configs/0
 If you do not segement non-occupied area, you can delete `penalize` parameter in config file, and run above command.
 
 
-## Testing and Editor Testing
+## Evaluation
 
-For 2D testing, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
+### Decomposition
+
+For decomposition, we used PSNR, SSIM, LPIPS, and mAP to evaluate our task:
 
 You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=0 python test_xxxx.py --config test_configs/0050/scene_name.txt`.
+
+### Manipulation
 
 For editor testing:
 
