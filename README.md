@@ -81,13 +81,13 @@ ScanNet
 
 After you set all parameters you want, you can train model use one of blow command, for example:
 
-If you want use full of segementation function, you can run commands like:
+If you want use full of decomposition function, you can run commands like:
 ```bash
 
 CUDA_VISIBLE_DEVICES=0 python -u train_dmsr.py --config configs/train/dmsr/study.txt
 
 ```
-If you do not segement emptiness area, you can delete `penalize` parameter in config file, and run above command.
+If you do not decompose emptiness area, you can delete `penalize` parameter in config file, and run above command.
 
 
 ## Evaluation
