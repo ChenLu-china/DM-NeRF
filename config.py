@@ -2,7 +2,7 @@ import os
 import time
 import configargparse
 import torch
-from networks.ins_nerf import get_embedder, Instance_NeRF
+from networks.dm_nerf import get_embedder, Instance_NeRF
 
 
 def config_parser():

@@ -4,7 +4,7 @@ import numpy as np
 from config import initial, create_nerf
 from datasets.scannet.loader_scannet import load_data
 from networks.ins_eval import ins_criterion, img2mse, mse2psnr
-from networks.ins_penalizer import ins_penalizer
+from networks.emptiness_penalizer import ins_penalizer
 from networks.test import render_test
 from networks.helpers import gt_select_crop, z_val_sample, round_losses
 from networks.render import ins_nerf

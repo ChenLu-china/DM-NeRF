@@ -4,7 +4,6 @@ import h5py
 import json
 import imageio
 import numpy as np
-from datasets.replica.data_loader import *
 
 np.random.seed(0)
 

@@ -4,7 +4,6 @@ import os
 import h5py
 import cv2
 from datasets.scannet.loader_vis import vis_load
-from datasets.scannet import data_loader
 from datasets.scannet.loader_vis import vis_segmentation, ins2img, ins2img_full, vis_crop
 
 
