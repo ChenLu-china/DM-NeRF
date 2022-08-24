@@ -4,7 +4,6 @@ import open3d as o3d
 import matplotlib.pyplot as plt
 
 
-# some function to help changing labels to rgb images. Including Semantic and Instance both.
 def ins2img(predicted_onehot, rgbs):
     predicted_labels = torch.argmax(predicted_onehot, dim=-1)
     predicted_labels = predicted_labels.cpu()

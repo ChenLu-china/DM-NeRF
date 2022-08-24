@@ -342,8 +342,6 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
 
     """save all results"""
     if gt_rgbs is not None:
-        # show_rgbs_file = os.path.join(args.basedir, args.expname, args.log_time, 'instance_rgbs.png')
-        # show_instance_rgb(ins_rgbs, show_rgbs_file)
 
         map_result_file = os.path.join(save_dir, 'matching_log.json')
         with open(map_result_file, 'w') as f:

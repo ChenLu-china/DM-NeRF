@@ -27,7 +27,6 @@ def emptiness_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
     mask_before = (p_dists < dists_before).type(torch.float32)  # (N_rays, N_points)
     mask_after = (p_dists > dists_after).type(torch.float32)  # (N_rays, N_points)
     mask_middle = 1 - (mask_after + mask_before)  # (N_rays, N_points)
-    # (dists_before <= dists_accu <= dists_after).type(torch.int64)
 
     # if depth is at the begin or end the mask will be zero, so plus a value closes to zero
     pred_ins = raw[..., 4:]  # (N_rays, N_point, ins_number+1)
