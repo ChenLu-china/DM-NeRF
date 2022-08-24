@@ -1,11 +1,9 @@
 import os
 import json
-import torch
-import open3d as o3d
-import skimage.measure as ski_measure
-import numpy as np
 import trimesh
 import torch.nn.functional as F
+import skimage.measure as ski_measure
+
 from tools.visualizer import *
 from networks.render import dm_nerf
 from networks.helpers import z_val_sample
@@ -142,7 +140,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
             batch_rays = torch.stack([rays_io, rays_id], dim=0)
             batch_rays = batch_rays.to(args.device)
             all_info = dm_nerf(batch_rays, position_embedder, view_embedder,
-                                model_coarse, model_fine, z_val_coarse, args)
+                               model_coarse, model_fine, z_val_coarse, args)
             if full_ins is None:
                 full_ins = all_info['ins_fine']
             else:

@@ -1,17 +1,18 @@
 import os
+import cv2
 import time
-import imageio
 import lpips
 import torch
+import imageio
 import numpy as np
 import torch.nn.functional as F
+
 from skimage import metrics
+from networks.render import dm_nerf
+from networks.evaluator import to8b
 from networks.evaluator import ins_eval
 from networks.helpers import get_rays_k, z_val_sample
-from networks.evaluator import to8b
-from networks.render import dm_nerf
 from tools.visualizer import render_label2img, render_gt_label2img
-import cv2
 
 
 def render_test(position_embedder, view_embedder, model_coarse, model_fine, render_poses, hwk, args, gt_imgs=None,

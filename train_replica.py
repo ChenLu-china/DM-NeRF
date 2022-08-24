@@ -1,14 +1,15 @@
-import torch
 import os
+import torch
 import numpy as np
-from config import initial, create_nerf
-from datasets.replica.loader import load_data
-from networks.evaluator import ins_criterion, img2mse, mse2psnr
-from networks.penalizer import ins_penalizer
-from networks.tester import render_test
-from networks.helpers import get_select_full, z_val_sample
+
 from networks.render import dm_nerf
+from config import initial, create_nerf
+from networks.tester import render_test
 from networks.helpers import round_losses
+from networks.penalizer import ins_penalizer
+from datasets.replica.loader import load_data
+from networks.helpers import get_select_full, z_val_sample
+from networks.evaluator import ins_criterion, img2mse, mse2psnr
 
 np.random.seed(0)
 torch.cuda.manual_seed(3)
@@ -52,9 +53,9 @@ def train():
         # use penalize
         if args.penalize:
             emptiness_coarse = ins_penalizer(all_info['raw_coarse'], all_info['z_vals_coarse'],
-                                            all_info['depth_coarse'], batch_rays[1], args)
+                                             all_info['depth_coarse'], batch_rays[1], args)
             emptiness_fine = ins_penalizer(all_info['raw_fine'], all_info['z_vals_fine'],
-                                          all_info['depth_fine'], batch_rays[1], args)
+                                           all_info['depth_fine'], batch_rays[1], args)
 
             emptiness_loss = emptiness_fine + emptiness_coarse
             total_loss = total_loss + emptiness_loss
@@ -141,6 +142,3 @@ if __name__ == '__main__':
     poses = torch.Tensor(poses).cpu()
 
     train()
-
-
-

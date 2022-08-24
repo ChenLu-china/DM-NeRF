@@ -1,8 +1,9 @@
-from torch import nn
 import torch
-from scipy.optimize import linear_sum_assignment
 import numpy as np
 import torch.nn.functional as F
+
+from torch import nn
+from scipy.optimize import linear_sum_assignment
 
 bceloss = nn.BCELoss(reduction='none')
 thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
@@ -17,7 +18,6 @@ device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("
 
 
 def ins_criterion(pred_ins, gt_labels, ins_num):
-
     # change label to one hot
     valid_gt_labels = torch.unique(gt_labels)
     gt_ins = torch.zeros(size=(gt_labels.shape[0], ins_num))
@@ -76,7 +76,6 @@ def hungarian(pred_ins, gt_ins, valid_ins_num, ins_num):
 
 
 def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='integral'):
-
     def interpolate_11(prec, rec):
         ap = 0.
         for t in torch.arange(0., 1.1, 0.1):
@@ -108,7 +107,6 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
     else:
         column_max_value = torch.sort(IoUs_Metrics, descending=True)
         column_max_value = column_max_value[0]
-
 
     ap_list = []
     for thre in thre_list:

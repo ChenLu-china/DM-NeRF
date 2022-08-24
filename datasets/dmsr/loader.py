@@ -1,10 +1,9 @@
-import torch
-import numpy as np
 import os
 import h5py
 import json
+import torch
 import imageio
-from datasets.dmsr.loader_vis import vis_segmentation, to8b, labeltoimg, vis_selected_pixels
+import numpy as np
 
 np.random.seed(0)
 
@@ -33,34 +32,6 @@ def pose_spherical(theta, phi, radius):
     c2w = rot_theta(theta / 180. * np.pi) @ c2w
     c2w = torch.Tensor(np.array([[-1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])) @ c2w
     return c2w
-
-
-# Editor testing data loader
-class processor:
-    def __init__(self, basedir, testskip=1):
-        super(processor, self).__init__()
-        self.basedir = basedir
-        self.testskip = testskip
-        # self.rgbs, self.pose, self.split = self.load_rgb()
-
-    def load_gts(self):
-        poses = []
-
-        posefile = os.path.join(self.basedir, f'train_transforms.json')
-        with open(posefile, 'r') as read_pose:
-            meta = json.load(read_pose)
-
-        angle_x = meta['camera_angle_x']
-        for frame in meta['frames'][::self.testskip]:
-            poses.append(frame['transform_matrix'])
-        poses = np.array(poses).astype(np.float32)
-
-        f = os.path.join(self.basedir, 'ins_rgb.hdf5')
-        with h5py.File(f, 'r') as f:
-            ins_rgbs = f['datasets'][:]
-        f.close()
-
-        return objs, view_id, ins_map, poses, ins_rgbs, angle_x
 
 
 # Training and Testing data loader class

@@ -1,14 +1,14 @@
 import os
 import torch
-from config import create_nerf, initial
+import trimesh
+
+from networks import manipulator
+from datasets.dmsr import loader
 from tools import pose_generator
 from datasets.dmsr import loader_eval
-from datasets.dmsr import loader
-from networks import manipulator
-from networks import manipulator
 from networks.tester import render_test
+from config import create_nerf, initial
 from tools.mesh_generator import mesh_main
-import trimesh
 
 
 def test():
@@ -17,11 +17,7 @@ def test():
     args.is_train = False
     with torch.no_grad():
         if args.render:
-            print("###########################################")
-            print()
             print('RENDER ONLY')
-            print()
-            print("###########################################")
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'renderonly_{}_{:06d}'.format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -43,21 +39,18 @@ def test():
             in_poses = torch.Tensor(poses)
             pose_generator.generate_poses_eval(args)
             trans_dicts = loader_eval.load_mani_poses(args)
-            testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'mani_testset_{:06d}'.format(iteration))
+            testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
+                                       'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator.manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
-                                         trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args, gt_rgbs=in_images
+                                         trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args,
+                                         gt_rgbs=in_images
                                          , gt_labels=in_instances)
-            
+
             pass
 
         elif args.mani_demo:
-            print("###########################################")
-            print()
             print('EDIT DEMO ONLY')
-            print()
-            print("###########################################")
-
             """this operations list can re-design"""
             print('Loaded blender', hwk, args.datadir)
             int_view_poses = torch.Tensor(view_poses)
@@ -67,8 +60,8 @@ def test():
                                        'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator.manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
-                                    save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
-                                    objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
+                                         save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
+                                         objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
 
         elif args.mesh:
             print("###########################################")
@@ -98,9 +91,6 @@ if __name__ == '__main__':
         images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader.load_data(
             args)
     print('Loaded blender', images.shape, hwk, args.datadir)
-
-    # load transformation matrix
-    # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
 
     args.perturb = False
     H, W, K = hwk

@@ -1,14 +1,15 @@
-import torch
 import os
+import torch
 import numpy as np
-from config import initial, create_nerf
-from datasets.dmsr.loader import load_data
-from networks.evaluator import ins_criterion, img2mse, mse2psnr
-from networks.penalizer import ins_penalizer
-from networks.tester import render_test
-from networks.helpers import get_select_full, z_val_sample
+
 from networks.render import dm_nerf
+from config import initial, create_nerf
+from networks.tester import render_test
 from networks.helpers import round_losses
+from datasets.dmsr.loader import load_data
+from networks.penalizer import ins_penalizer
+from networks.helpers import get_select_full, z_val_sample
+from networks.evaluator import ins_criterion, img2mse, mse2psnr
 
 np.random.seed(0)
 torch.cuda.manual_seed(3)

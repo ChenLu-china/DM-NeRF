@@ -1,9 +1,9 @@
-import numpy as np
-import imageio
 import os
 import h5py
 import cv2
 import json
+import imageio
+import numpy as np
 
 
 def load_mani_poses(args):

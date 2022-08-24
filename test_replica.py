@@ -1,7 +1,7 @@
-from config import create_nerf, initial
 from datasets.replica.loader import *
-from networks.manipulator import manipulator_demo
+from config import create_nerf, initial
 from networks.tester import render_test
+from networks.manipulator import manipulator_demo
 
 
 def test():
@@ -10,11 +10,7 @@ def test():
     args.is_train = False
     with torch.no_grad():
         if args.render:
-            print("###########################################")
-            print()
             print('RENDER ONLY')
-            print()
-            print("###########################################")
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
                                        'renderonly_{}_{:06d}'.format('test' if args.render_test else 'path', iteration))
             os.makedirs(testsavedir, exist_ok=True)
@@ -24,11 +20,7 @@ def test():
                         matched_file=mathed_file)
             print('Done rendering', testsavedir)
         elif args.mani_demo:
-            print("###########################################")
-            print()
             print('EDIT RENDER ONLY')
-            print()
-            print("###########################################")
             """this operations list can re-design"""
             trans_dicts = load_mani_poses(args)
             ori_pose = poses[args.ori_pose]
@@ -36,7 +28,7 @@ def test():
                                        'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwf,
-                        trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
+                             trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
     return
 
 
@@ -46,8 +38,6 @@ if __name__ == '__main__':
     # load data
     images, poses, hwf, i_split, instances, ins_colors, args.ins_num = load_data(args)
     print('Loaded blender', images.shape, hwf, args.datadir)
-    # load transformation matrix
-    # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
 
     H, W, focal = hwf
     i_train, i_test = i_split

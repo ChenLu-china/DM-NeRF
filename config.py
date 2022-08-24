@@ -1,7 +1,8 @@
 import os
 import time
-import configargparse
 import torch
+import configargparse
+
 from networks.dm_nerf import get_embedder, DM_NeRF
 
 
@@ -171,7 +172,6 @@ def initial():
         args.device = torch.device("cuda:0")
     else:
         args.device = torch.device("cpu")
-
 
     log_dir = os.path.join(args.basedir, args.expname, args.log_time)
     print(log_dir)

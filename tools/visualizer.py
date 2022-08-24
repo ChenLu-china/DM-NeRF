@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 import open3d as o3d
+import matplotlib.pyplot as plt
 
 
 # some function to help changing labels to rgb images. Including Semantic and Instance both.

@@ -1,9 +1,10 @@
 import os
 import torch
-from config import create_nerf, initial
+
 from datasets.scannet.loader import *
-from networks.manipulator import manipulator_demo
 from networks.tester import render_test
+from config import create_nerf, initial
+from networks.manipulator import manipulator_demo
 
 
 def test():
@@ -30,7 +31,7 @@ def test():
                                        'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
             manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwk,
-                        trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
+                             trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
     return
 
 

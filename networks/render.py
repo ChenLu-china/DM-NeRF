@@ -4,6 +4,7 @@ from networks.helpers import sample_pdf
 
 DEBUG = False
 
+
 def render_train(raw, z_vals, rays_d):
     raw2alpha = lambda raw, dists, act_fn=F.relu: 1. - torch.exp(-act_fn(raw) * dists)
 
