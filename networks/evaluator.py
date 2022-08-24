@@ -5,6 +5,7 @@ import numpy as np
 import torch.nn.functional as F
 
 bceloss = nn.BCELoss(reduction='none')
+thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
 nllloss = nn.NLLLoss(ignore_index=-1, reduction='none')
 cross_entropy = nn.CrossEntropyLoss(ignore_index=-1, reduction='none')
 img2mse = lambda x, y: torch.mean((x - y) ** 2)
@@ -14,15 +15,8 @@ to8b = lambda x: (255 * np.clip(x, 0, 1)).astype(np.uint8)
 
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 
+
 def ins_criterion(pred_ins, gt_labels, ins_num):
-    """
-        This class computes the losses for NeRF-Instance Segmentation
-        It includes two phases:
-            1) we computer hungarian assignment between ground truth mask and prediction
-             confirm that all selected indexes are suitable minimized among all calculate values
-            2) resort order base on replica indices sequence
-            3) calculate of total losses
-    """
 
     # change label to one hot
     valid_gt_labels = torch.unique(gt_labels)
@@ -40,29 +34,14 @@ def ins_criterion(pred_ins, gt_labels, ins_num):
         invalid_ce = torch.tensor([0])
     valid_siou = torch.mean(cost_siou[order_row, order_col[:valid_ins_num]])
 
-
     ins_loss_sum = valid_ce + invalid_ce + valid_siou
     return ins_loss_sum, valid_ce, invalid_ce, valid_siou
 
 
 # matching function
 def hungarian(pred_ins, gt_ins, valid_ins_num, ins_num):
-    """
-        This class computes an assignment between the targets and the predictions of the network
-        I plan to calculate class label and soft Iou to judge how to sort the object
-    """
-
     @torch.no_grad()
     def reorder(cost_matrix, valid_ins_num):
-        """
-        This function is to confirm final order of prediction masks according to C and satisfied the global value
-        is the minimized.
-        scipy.linear_sum_assignment function can help us achieve find the minimize value along one row and satisfied the
-        sum of all voted value is also minimize (default calculate minimized value).
-        :param C: cost matrix
-        :param gt_masks: ground truth masks which can provide valid instance for recent picture
-        :return: NxTotal_Ins indies and the minimize cost value
-        """
         valid_scores = cost_matrix[:valid_ins_num]
         valid_scores = valid_scores.cpu().numpy()
         row_ind, col_ind = linear_sum_assignment(valid_scores)
@@ -97,19 +76,8 @@ def hungarian(pred_ins, gt_ins, valid_ins_num, ins_num):
 
 
 def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='integral'):
-    """
-    calculate this aims to evaluate the performance of prediction, we calculate AP value for each image, there are
-    two functions to achieve it, the one is interpolate method which means that we spare that 11 area, and calculate
-    AP for average 11 values, another function is just calculate prediction use integral method. Special implementations
-    are following.
-    """
 
     def interpolate_11(prec, rec):
-        """
-            This function proposal in 2007 year
-            step 1: calculate each precisions and recalls
-            because we don't have confidence score, so we only calculate top1-topN follow original order.
-        """
         ap = 0.
         for t in torch.arange(0., 1.1, 0.1):
             if torch.sum(rec >= t) == 0:
@@ -141,7 +109,7 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
         column_max_value = torch.sort(IoUs_Metrics, descending=True)
         column_max_value = column_max_value[0]
 
-    thre_list = [0.5, 0.75, 0.8, 0.85, 0.9, 0.95]
+
     ap_list = []
     for thre in thre_list:
         tp_list = column_max_value > thre
@@ -175,7 +143,7 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     # pred_label[mask == 0] = ins_num  # unlabeled index for prediction set as -1
 
     valid_pred_num = len(valid_pred_labels)
-    
+
     # prepare confidence masks and confidence scores
     pred_conf_mask = np.max(pred_ins.numpy(), axis=-1)
 
@@ -184,23 +152,21 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
     for label in valid_pred_labels:
         index = torch.where(pred_label == label)
         ssm = pred_conf_mask[index[0], index[1]]
-        pred_obj_conf = np.median(ssm)  # 中位数
-        # pred_obj_conf = ssm.sum() / len(index[0])  # 平均数
-        # pred_obj_conf = np.max(ssm) # 最大数
+        pred_obj_conf = np.median(ssm)
         pred_conf_list.append(pred_obj_conf)
     pred_conf_scores = torch.from_numpy(np.array(pred_conf_list))
-    
+
     # change predicted labels to each signal object masks not existed padding as zero
     pred_ins = torch.zeros_like(gt_ins)
     pred_ins[..., :valid_pred_num] = F.one_hot(pred_label)[..., valid_pred_labels]
-    
+
     cost_ce, cost_iou, order_row, order_col = hungarian(pred_ins.reshape((-1, ins_num)),
                                                         gt_ins.reshape((-1, ins_num)),
                                                         gt_ins_num, ins_num)
 
     valid_inds = order_col[:gt_ins_num]
     ious_metrics = 1 - cost_iou[order_row, valid_inds]
-    
+
     # prepare confidence values
     confidence = torch.zeros(size=[gt_ins_num])
     for i, valid_ind in enumerate(valid_inds):
@@ -208,7 +174,7 @@ def ins_eval(pred_ins, gt_ins, gt_ins_num, ins_num, mask=None):
             confidence[i] = pred_conf_scores[valid_ind]
         else:
             confidence[i] = 0
-    
+
     ap = calculate_ap(ious_metrics, gt_ins_num, confidence=confidence, function_select='integral')
 
     invalid_mask = valid_inds >= valid_pred_num

@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-def gaussian_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
+def empty_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
     # initial gaussian distribution algorithm
     Gaussian_Distribution = lambda delta_dist, deta_h, deta_w: torch.exp(
         -(delta_dist ** 2) / (2 * (deta_w ** 2))) / (deta_h * torch.sqrt(torch.Tensor([2 * np.pi]))) + 1e-8
@@ -37,8 +37,6 @@ def gaussian_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
 
     gt_labeles = torch.zeros_like(pred_ins)
     gt_labeles[..., -1] = 1
-    # penalized_ins_before = penalized_ins_before.reshape([-1])  # (N_rays * N_point * (ins_number+1))
-    # gt_labeled = gt_labeled.reshape([-1])
     loss_before = -gt_labeles * torch.log(pred_ins + 1e-8) - (1 - gt_labeles) * torch.log(1 - pred_ins + 1e-8)
     masked_penalize_weights_air = penalize_weights_air * mask_before
     loss_before = loss_before * masked_penalize_weights_air[..., None]  # (N_rays, N_points, ins + 1)
@@ -48,8 +46,6 @@ def gaussian_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
     # calculate middle part
     penalized_ins_middle = pred_ins[..., -1]
     gt_labeled_middle = torch.zeros_like(penalized_ins_middle)
-    # gt_labeled_middle = gt_labeled_middle.reshape([-1])
-    # penalized_ins_middle = penalized_ins_middle.reshape([-1])
     loss_middle = -gt_labeled_middle * torch.log(penalized_ins_middle + 1e-8) - (1 - gt_labeled_middle) * torch.log(
         1 - penalized_ins_middle + 1e-8)
     masked_penalize_weights = penalize_weights * mask_middle
@@ -62,6 +58,6 @@ def gaussian_penalizer(raw, z_vals, depths, rays_d, tolerance, deta_w):
 
 def ins_penalizer(raw, z_vals, depth, rays_d, args):
     depth = depth[..., None].detach()
-    valid_penalize_loss = gaussian_penalizer(raw, z_vals, depth, rays_d, args.tolerance, args.deta_w)
+    valid_penalize_loss = empty_penalizer(raw, z_vals, depth, rays_d, args.tolerance, args.deta_w)
 
     return valid_penalize_loss

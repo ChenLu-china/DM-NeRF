@@ -62,43 +62,6 @@ def get_rays_np(H, W, focal, c2w):
     return rays_o, rays_d
 
 
-def gt_select_weakly(rgb, pose, focal, ins_target, ins_index, N_train):
-    H, W, C = rgb.shape
-    rays_o, rays_d = get_rays(H, W, focal, pose)
-    loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
-    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()  # (H * W)
-
-    selected_index = np.random.choice(loc_h.shape[0], size=[N_train], replace=False)
-    unlabeled_index = np.array(list(set(selected_index) - set(ins_index)))
-    unlabeled_h, unlabeled_w = loc_h[unlabeled_index], loc_w[unlabeled_index]  # (N_rgb, 2)
-
-    labeled_index = np.array(list(set(selected_index) - set(unlabeled_index)))
-    labeled_h, labeled_w = loc_h[labeled_index], loc_w[labeled_index]  # (N_ins,2) select ins coordinates
-    N_ins = len(labeled_index)
-
-    selected_h, selected_w = torch.cat((unlabeled_h, labeled_h), dim=0), torch.cat((unlabeled_w, labeled_w), dim=0)
-    rays_o = rays_o[selected_h, selected_w]  # (N_rgb, 3)
-    rays_d = rays_d[selected_h, selected_w]  # (N_rgb, 3)
-    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_rgb+N_ins, 3)
-    target_c = rgb[selected_h, selected_w]  # (N_rgb, 3)
-    target_i = ins_target[labeled_h, labeled_w]  # (N_ins, 3)
-    return target_c, target_i, batch_rays, N_ins
-
-
-def get_select_general(rgb, pose, focal, ins_target, N_train):
-    H, W, C = rgb.shape
-    rays_o, rays_d = get_rays(H, W, focal, pose)
-    loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
-    loc_h, loc_w = torch.reshape(loc_h, [-1]).long(), torch.reshape(loc_w, [-1]).long()
-    selected_index = np.random.choice(loc_h.shape[0], size=[N_train], replace=False)
-    selected_h, selected_w = loc_h[selected_index], loc_w[selected_index]
-    rays_o = rays_o[selected_h, selected_w]
-    rays_d = rays_d[selected_h, selected_w]
-    batch_rays = torch.stack([rays_o, rays_d], 0)  # (N_train, 3)
-    target_c = rgb[selected_h, selected_w]  # (N_train, 3)
-    target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
-    return target_c, target_i, batch_rays
-
 # for scannet image process
 def get_rays_k(H, W, K, c2w):
     i, j = torch.meshgrid(torch.linspace(0, W - 1, W),
@@ -114,7 +77,7 @@ def get_rays_k(H, W, K, c2w):
     return rays_o, rays_d
 
 
-def gt_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
+def get_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
     N_ins = int(N_train * 0.3)
 
     if N_ins > len(ins_index):
@@ -151,7 +114,7 @@ def gt_select_crop(rgb, pose, K, ins_target, ins_index, crop_mask, N_train):
 ######
 
 # for synthetic rooms
-def gt_select_general(rgb, pose, K, ins_target, N_train):
+def get_select_full(rgb, pose, K, ins_target, N_train):
     H, W, C = rgb.shape
     rays_o, rays_d = get_rays_k(H, W, K, pose)
     loc_h, loc_w = torch.meshgrid(torch.linspace(0, H - 1, H), torch.linspace(0, W - 1, W))
@@ -164,6 +127,7 @@ def gt_select_general(rgb, pose, K, ins_target, N_train):
     target_c = rgb[selected_h, selected_w]  # (N_train, 3)
     target_i = ins_target[selected_h, selected_w]  # (N_train, 3)
     return target_c, target_i, batch_rays
+
 
 def z_val_sample(N_rays, near, far, N_samples):
     near, far = near * torch.ones(size=(N_rays, 1)), far * torch.ones(size=(N_rays, 1))

@@ -2,12 +2,12 @@ import torch
 import os
 import numpy as np
 from config import initial, create_nerf
-from datasets.dmsr.load_dmsr import load_data
+from datasets.dmsr.loader import load_data
 from networks.evaluator import ins_criterion, img2mse, mse2psnr
 from networks.penalizer import ins_penalizer
 from networks.tester import render_test
-from networks.helpers import gt_select_general, z_val_sample
-from networks.render import ins_nerf
+from networks.helpers import get_select_full, z_val_sample
+from networks.render import dm_nerf
 from networks.helpers import round_losses
 
 np.random.seed(0)
@@ -27,9 +27,9 @@ def train():
         pose = poses[img_i, :3, :4].to(args.device)
         gt_label = gt_labels[img_i].to(args.device)
 
-        target_c, target_i, batch_rays = gt_select_general(gt_rgb, pose, K, gt_label, args.N_train)
+        target_c, target_i, batch_rays = get_select_full(gt_rgb, pose, K, gt_label, args.N_train)
 
-        all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
+        all_info = dm_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
 
         # coarse losses
         rgb_loss_coarse = img2mse(all_info['rgb_coarse'], target_c)

@@ -1,6 +1,6 @@
 from config import create_nerf, initial
-from datasets.replica.replica_loader import *
-from networks.editor import editor_test
+from datasets.replica.loader import *
+from networks.manipulator import manipulator_demo
 from networks.tester import render_test
 
 
@@ -23,21 +23,19 @@ def test():
                         gt_imgs=images, gt_labels=instances, ins_rgbs=ins_colors, savedir=testsavedir,
                         matched_file=mathed_file)
             print('Done rendering', testsavedir)
-        elif args.editor:
+        elif args.mani_demo:
             print("###########################################")
             print()
             print('EDIT RENDER ONLY')
             print()
             print("###########################################")
             """this operations list can re-design"""
-
-            # ori_pose, tar_poses = load_editor_poses(args)
-            trans_dicts = load_editor_poses(args)
+            trans_dicts = load_mani_poses(args)
             ori_pose = poses[args.ori_pose]
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'editor_testset_{:06d}'.format(iteration))
+                                       'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            editor_test(position_embedder, view_embedder, model_fine, ori_pose, hwf,
+            manipulator_demo(position_embedder, view_embedder, model_fine, ori_pose, hwf,
                         trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args)
     return
 

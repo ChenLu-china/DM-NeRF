@@ -6,7 +6,7 @@
       "obj_name": "cabinet",
       "obj_gt_id": 3,
       "tar_id": 8,
-      "editor_mode": "translation",
+      "mani_mode": "translation",
       "distance": [-2.4],
       "obj_center": [
         -0.519422,
@@ -18,7 +18,7 @@
       "obj_name": "chair",
       "obj_gt_id": 1,
       "tar_id": 1,
-      "editor_mode": "rotation",
+      "mani_mode": "rotation",
       "rotation": 360,
       "obj_center": [
         -0.349823,
@@ -30,7 +30,7 @@
       "obj_name": "table_3",
       "obj_gt_id": 10,
       "tar_id": 9,
-      "editor_mode": "rotation",
+      "mani_mode": "rotation",
       "rotation": 360,
       "obj_center": [
         1.43618,
@@ -42,7 +42,7 @@
       "obj_name": "chair_2",
       "obj_gt_id": 8,
       "tar_id": 4,
-      "editor_mode": "translation",
+      "mani_mode": "translation",
       "distance": [2.8],
       "obj_center": [
         1.49072,

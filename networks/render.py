@@ -4,7 +4,6 @@ from networks.helpers import sample_pdf
 
 DEBUG = False
 
-
 def render_train(raw, z_vals, rays_d):
     raw2alpha = lambda raw, dists, act_fn=F.relu: 1. - torch.exp(-act_fn(raw) * dists)
 
@@ -31,18 +30,10 @@ def render_train(raw, z_vals, rays_d):
     ins_map = torch.sigmoid(ins_map)
     ins_map = ins_map[..., :-1]
 
-    # constraint invalid point between camera and surface
-    """Need to add a cross_entropy losses"""
-    """log1: improve soft function"""
-    """log2: 
-        testing more parameter of deta_w and dists,
-        hint deta_h is fixed as 0.4 that the height of Gaussian distribution will close to 1.
-    """
-
     return rgb_map, weights, depth_map, ins_map
 
 
-def ins_nerf(rays, position_embedder, view_embedder, model_coarse, model_fine, z_vals_coarse, args):
+def dm_nerf(rays, position_embedder, view_embedder, model_coarse, model_fine, z_vals_coarse, args):
     # extract parameter
     # split rays
     rays_o, rays_d = rays

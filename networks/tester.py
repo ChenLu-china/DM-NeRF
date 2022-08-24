@@ -9,16 +9,17 @@ from skimage import metrics
 from networks.evaluator import ins_eval
 from networks.helpers import get_rays_k, z_val_sample
 from networks.evaluator import to8b
-from networks.render import ins_nerf
+from networks.render import dm_nerf
 from tools.visualizer import render_label2img, render_gt_label2img
 import cv2
+
 
 def render_test(position_embedder, view_embedder, model_coarse, model_fine, render_poses, hwk, args, gt_imgs=None,
                 gt_labels=None, ins_rgbs=None, savedir=None, matched_file=None, crop_mask=None):
     _, _, dataset_name, scene_name = args.datadir.split('/')
     H, W, K = hwk
-    cropped_imgs = []
-    cropped_labels = []
+    cropped_imgs, cropped_labels, psnrs, ssims, lpipses, aps = [], [], [], [], [], []
+
     if crop_mask is not None:
         crop_mask = crop_mask.reshape(-1)
         for index in range(len(gt_imgs)):
@@ -43,11 +44,6 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
         if os.path.exists(matched_file):
             os.remove(matched_file)
 
-    psnrs = []
-    ssims = []
-    lpipses = []
-    aps = []
-
     import json
     gt_color_dict_path = './data/color_dict.json'
     gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
@@ -70,8 +66,8 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
             rays_io = rays_o[step:step + N_test]  # (chuck, 3)
             rays_id = rays_d[step:step + N_test]  # (chuck, 3)
             batch_rays = torch.stack([rays_io, rays_id], dim=0)
-            all_info = ins_nerf(batch_rays, position_embedder, view_embedder,
-                                model_coarse, model_fine, z_val_coarse, args)
+            all_info = dm_nerf(batch_rays, position_embedder, view_embedder,
+                               model_coarse, model_fine, z_val_coarse, args)
             if full_rgb is None and full_ins is None:
                 full_rgb, full_ins = all_info['rgb_fine'], all_info['ins_fine']
             else:
@@ -102,10 +98,6 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
             print("RGB Evaluation standard:")
             print(f"PSNR: {psnr} SSIM: {ssim} LPIPS: {lpips_i.item()}")
 
-            # preprocess unique labels
-            # semantic instance segmentation evaluation part
-            # Matching test prediction results, function one is using Hungarian Matching method directly, function two
-            # is using another method, specifically implementation is blow:
             gt_label = gt_labels[i].cpu()
             if crop_mask is not None:
                 valid_gt_labels = torch.unique(gt_label)[:-1]
@@ -123,7 +115,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
                 valid_gt_labels = torch.unique(gt_label)
                 valid_gt_num = len(valid_gt_labels)
                 gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
-                gt_label_nnnn = valid_gt_labels.cpu().numpy()
+                gt_label_nnnn = valid_gt_labels.cpu().numpy()  # change name
                 if valid_gt_num > 0:
                     pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num)
                 else:
@@ -157,9 +149,6 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
         print(i, time.time() - t)
 
     if gt_imgs is not None:
-        # show_rgbs_file = os.path.join(args.basedir, args.expname, args.log_time, 'instance_rgbs.png')
-        # show_instance_rgb(ins_rgbs, show_rgbs_file)
-
         map_result_file = os.path.join(savedir, 'matching_log.json')
         with open(map_result_file, 'w') as f:
             json.dump(full_map, f)
@@ -170,18 +159,14 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
         output = output.transpose([1, 0])
         out_ap = np.mean(aps, axis=0)
         mean_output = np.array(
-            [np.nanmean(psnrs), np.nanmean(ssims), np.nanmean(lpipses), out_ap[0], out_ap[1], out_ap[2], out_ap[3],
+            [np.mean(psnrs), np.mean(ssims), np.mean(lpipses), out_ap[0], out_ap[1], out_ap[2], out_ap[3],
              out_ap[4], out_ap[5]])
         mean_output = mean_output.reshape([1, 9])
         output = np.concatenate([output, mean_output], 0)
         test_result_file = os.path.join(savedir, 'test_results.txt')
         np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
-        print('PSNR: {:.4f} SSIM: {:.4f}  LPIPS: {:.4f} APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
-            np.mean(psnrs), np.mean(ssims),
-            np.mean(lpipses),
-            out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
-
-        
-        
-        
-        
+        print(
+            'PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f}, \n APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
+                np.mean(psnrs), np.mean(ssims),
+                np.mean(lpipses),
+                out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))

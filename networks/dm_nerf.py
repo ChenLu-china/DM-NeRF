@@ -57,16 +57,17 @@ def get_embedder(multires, i=0):
     return embedder, embedder.out_dim
 
 
-class Instance_NeRF(nn.Module):
+class DM_NeRF(nn.Module):
     def __init__(self, D=8, W=256, input_ch_pts=3, input_ch_views=3, skips=[4], ins_num=None):
-        super(Instance_NeRF, self).__init__()
+        super(DM_NeRF, self).__init__()
         self.skips = skips
         self.input_ch_pts = input_ch_pts
         self.input_ch_views = input_ch_views
 
         self.mlps = nn.ModuleList(
-            [nn.Linear(input_ch_pts, W)] + [nn.Linear(W, W) if i not in skips else nn.Linear(W + input_ch_pts, W) for i in
-                                        range(D - 1)])
+            [nn.Linear(input_ch_pts, W)] + [nn.Linear(W, W) if i not in skips else nn.Linear(W + input_ch_pts, W) for i
+                                            in
+                                            range(D - 1)])
 
         self.rgb_feature_linear = nn.Linear(W, W)
         self.ins_feature_linear = nn.Linear(W, W)

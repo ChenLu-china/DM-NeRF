@@ -1,20 +1,21 @@
 import torch
 import os
 import imageio
-import numpy as np
 import time
 import json
 import lpips
 import cv2
+import numpy as np
 import torch.nn.functional as F
-from networks.helpers import get_rays_k, sample_pdf
-from networks.evaluator import to8b
-from tools.visualizer import editor_label2img, render_label2img, render_gt_label2img
+
 from skimage import metrics
+from networks.evaluator import to8b
 from networks.evaluator import ins_eval
+from networks.helpers import get_rays_k, sample_pdf
+from tools.visualizer import manipulator_label2img, render_label2img, render_gt_label2img
 
 
-def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
+def exchanger(ori_raw, tar_raws, ori_raw_pred, tar_raw_preds, move_labels):
     """
     :param q_pre_label:
     :param e_pre_label:
@@ -25,26 +26,26 @@ def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
     ori_pred_ins = torch.sigmoid(ori_pred_ins)
     ori_pred_label = torch.argmax(ori_pred_ins, dim=-1)  # 0-32
 
-    ori_accu_ins = ori_raw_pre[..., :-1]
-    ori_accu_ins = torch.sigmoid(ori_accu_ins)
-    ori_accu_label = torch.argmax(ori_accu_ins, dim=-1)  # 0-32
-    ori_accu_label = ori_accu_label[:, None].repeat(1, ori_pred_label.shape[-1])
+    ori_accum_ins = ori_raw_pred[..., :-1]
+    ori_accum_ins = torch.sigmoid(ori_accum_ins)
+    ori_accum_label = torch.argmax(ori_accum_ins, dim=-1)  # 0-32
+    ori_accum_label = ori_accum_label[:, None].repeat(1, ori_pred_label.shape[-1])
 
     for idx, move_label in enumerate(move_labels):
         tar_raw = tar_raws[idx]
-        tar_raw_pre = tar_raw_pres[idx]
+        tar_raw_pre = tar_raw_preds[idx]
         ######################################################
 
         ori_is_move = ori_pred_label == move_label
-        ori_acc_not_move = ori_accu_label != move_label
+        ori_acc_not_move = ori_accum_label != move_label
         ori_occludes = ori_acc_not_move * ori_is_move
-        ori_pred_label[ori_occludes == True] = ori_accu_label[ori_occludes == True]
+        ori_pred_label[ori_occludes == True] = ori_accum_label[ori_occludes == True]
 
         ######################################################
 
         ori_not_move = ori_pred_label != move_label
-        ori_accu_move = ori_accu_label == move_label
-        fillings = ori_accu_move * ori_not_move
+        ori_accum_move = ori_accum_label == move_label
+        fillings = ori_accum_move * ori_not_move
         # ori_pred_label[ccc == True] = move_label
 
         tar_pred_ins = tar_raw[..., 4:]
@@ -52,17 +53,17 @@ def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
         tar_pred_label = torch.argmax(tar_pred_ins, dim=-1)  # 0-32
         tar_pred_label_temp = tar_pred_label
 
-        tar_accu_ins = tar_raw_pre[..., :-1]
-        tar_accu_ins = torch.sigmoid(tar_accu_ins)
-        tar_accu_label = torch.argmax(tar_accu_ins, dim=-1)  # 0-32
-        tar_accu_label = tar_accu_label[:, None].repeat(1, tar_pred_label.shape[-1])
+        tar_accum_ins = tar_raw_pre[..., :-1]
+        tar_accum_ins = torch.sigmoid(tar_accum_ins)
+        tar_accum_label = torch.argmax(tar_accum_ins, dim=-1)  # 0-32
+        tar_accum_label = tar_accum_label[:, None].repeat(1, tar_pred_label.shape[-1])
 
         ######################################################
 
         tar_is_move = tar_pred_label == move_label
-        tar_accu_not_move = tar_accu_label != move_label
-        tar_occludes = tar_accu_not_move * tar_is_move
-        tar_pred_label[tar_occludes == True] = tar_accu_label[tar_occludes == True]
+        tar_accum_not_move = tar_accum_label != move_label
+        tar_occludes = tar_accum_not_move * tar_is_move
+        tar_pred_label[tar_occludes == True] = tar_accum_label[tar_occludes == True]
 
         ######################################################
 
@@ -89,42 +90,7 @@ def exchanger(ori_raw, tar_raws, ori_raw_pre, tar_raw_pres, move_labels):
     return ori_raw, tar_raws, ori_pred_label, tar_pred_label_temp
 
 
-def exchanger_fine(ori_raw, tar_raw, ori_raw_fine, tar_raw_fine, move_label):
-    """
-    :param q_pre_label:
-    :param e_pre_label:
-    :param t_label:
-    :return operation_mask: -1 means not exchange, 0 means eliminate, 1 means exchange
-    """
-    ori_pred_ins = ori_raw_fine[..., 4:]
-    ori_pred_ins = torch.sigmoid(ori_pred_ins)
-    ori_pred_label = torch.argmax(ori_pred_ins, dim=-1)  # 0-32
-
-    tar_pred_ins = tar_raw_fine[..., 4:]
-    tar_pred_ins = torch.sigmoid(tar_pred_ins)
-    tar_pred_label = torch.argmax(tar_pred_ins, dim=-1)  # 0-32
-
-    operation_mask = torch.zeros_like(ori_pred_label)
-    ori_move_mask, tar_move_mask = torch.zeros_like(ori_pred_label), torch.zeros_like(tar_pred_label)
-    ori_move_mask[ori_pred_label == move_label] = -2
-    tar_move_mask[tar_pred_label == move_label] = 1
-
-    reduced_mask = tar_move_mask - ori_move_mask
-
-    operation_mask[reduced_mask == 0] = -1
-    operation_mask[reduced_mask == 1] = 1
-    operation_mask[reduced_mask == 2] = 0
-    operation_mask[reduced_mask == 3] = 1
-
-    '''-1 means not exchange, 0 means eliminate, 1 means exchange'''
-
-    ori_raw[operation_mask == 1] = tar_raw[operation_mask == 1]
-    ori_raw[operation_mask == 0] = ori_raw[operation_mask == 0] * 0
-
-    return ori_raw, tar_raw, ori_pred_label, tar_pred_label
-
-
-def editor_render(raw, z_vals, rays_d):
+def manipulator_render(raw, z_vals, rays_d):
     """Transforms model's predictions to semantically meaningful values.
     Args:
         raw: [num_rays, num_samples along ray, 4]. Prediction from model.
@@ -153,15 +119,12 @@ def editor_render(raw, z_vals, rays_d):
 
     ins_map = torch.sum(weights[..., None] * ins_labels, -2)  # [N_rays, 16]
     ins_map = torch.sigmoid(ins_map)
-    # semantic_map = torch.softmax(semantic_map, dim=1)
     depth_map = torch.sum(weights * z_vals, -1)
-    # disp_map = 1. / torch.max(1e-10 * torch.ones_like(depth_map), depth_map / torch.sum(weights, -1))
-    # acc_map = torch.sum(weights, -1)
 
     return rgb_map, weights, depth_map, ins_map
 
 
-def editor_nerf(rays, position_embedder, view_embedder, model, N_samples=None, near=None, far=None, z_vals=None):
+def manipulator_nerf(rays, position_embedder, view_embedder, model, N_samples=None, near=None, far=None, z_vals=None):
     rays_o, rays_d = rays
     viewdirs = rays_d
     viewdirs = viewdirs / torch.norm(viewdirs, dim=-1, keepdim=True)
@@ -190,112 +153,38 @@ def editor_nerf(rays, position_embedder, view_embedder, model, N_samples=None, n
     return raw, z_vals
 
 
-def editor_ins_b(position_embedder, view_embedder, model_coarse, model_fine, ori_rays, tar_rays, args):
-    """
-            change stratagy, the integral and move color are high accuracy, so we just eliminate the color's value of points
-            which has the final label and the position betweeen the camera and the plane.
-        """
-    # extract parameter
-    N_samples, N_importance, near, far = args.N_samples, args.N_importance, args.near, args.far
-
-    """first step"""
-    # sample 64 points
-    ori_raw, ori_z_vals = editor_nerf(ori_rays, position_embedder, view_embedder, model_coarse, N_samples, near, far)
-    tar_raw, tar_z_vals = editor_nerf(tar_rays, position_embedder, view_embedder, model_coarse, N_samples, near, far)
-
-    # ori_raw_fine, ori_z_vals_fine = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near,
-    #                                             far)
-    # tar_raw_fine, tar_z_vals_fine = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine, N_samples, near,
-    #                                             far)
-    # ori
-    _, ori_weights, _, _ = editor_render(ori_raw, ori_z_vals, ori_rays[1])
-    # sample 128
-    ori_z_vals_mid = .5 * (ori_z_vals[..., 1:] + ori_z_vals[..., :-1])
-    ori_z_samples = sample_pdf(ori_z_vals_mid, ori_weights[..., 1:-1], N_importance)  # interpolate 128 points
-    ori_z_vals_prec, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples], dim=-1), dim=-1)
-    ori_raw_prec, _ = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near, far,
-                                  z_vals=ori_z_vals_prec)
-    _, _, _, ori_ins_accu = editor_render(ori_raw_prec, ori_z_vals_prec, ori_rays[1])
-
-    # tar
-    tar_rgb, tar_weights, tar_depth, tar_ins = editor_render(tar_raw, tar_z_vals, tar_rays[1])
-    tar_z_vals_mid = .5 * (tar_z_vals[..., 1:] + tar_z_vals[..., :-1])
-    tar_z_samples = sample_pdf(tar_z_vals_mid, tar_weights[..., 1:-1], N_importance)
-    tar_z_vals_prec, _ = torch.sort(torch.cat([tar_z_vals, tar_z_samples], dim=-1), dim=-1)
-    tar_raw_prec, _ = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine,
-                                  z_vals=tar_z_vals_prec)
-    _, _, _, tar_ins_accu = editor_render(tar_raw_prec, tar_z_vals_prec, tar_rays[1])
-    # exchange
-    ori_raw, tar_raw, _, tar_pred_label = exchanger(ori_raw, tar_raw, ori_ins_accu, tar_ins_accu, args.target_label)
-
-    # calculate weights
-    ori_rgb, ori_weights, ori_depth, ori_ins = editor_render(ori_raw, ori_z_vals, ori_rays[1])
-    tar_rgb, tar_weights, tar_depth, tar_ins = editor_render(tar_raw, tar_z_vals, tar_rays[1])
-
-    """step2"""
-    # reset weights
-    tar_z_vals_mid = .5 * (tar_z_vals[..., 1:] + tar_z_vals[..., :-1])
-    tar_z_samples = sample_pdf(tar_z_vals_mid, tar_weights[..., 1:-1], N_importance)
-    tar_z_vals_unreset, _ = torch.sort(torch.cat([tar_z_vals, tar_z_samples], dim=-1), dim=-1)
-    tar_raw_unreset, tar_z_vals_unreset = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine,
-                                                      z_vals=tar_z_vals_unreset)
-    tar_rgb, tar_weights_unreset, tar_depth, tar_ins = editor_render(tar_raw_unreset, tar_z_vals_unreset, tar_rays[1])
-    weights_mask = (tar_pred_label == args.target_label).type(torch.float32)
-    tar_weights = tar_weights * 1
-
-    # resample 128 points respectively
-    ori_z_vals_mid = .5 * (ori_z_vals[..., 1:] + ori_z_vals[..., :-1])
-    ori_z_samples = sample_pdf(ori_z_vals_mid, ori_weights[..., 1:-1], N_importance)  # interpolate 128 points
-    tar_z_samples = sample_pdf(tar_z_vals_mid, tar_weights[..., 1:-1], N_importance)
-
-    # cat all the points 64+128+128
-    ori_z_vals, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples, tar_z_samples], dim=-1), dim=-1)
-    tar_z_vals, _ = torch.sort(torch.cat([tar_z_vals, ori_z_samples, tar_z_samples], dim=-1), dim=-1)
-
-    ori_raw, ori_z_vals = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, z_vals=ori_z_vals)
-    tar_raw, tar_z_vals = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine, z_vals=tar_z_vals)
-
-    ori_raw, tar_raw, _, _ = exchanger(ori_raw, tar_raw, ori_ins_accu, tar_ins_accu, args.target_label)
-
-    # final render a rgb and ins map
-    final_rgb, final_weights, final_depth, final_ins = editor_render(ori_raw, ori_z_vals, ori_rays[1])
-
-    return final_rgb, final_ins, tar_rgb, tar_ins_accu
-
-
-def editor_ins(position_embedder, view_embedder, model_coarse, model_fine, ori_rays, f_tar_rays, args):
+def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_rays, f_tar_rays, args):
     """
         change stratagy, the integral and move color are high accuracy, so we just eliminate the color's value of points
         which has the final label and the position betweeen the camera and the plane.
     """
     # extract parameter
     N_samples, N_importance, near, far = args.N_samples, args.N_importance, args.near, args.far
-    ori_raw, ori_z_vals = editor_nerf(ori_rays, position_embedder, view_embedder, model_coarse, N_samples, near, far)
+    ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_coarse, N_samples, near,
+                                           far)
 
     # ori
-    _, ori_weights, _, _ = editor_render(ori_raw, ori_z_vals, ori_rays[1])
+    _, ori_weights, _, _ = manipulator_render(ori_raw, ori_z_vals, ori_rays[1])
 
     # sample 128
     ori_z_vals_mid = .5 * (ori_z_vals[..., 1:] + ori_z_vals[..., :-1])
     ori_z_samples = sample_pdf(ori_z_vals_mid, ori_weights[..., 1:-1], N_importance)  # interpolate 128 points
-    ori_z_vals_prec, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples], dim=-1), dim=-1)
-    ori_raw_prec, _ = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near, far,
-                                  z_vals=ori_z_vals_prec)
-    _, _, _, ori_ins_accu = editor_render(ori_raw_prec, ori_z_vals_prec, ori_rays[1])
+    ori_z_vals_full, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples], dim=-1), dim=-1)
+    ori_raw_full, _ = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near, far,
+                                       z_vals=ori_z_vals_full)
+    _, _, _, ori_ins_accum = manipulator_render(ori_raw_full, ori_z_vals_full, ori_rays[1])
 
-    tar_raws, tar_rgbs, f_tar_weights, tar_instances, f_tar_z_vals, f_tar_z_samples, tar_ins_accus, = [], [], [], [], [], [], []
+    tar_raws, tar_rgbs, f_tar_weights, tar_instances, f_tar_z_vals, f_tar_z_samples, tar_ins_accums, = [], [], [], [], [], [], []
     for idx, tar_rays in enumerate(f_tar_rays):
         # sample 64
-        tar_raw, tar_z_vals = editor_nerf(tar_rays, position_embedder, view_embedder, model_coarse, N_samples, near,
-                                          far)
+        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_coarse, N_samples,
+                                               near,
+                                               far)
         tar_raws.append(tar_raw)
         f_tar_z_vals.append(tar_z_vals)
-        # ori_raw_fine, ori_z_vals_fine = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near,
-        #                                             far)
-        # tar_raw_fine, tar_z_vals_fine = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine, N_samples, near,
-        #                                             far)
+
         # tar
-        tar_rgb, tar_weights, tar_depth, tar_ins = editor_render(tar_raw, tar_z_vals, tar_rays[1])
+        tar_rgb, tar_weights, tar_depth, tar_ins = manipulator_render(tar_raw, tar_z_vals, tar_rays[1])
         tar_rgbs.append(tar_rgb)
         f_tar_weights.append(tar_weights)
         tar_instances.append(tar_ins)
@@ -303,19 +192,19 @@ def editor_ins(position_embedder, view_embedder, model_coarse, model_fine, ori_r
         # sample 128
         tar_z_vals_mid = .5 * (tar_z_vals[..., 1:] + tar_z_vals[..., :-1])
         tar_z_samples = sample_pdf(tar_z_vals_mid, tar_weights[..., 1:-1], N_importance)
-        tar_z_vals_prec, _ = torch.sort(torch.cat([tar_z_vals, tar_z_samples], dim=-1), dim=-1)
-        tar_raw_prec, _ = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine,
-                                      z_vals=tar_z_vals_prec)
-        _, _, _, tar_ins_accu = editor_render(tar_raw_prec, tar_z_vals_prec, tar_rays[1])
+        tar_z_vals_full, _ = torch.sort(torch.cat([tar_z_vals, tar_z_samples], dim=-1), dim=-1)
+        tar_raw_full, _ = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_fine,
+                                           z_vals=tar_z_vals_full)
+        _, _, _, tar_ins_accum = manipulator_render(tar_raw_full, tar_z_vals_full, tar_rays[1])
         f_tar_z_samples.append(tar_z_samples)
-        tar_ins_accus.append(tar_ins_accu)
+        tar_ins_accums.append(tar_ins_accum)
 
     # exchange
-    ori_raw, tar_raw, _, tar_pred_label = exchanger(ori_raw, tar_raws, ori_ins_accu, tar_ins_accus, args.target_label)
+    ori_raw, tar_raw, _, tar_pred_label = exchanger(ori_raw, tar_raws, ori_ins_accum, tar_ins_accums, args.target_label)
 
     """step2"""
     # calculate weights
-    ori_rgb, ori_weights, ori_depth, ori_ins = editor_render(ori_raw, ori_z_vals, ori_rays[1])
+    ori_rgb, ori_weights, ori_depth, ori_ins = manipulator_render(ori_raw, ori_z_vals, ori_rays[1])
 
     # resample 128 points respectively
     ori_z_vals_mid = .5 * (ori_z_vals[..., 1:] + ori_z_vals[..., :-1])
@@ -326,20 +215,22 @@ def editor_ins(position_embedder, view_embedder, model_coarse, model_fine, ori_r
     ori_z_vals, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples, f_tar_z_samples], dim=-1), dim=-1)
     for idx, tar_rays in enumerate(f_tar_rays):
         tar_z_vals = f_tar_z_vals[idx]
-        ori_raw, ori_z_vals = editor_nerf(ori_rays, position_embedder, view_embedder, model_fine, z_vals=ori_z_vals)
+        ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_fine,
+                                               z_vals=ori_z_vals)
         tar_z_vals, _ = torch.sort(torch.cat([tar_z_vals, ori_z_samples, f_tar_z_samples], dim=-1), dim=-1)
-        tar_raw, tar_z_vals = editor_nerf(tar_rays, position_embedder, view_embedder, model_fine, z_vals=tar_z_vals)
+        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_fine,
+                                               z_vals=tar_z_vals)
         tar_raws[idx] = tar_raw
 
-    ori_raw, tar_raws, _, _ = exchanger(ori_raw, tar_raws, ori_ins_accu, tar_ins_accus, args.target_label)
+    ori_raw, tar_raws, _, _ = exchanger(ori_raw, tar_raws, ori_ins_accum, tar_ins_accums, args.target_label)
     # final render a rgb and ins map
-    final_rgb, final_weights, final_depth, final_ins = editor_render(ori_raw, ori_z_vals, ori_rays[1])
+    final_rgb, final_weights, final_depth, final_ins = manipulator_render(ori_raw, ori_z_vals, ori_rays[1])
 
-    return final_rgb, final_ins, tar_rgb, tar_ins_accu
+    return final_rgb, final_ins, tar_rgb, tar_ins_accum
 
 
-def editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, trans_dicts, save_dir,
-                ins_rgbs, args, gt_rgbs=None, gt_labels=None):
+def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, trans_dicts, save_dir,
+                     ins_rgbs, args, gt_rgbs=None, gt_labels=None):
     """
             the first step to find the
     """
@@ -394,9 +285,9 @@ def editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine,
             tar_rays_id = tar_rays_d[step:step + N_test]  # (chuck, 3)
             tar_batch_rays = torch.stack([tar_rays_io, tar_rays_id], dim=0)
             # edit render
-            ori_rgb, ins, tar_rgb, tar_ins = editor_ins(position_embedder, view_embedder, model_coarse, model_fine,
-                                                        ori_batch_rays,
-                                                        tar_batch_rays, args)
+            ori_rgb, ins, tar_rgb, tar_ins = manipulator(position_embedder, view_embedder, model_coarse, model_fine,
+                                                         ori_batch_rays,
+                                                         tar_batch_rays, args)
             # all_info = ins_nerf(tar_batch_rays, position_embedder, view_embedder, model_fine, model_coarse, args)
             if full_rgb is None and full_ins is None:
                 full_rgb, full_ins, full_tar_rgb, full_tar_ins = ori_rgb, ins, tar_rgb, tar_ins
@@ -409,12 +300,6 @@ def editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine,
         """editor finish"""
         ori_rgb = full_rgb.reshape([H, W, full_rgb.shape[-1]])
         ins = full_ins.reshape([H, W, full_ins.shape[-1]])
-
-        # label = torch.argmax(ins, dim=-1)
-        # label = label.reshape([H, W])
-        # ins_img = editor_label2img(label, ins_rgbs, color_dict, args.ins_num)
-        # ins_file = os.path.join(ori_ins_dict, f'ins_{trans_dict["mode"]}_{str(i).zfill(3)}.png')
-        # imageio.imwrite(ins_file, ins_img)
 
         """calculating step for our dataset"""
         if gt_rgbs is not None:
@@ -512,19 +397,18 @@ def editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine,
         test_result_file = os.path.join(save_dir, 'test_results.txt')
         np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
         print(
-            'PSNR: {:.4f} SSIM: {:.4f}  LPIPS: {:.4f} APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
+            'PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f} \n APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
                 np.mean(psnrs), np.mean(ssims),
                 np.mean(lpipses),
                 out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
 
     print("finished!!!!!!!")
     return
-    # # generation video
-    # imageio.mimwrite(os.path.join(save_dir, f'editor_video.mp4'), ori_rgbs, fps=len(ori_rgbs) // 6, quality=8)
 
 
-def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, save_dir, ins_rgbs, args,
-                objs, objs_trans, view_poses, ins_map):
+def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, save_dir, ins_rgbs,
+                     args,
+                     objs, objs_trans, view_poses, ins_map):
     """
             the first step to find the
     """
@@ -537,7 +421,7 @@ def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine,
     gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
     color_dict = gt_color_dict[dataset_name][scene_name]
 
-    save_dir = os.path.join(save_dir, "editor_output")
+    save_dir = os.path.join(save_dir, "mani_output")
     os.makedirs(save_dir, exist_ok=True)
 
     # original
@@ -557,33 +441,33 @@ def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine,
         for obj in objs:
             obj_name = obj['obj_name']
             target_labels.append(obj['tar_id'])
-            editor_mode = obj['editor_mode']
-            if editor_mode == 'deform':
+            mani_mode = obj['mani_mode']
+            if mani_mode == 'deform':
                 print("deforming......")
                 v_1 = np.linspace(1, H, H)
-                editor_func = obj['deform_func']
-                if editor_func == 'sin':
+                deform_func = obj['deform_func']
+                if deform_func == 'sin':
                     """deform sin"""
                     v_1 = ((8 * np.pi) / 400) * v_1
                     v_1 = np.repeat(v_1[:, np.newaxis], W, axis=-1)
                     v_1 = np.sin(v_1) * deform_v[i]
                     v_1 = torch.from_numpy(v_1.reshape(-1)).to(args.device)
-                elif editor_func == 'ex':
+                elif deform_func == 'ex':
                     """deform e^x"""
                     v_1 = np.exp(-1 * v_1 / 50)
                     v_1 = np.repeat(v_1[:, np.newaxis], W, axis=-1)
                     v_1 = torch.from_numpy(v_1.reshape(-1)).to(args.device)
-                elif editor_func == 'linear':
+                elif deform_func == 'linear':
                     """"deform linear"""
                     v_1 = (v_1 - 200) / 215
                     v_1 = np.repeat(v_1[:, np.newaxis], W, axis=-1)
                     v_1 = torch.from_numpy(v_1.reshape(-1)).to(args.device)
-                elif editor_func == 'abs_linear':
+                elif deform_func == 'abs_linear':
                     """"deform linear"""
                     v_1 = np.abs(v_1 - 200) / 200
                     v_1 = np.repeat(v_1[:, np.newaxis], W, axis=-1)
                     v_1 = torch.from_numpy(v_1.reshape(-1)).to(args.device)
-                elif editor_func == 'ln':
+                elif deform_func == 'ln':
                     """deform ln"""
                     v_1 = v_1 / 200
                     v_1 = np.repeat(v_1[:, np.newaxis], W, axis=-1)
@@ -620,9 +504,9 @@ def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine,
             tar_rays_ids = tar_rays_ds[:, step:step + N_test]  # (chuck, 3)
             tar_batch_rays = torch.stack([tar_rays_ios, tar_rays_ids], dim=1)
             # edit render
-            ori_rgb, ins, tar_rgb, tar_ins = editor_ins(position_embedder, view_embedder, model_coarse, model_fine,
-                                                        ori_batch_rays,
-                                                        tar_batch_rays, args)
+            ori_rgb, ins, tar_rgb, tar_ins = manipulator(position_embedder, view_embedder, model_coarse, model_fine,
+                                                         ori_batch_rays,
+                                                         tar_batch_rays, args)
             if full_rgb is None and full_ins is None:
                 full_rgb, full_ins, full_tar_rgb, full_tar_ins = ori_rgb, ins, tar_rgb, tar_ins
             else:
@@ -632,11 +516,6 @@ def editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine,
                 full_tar_ins = torch.cat((full_tar_ins, tar_ins), dim=0)
         ori_rgb = full_rgb.reshape([H, W, full_rgb.shape[-1]])
         ins = full_ins.reshape([H, W, full_ins.shape[-1]])
-        # ori_rgb_s = ori_rgb.cpu().numpy()
-        # ori_rgb_s = ori_rgb_s.reshape([H, W, 3])
-        # ori_rgb_s = to8b(ori_rgb_s)
-        # img_file = os.path.join(save_dir, f'{0}_rgb.png')
-        # imageio.imwrite(img_file, ori_rgb_s)
 
         """editor finish"""
         # get predicted rgb

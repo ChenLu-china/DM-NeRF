@@ -2,12 +2,12 @@ import torch
 import os
 import numpy as np
 from config import initial, create_nerf
-from datasets.scannet.loader_scannet import load_data
+from datasets.scannet.loader import load_data
 from networks.evaluator import ins_criterion, img2mse, mse2psnr
 from networks.penalizer import ins_penalizer
 from networks.tester import render_test
-from networks.helpers import gt_select_crop, z_val_sample, round_losses
-from networks.render import ins_nerf
+from networks.helpers import get_select_crop, z_val_sample, round_losses
+from networks.render import dm_nerf
 
 np.random.seed(0)
 torch.cuda.manual_seed(4)
@@ -26,10 +26,10 @@ def train():
         gt_label = gt_labels[img_i].to(args.device)
         ins_index = ins_indices[img_i]
 
-        target_c, target_i, batch_rays, args.N_ins = gt_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
+        target_c, target_i, batch_rays, args.N_ins = get_select_crop(gt_rgb, pose, K, gt_label, ins_index, crop_mask,
                                                                     args.N_train)
 
-        all_info = ins_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
+        all_info = dm_nerf(batch_rays, position_embedder, view_embedder, model_coarse, model_fine, z_val_coarse, args)
 
         # coarse losses
         rgb_loss_coarse = img2mse(all_info['rgb_coarse'], target_c)
@@ -51,13 +51,13 @@ def train():
 
         # use penalize
         if args.penalize:
-            penalize_coarse = ins_penalizer(all_info['raw_coarse'], all_info['z_vals_coarse'],
+            emptiness_coarse = ins_penalizer(all_info['raw_coarse'], all_info['z_vals_coarse'],
                                             all_info['depth_coarse'], batch_rays[1], args)
-            penalize_fine = ins_penalizer(all_info['raw_fine'], all_info['z_vals_fine'],
+            emptiness_fine = ins_penalizer(all_info['raw_fine'], all_info['z_vals_fine'],
                                           all_info['depth_fine'], batch_rays[1], args)
 
-            penalize_loss = penalize_fine + penalize_coarse
-            total_loss = total_loss + penalize_loss
+            emptiness_loss = emptiness_fine + emptiness_coarse
+            total_loss = total_loss + emptiness_loss
 
         # optimizing
         optimizer.zero_grad()
@@ -78,7 +78,7 @@ def train():
             r_invalid_ce_fine, r_penalize_loss = round_losses(psnr_fine.item(), psnr_coarse.item(), total_loss.item(),
                                                               rgb_loss.item(), ins_loss.item(), valid_siou_fine.item(),
                                                               valid_ce_fine.item(), invalid_ce_fine.item(),
-                                                              penalize_loss.item())
+                                                              emptiness_loss.item())
             print(
                 f"[TRAIN] Iter: {i} F_PSNR: {r_psnr_fine} C_PSNR: {r_psnr_coarse} Total_Loss: {r_total_loss} \n"
                 f"RGB_Loss: {r_rgb_loss} Ins_Loss: {r_ins_loss} Ins_SIoU_Loss: {r_val_siou_fine} \n"

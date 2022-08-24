@@ -207,7 +207,7 @@ def png_i(f):
     return imageio.imread(f)
 
 
-def load_editor_poses(args):
+def load_mani_poses(args):
     load_path = os.path.join(args.datadir, 'transformation_matrix.json')
     with open(load_path, 'r') as rf:
         obj_trans = json.load(rf)

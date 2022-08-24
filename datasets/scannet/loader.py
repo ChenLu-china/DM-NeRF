@@ -3,8 +3,15 @@ import imageio
 import os
 import h5py
 import cv2
-from datasets.scannet.loader_vis import vis_load
-from datasets.scannet.loader_vis import vis_segmentation, ins2img, ins2img_full, vis_crop
+import json
+
+
+def load_mani_poses(args):
+    load_path = os.path.join(args.datadir, 'transformation_matrix.json')
+    with open(load_path, 'r') as rf:
+        obj_trans = json.load(rf)
+    rf.close()
+    return obj_trans
 
 
 def crop_data(H, W, crop_size):
@@ -98,7 +105,6 @@ class img_processor:
 
 
 class ins_processor:
-
     def __init__(self, data_dir, testskip=1, resize=True, weakly_value=1.):
         super(ins_processor, self).__init__()
         self.data_dir = data_dir
@@ -185,15 +191,15 @@ class ins_processor:
 
 
 def load_data(args):
-    imgs, poses, i_split, intrinsic = data_loader.img_processor(args.datadir,
-                                                                args.testskip,
-                                                                resize=args.resize).load_rgb()
+    imgs, poses, i_split, intrinsic = img_processor(args.datadir,
+                                                    args.testskip,
+                                                    resize=args.resize).load_rgb()
 
-    ins_processor = data_loader.ins_processor(args.datadir,
-                                              testskip=args.testskip,
-                                              resize=args.resize,
-                                              weakly_value=args.weakly_value)
-    gt_labels, ins_rgbs, ins_num = ins_processor.load_semantic_instance()
+    decompose_processor = ins_processor(args.datadir,
+                                        testskip=args.testskip,
+                                        resize=args.resize,
+                                        weakly_value=args.weakly_value)
+    gt_labels, ins_rgbs, ins_num = decompose_processor.load_semantic_instance()
     crop_size = [args.crop_width, args.crop_height]
 
     H, W = imgs[0].shape[:2]

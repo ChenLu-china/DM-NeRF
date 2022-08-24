@@ -7,7 +7,7 @@ import numpy as np
 import trimesh
 import torch.nn.functional as F
 from tools.visualizer import *
-from networks.render import ins_nerf
+from networks.render import dm_nerf
 from networks.helpers import z_val_sample
 
 
@@ -90,7 +90,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
     # mesh.show()
 
     exported = trimesh.exchange.export.export_mesh(mesh_canonical,
-                                                   os.path.join(save_dir, 'mesh_canonical.ply'))
+                                                   os.path.join(save_dir, 'mesh.ply'))
     print("Saving Marching Cubes mesh to mesh_canonical.ply !")
 
     o3d_mesh = trimesh_to_open3d(mesh)
@@ -115,8 +115,6 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
     print("###########################################")
 
     ## use normal vector method as suggested by the author, see https://github.com/bmild/nerf/issues/44
-    mesh_recon_save_dir = os.path.join(save_dir, "use_vertex_normal")
-    os.makedirs(mesh_recon_save_dir, exist_ok=True)
 
     selected_mesh = o3d_mesh_canonical_clean
     rays_d = - torch.FloatTensor(
@@ -143,7 +141,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
             rays_id = rays_d[step:step + N_test]  # (chuck, 3)
             batch_rays = torch.stack([rays_io, rays_id], dim=0)
             batch_rays = batch_rays.to(args.device)
-            all_info = ins_nerf(batch_rays, position_embedder, view_embedder,
+            all_info = dm_nerf(batch_rays, position_embedder, view_embedder,
                                 model_coarse, model_fine, z_val_coarse, args)
             if full_ins is None:
                 full_ins = all_info['ins_fine']
@@ -154,7 +152,7 @@ def mesh_main(position_embedder, view_embedder, model_coarse, model_fine, args, 
 
     o3d_mesh_canonical_clean.vertex_colors = o3d.utility.Vector3dVector(ins_color[:, [2, 1, 0]] / 255.0)
     o3d.io.write_triangle_mesh(
-        os.path.join(mesh_recon_save_dir, 'color_mesh_decomposition.ply'),
+        os.path.join(save_dir, 'color_mesh.ply'),
         o3d_mesh_canonical_clean)
     print("Saving Marching Cubes mesh to color_mesh_decomposition.ply")
 

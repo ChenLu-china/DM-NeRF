@@ -2,7 +2,7 @@ import os
 import time
 import configargparse
 import torch
-from networks.dm_nerf import get_embedder, Instance_NeRF
+from networks.dm_nerf import get_embedder, DM_NeRF
 
 
 def config_parser():
@@ -120,12 +120,12 @@ def config_parser():
 
     parser.add_argument("--ori_pose", type=int, default=None,
                         help='sign the instance center')
-    # editor parameter
-    parser.add_argument("--editor_demo", action='store_true',
+    # manipulation parameter
+    parser.add_argument("--mani_demo", action='store_true',
                         help='do not optimize, reload weights and render out render_poses path')
-    parser.add_argument("--editor_eval", action='store_true',
+    parser.add_argument("--mani_eval", action='store_true',
                         help='do not optimize, reload weights and render out render_poses path')
-    parser.add_argument("--editor_mode", type=str, default='rotation',
+    parser.add_argument("--mani_mode", type=str, default='rotation',
                         help='select operation mode includes translation, rotation, scale, multi')
     parser.add_argument("--views", type=int, default=720,
                         help="the amount of generated view")
@@ -149,11 +149,11 @@ def create_nerf(args):
     position_embedder, input_ch_pos = get_embedder(args.multires, args.i_embed)
     view_embedder, input_ch_view = get_embedder(args.multires_views, args.i_embed)
     model_coarse = \
-        Instance_NeRF(args.netdepth, args.netwidth, input_ch_pos, input_ch_view, [4], args.ins_num).to(args.device)
+        DM_NeRF(args.netdepth, args.netwidth, input_ch_pos, input_ch_view, [4], args.ins_num).to(args.device)
     print(model_coarse)
 
     model_fine = \
-        Instance_NeRF(args.netdepth, args.netwidth, input_ch_pos, input_ch_view, [4], args.ins_num).to(args.device)
+        DM_NeRF(args.netdepth, args.netwidth, input_ch_pos, input_ch_view, [4], args.ins_num).to(args.device)
     print(model_fine)
     return position_embedder, view_embedder, model_coarse, model_fine, args
 

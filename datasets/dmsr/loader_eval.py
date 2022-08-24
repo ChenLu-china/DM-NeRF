@@ -4,7 +4,7 @@ import h5py
 import numpy as np
 import json
 import imageio
-from datasets.dmsr.loader_vis import vis_segmentation, to8b, labeltoimg, vis_selected_pixels
+
 
 trans_t = lambda t: torch.Tensor([
     [1, 0, 0, 0],
@@ -41,17 +41,17 @@ def png_i(f):
 
 
 class processor:
-    def __init__(self, basedir, editor_mode, testskip=1):
+    def __init__(self, basedir, mani_mode, testskip=1):
         super(processor, self).__init__()
         self.basedir = basedir
-        self.editor_mode = editor_mode
+        self.mani_mode = mani_mode
         self.testskip = testskip
         # self.rgbs, self.pose, self.split = self.load_rgb()
 
     def load_gts(self):
         poses = []
 
-        fname = os.path.join(self.basedir, f'indoor_{self.editor_mode}_test', 'rgbs')
+        fname = os.path.join(self.basedir, f'indoor_{self.mani_mode}_test', 'rgbs')
         imagefile = [os.path.join(fname, f) for f in sorted(os.listdir(fname))]
         rgbs = [png_i(f) for f in imagefile]
 
@@ -68,7 +68,7 @@ class processor:
         rgbs = np.array(rgbs)[index]
         rgbs = (rgbs / 255.).astype(np.float32)  # keep all 3 channels (RGB)
 
-        ins_path = os.path.join(self.basedir, f'indoor_{self.editor_mode}_test', 'semantic_instance')
+        ins_path = os.path.join(self.basedir, f'indoor_{self.mani_mode}_test', 'semantic_instance')
         ins_files = [os.path.join(ins_path, f) for f in sorted(os.listdir(ins_path))]
         gt_labels = np.array([png_i(f) for f in ins_files])
         gt_labels = gt_labels[index]
@@ -157,20 +157,18 @@ class ins_processor:
         return all_ins_hws
 
 
-def load_editor_poses(args):
+def load_mani_poses(args):
     load_path = os.path.join(args.datadir, 'transformation_matrix.json')
     with open(load_path, 'r') as rf:
-        editor_poses = json.load(rf)
+        mani_poses = json.load(rf)
     rf.close()
-
-    # ori_pose = np.array(editor_poses['ori_pose'])
-    transformations = editor_poses['transformations']
+    transformations = mani_poses['transformations']
     return transformations
 
 
 def load_data(args):
     # load color image RGB
-    imgs, poses, gt_labels, ins_rgbs, camera_angle_x = processor(args.datadir, args.editor_mode,
+    imgs, poses, gt_labels, ins_rgbs, camera_angle_x = processor(args.datadir, args.mani_mode,
                                                                  testskip=args.testskip).load_gts()
     ins_num = len(ins_rgbs)
     H, W = imgs[0].shape[:2]

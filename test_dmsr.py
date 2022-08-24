@@ -2,8 +2,8 @@ import os
 import torch
 from config import create_nerf, initial
 from tools import pose_generator
-from datasets.dmsr import dmsr_loader_val
-from datasets.dmsr import dmsr_loader
+from datasets.dmsr import loader_eval
+from datasets.dmsr import loader
 from networks import manipulator
 from networks import manipulator
 from networks.tester import render_test
@@ -35,25 +35,23 @@ def test():
                         matched_file=mathed_file)
             print('Done rendering', testsavedir)
 
-        elif args.editor_eval:
+        elif args.mani_eval:
             print('EDIT EVALUATION ONLY')
             """this operations list can re-design"""
-
-            # ori_pose, tar_poses = load_editor_poses(args)
             in_images = torch.Tensor(images)
             in_instances = torch.Tensor(instances).type(torch.int8)
             in_poses = torch.Tensor(poses)
             pose_generator.generate_poses_eval(args)
-            trans_dicts = dmsr_loader_val.load_editor_poses(args)
-            testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'editor_testset_{:06d}'.format(iteration))
+            trans_dicts = loader_eval.load_mani_poses(args)
+            testsavedir = os.path.join(args.basedir, args.expname, args.log_time, 'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            manipulator.editor_test_eval(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
+            manipulator.manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, in_poses, hwk,
                                          trans_dicts=trans_dicts, save_dir=testsavedir, ins_rgbs=ins_colors, args=args, gt_rgbs=in_images
                                          , gt_labels=in_instances)
             
             pass
 
-        elif args.editor_demo:
+        elif args.mani_demo:
             print("###########################################")
             print()
             print('EDIT DEMO ONLY')
@@ -61,16 +59,14 @@ def test():
             print("###########################################")
 
             """this operations list can re-design"""
-
-            # ori_pose, tar_poses = load_editor_poses(args)
             print('Loaded blender', hwk, args.datadir)
             int_view_poses = torch.Tensor(view_poses)
             pose_generator.generate_poses_demo(objs, args)
-            obj_trans = dmsr_loader.load_editor_poses(args)
+            obj_trans = loader.load_mani_poses(args)
             testsavedir = os.path.join(args.basedir, args.expname, args.log_time,
-                                       'editor_testset_{:06d}'.format(iteration))
+                                       'mani_testset_{:06d}'.format(iteration))
             os.makedirs(testsavedir, exist_ok=True)
-            manipulator.editor_test_demo(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
+            manipulator.manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, poses, hwk,
                                     save_dir=testsavedir, ins_rgbs=ins_colors, args=args, objs=objs,
                                     objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
 
@@ -96,10 +92,10 @@ if __name__ == '__main__':
     args = initial()
 
     # load data
-    if args.editor_val:
-        images, poses, hwk, instances, ins_colors, args.ins_num = dmsr_loader_val.load_data(args)
+    if args.mani_eval:
+        images, poses, hwk, instances, ins_colors, args.ins_num = loader_eval.load_data(args)
     else:
-        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = dmsr_loader.load_data(
+        images, poses, hwk, i_split, instances, ins_colors, args.ins_num, objs, view_poses, ins_map = loader.load_data(
             args)
     print('Loaded blender', images.shape, hwk, args.datadir)
 
