@@ -83,12 +83,10 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
             rgb = full_rgb.reshape([H, W, full_rgb.shape[-1]])
             ins = full_ins.reshape([H, W, full_ins.shape[-1]])
 
-        # matching_scores.append(min_score)
         if i == 0:
             print(rgb.shape)
 
         if gt_imgs is not None:
-            # p = -10. * np.log10(np.mean(np.square(rgb.cpu().numpy() - gt_imgs[i])))
             # rgb image evaluation part
             psnr = metrics.peak_signal_noise_ratio(rgb.cpu().numpy(), gt_imgs_cpu[i], data_range=1)
             ssim = metrics.structural_similarity(rgb.cpu().numpy(), gt_imgs_cpu[i], multichannel=True, data_range=1)
@@ -104,7 +102,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
                 valid_gt_labels = torch.unique(gt_label)[:-1]
                 valid_gt_num = len(valid_gt_labels)
                 gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
-                gt_label_nnnn = valid_gt_labels.cpu().numpy()
+                gt_label_np = valid_gt_labels.cpu().numpy()
                 if valid_gt_num > 0:
                     mask = (gt_label < args.ins_num).type(torch.float32)
                     pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num, mask)
@@ -116,7 +114,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
                 valid_gt_labels = torch.unique(gt_label)
                 valid_gt_num = len(valid_gt_labels)
                 gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
-                gt_label_nnnn = valid_gt_labels.cpu().numpy()  # change name
+                gt_label_np = valid_gt_labels.cpu().numpy()  # change name
                 if valid_gt_num > 0:
                     pred_label, ap, pred_matched_order = ins_eval(ins.cpu(), gt_ins, valid_gt_num, args.ins_num)
                 else:
@@ -126,7 +124,7 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
             ins_map = {}
             for idx, pred_label_replica in enumerate(pred_matched_order):
                 if pred_label_replica != -1:
-                    ins_map[str(pred_label_replica)] = int(gt_label_nnnn[idx])
+                    ins_map[str(pred_label_replica)] = int(gt_label_np[idx])
 
             full_map[i] = ins_map
 
@@ -159,15 +157,12 @@ def render_test(position_embedder, view_embedder, model_coarse, model_fine, rend
         print(output.shape)
         output = output.transpose([1, 0])
         out_ap = np.mean(aps, axis=0)
-        mean_output = np.array(
-            [np.mean(psnrs), np.mean(ssims), np.mean(lpipses), out_ap[0], out_ap[1], out_ap[2], out_ap[3],
-             out_ap[4], out_ap[5]])
+        mean_output = np.array([np.mean(psnrs), np.mean(ssims), np.mean(lpipses), out_ap[0], out_ap[1],
+                                out_ap[2], out_ap[3], out_ap[4], out_ap[5]])
         mean_output = mean_output.reshape([1, 9])
         output = np.concatenate([output, mean_output], 0)
         test_result_file = os.path.join(savedir, 'test_results.txt')
         np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
-        print(
-            'PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f}, \n APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
-                np.mean(psnrs), np.mean(ssims),
-                np.mean(lpipses),
-                out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
+        print('PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f} '.format(np.mean(psnrs), np.mean(ssims), np.mean(lpipses)))
+        print('APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'
+              .format(out_ap[0], out_ap[1], out_ap[2], out_ap[3],out_ap[4], out_ap[5]))

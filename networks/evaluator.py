@@ -98,7 +98,6 @@ def calculate_ap(IoUs_Metrics, gt_number, confidence=None, function_select='inte
         return ap
 
     '''begin'''
-    # row corresponding ground truth, column corresponding prediction
     # make TP matrix
     if confidence is not None:
         column_max_index = torch.argsort(confidence, descending=True)

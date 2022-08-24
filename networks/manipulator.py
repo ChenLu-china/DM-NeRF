@@ -154,14 +154,10 @@ def manipulator_nerf(rays, position_embedder, view_embedder, model, N_samples=No
 
 
 def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_rays, f_tar_rays, args):
-    """
-        change stratagy, the integral and move color are high accuracy, so we just eliminate the color's value of points
-        which has the final label and the position betweeen the camera and the plane.
-    """
     # extract parameter
     N_samples, N_importance, near, far = args.N_samples, args.N_importance, args.near, args.far
-    ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_coarse, N_samples, near,
-                                           far)
+    ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_coarse,
+                                           N_samples, near, far)
 
     # ori
     _, ori_weights, _, _ = manipulator_render(ori_raw, ori_z_vals, ori_rays[1])
@@ -170,16 +166,15 @@ def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_
     ori_z_vals_mid = .5 * (ori_z_vals[..., 1:] + ori_z_vals[..., :-1])
     ori_z_samples = sample_pdf(ori_z_vals_mid, ori_weights[..., 1:-1], N_importance)  # interpolate 128 points
     ori_z_vals_full, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples], dim=-1), dim=-1)
-    ori_raw_full, _ = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_fine, N_samples, near, far,
-                                       z_vals=ori_z_vals_full)
+    ori_raw_full, _ = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_fine,
+                                       N_samples, near, far, z_vals=ori_z_vals_full)
     _, _, _, ori_ins_accum = manipulator_render(ori_raw_full, ori_z_vals_full, ori_rays[1])
 
     tar_raws, tar_rgbs, f_tar_weights, tar_instances, f_tar_z_vals, f_tar_z_samples, tar_ins_accums, = [], [], [], [], [], [], []
     for idx, tar_rays in enumerate(f_tar_rays):
         # sample 64
-        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_coarse, N_samples,
-                                               near,
-                                               far)
+        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder,
+                                               model_coarse, N_samples, near, far)
         tar_raws.append(tar_raw)
         f_tar_z_vals.append(tar_z_vals)
 
@@ -193,8 +188,8 @@ def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_
         tar_z_vals_mid = .5 * (tar_z_vals[..., 1:] + tar_z_vals[..., :-1])
         tar_z_samples = sample_pdf(tar_z_vals_mid, tar_weights[..., 1:-1], N_importance)
         tar_z_vals_full, _ = torch.sort(torch.cat([tar_z_vals, tar_z_samples], dim=-1), dim=-1)
-        tar_raw_full, _ = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_fine,
-                                           z_vals=tar_z_vals_full)
+        tar_raw_full, _ = manipulator_nerf(tar_rays, position_embedder, view_embedder,
+                                           model_fine, z_vals=tar_z_vals_full)
         _, _, _, tar_ins_accum = manipulator_render(tar_raw_full, tar_z_vals_full, tar_rays[1])
         f_tar_z_samples.append(tar_z_samples)
         tar_ins_accums.append(tar_ins_accum)
@@ -215,11 +210,11 @@ def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_
     ori_z_vals, _ = torch.sort(torch.cat([ori_z_vals, ori_z_samples, f_tar_z_samples], dim=-1), dim=-1)
     for idx, tar_rays in enumerate(f_tar_rays):
         tar_z_vals = f_tar_z_vals[idx]
-        ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder, model_fine,
-                                               z_vals=ori_z_vals)
+        ori_raw, ori_z_vals = manipulator_nerf(ori_rays, position_embedder, view_embedder,
+                                               model_fine, z_vals=ori_z_vals)
         tar_z_vals, _ = torch.sort(torch.cat([tar_z_vals, ori_z_samples, f_tar_z_samples], dim=-1), dim=-1)
-        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder, model_fine,
-                                               z_vals=tar_z_vals)
+        tar_raw, tar_z_vals = manipulator_nerf(tar_rays, position_embedder, view_embedder,
+                                               model_fine, z_vals=tar_z_vals)
         tar_raws[idx] = tar_raw
 
     ori_raw, tar_raws, _, _ = exchanger(ori_raw, tar_raws, ori_ins_accum, tar_ins_accums, args.target_label)
@@ -231,10 +226,6 @@ def manipulator(position_embedder, view_embedder, model_coarse, model_fine, ori_
 
 def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, trans_dicts, save_dir,
                      ins_rgbs, args, gt_rgbs=None, gt_labels=None):
-    """
-            the first step to find the
-    """
-
     """move_object must between 1 to args.class_number"""
     _, _, dataset_name, _, scene_name = args.datadir.split('/')
     H, W, K = hwk
@@ -244,9 +235,7 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
         lpips_vgg = lpips.LPIPS(net='vgg').to(args.device)
         gt_ins = torch.zeros(size=(H, W, args.ins_num))
 
-    ori_rgbs = []
-    ins_imgs = []
-    psnrs, ssims, lpipses, aps = [], [], [], []
+    ori_rgbs, ins_imgs, psnrs, ssims, lpipses, aps = [], [], [], [], [], []
 
     gt_color_dict_path = './data/color_dict.json'
     gt_color_dict = json.load(open(gt_color_dict_path, 'r'))
@@ -286,8 +275,7 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
             tar_batch_rays = torch.stack([tar_rays_io, tar_rays_id], dim=0)
             # edit render
             ori_rgb, ins, tar_rgb, tar_ins = manipulator(position_embedder, view_embedder, model_coarse, model_fine,
-                                                         ori_batch_rays,
-                                                         tar_batch_rays, args)
+                                                         ori_batch_rays, tar_batch_rays, args)
             # all_info = ins_nerf(tar_batch_rays, position_embedder, view_embedder, model_fine, model_coarse, args)
             if full_rgb is None and full_ins is None:
                 full_rgb, full_ins, full_tar_rgb, full_tar_ins = ori_rgb, ins, tar_rgb, tar_ins
@@ -314,16 +302,11 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
             print(f"PSNR: {psnr} SSIM: {ssim} LPIPS: {lpips_i.item()}")
 
             # calculate ap
-            # preprocess unique labels
-            # semantic instance segmentation evaluation part
             gt_label = gt_labels[i]
             valid_gt_labels = torch.unique(gt_label)
             valid_gt_num = len(valid_gt_labels)
             gt_ins[..., :valid_gt_num] = F.one_hot(gt_label.long())[..., valid_gt_labels.long()]
-
-            # Matching test prediction results, function one is using Hungarian Matching method directly, function two
-            # is using another method, specifically implementation is blow:
-            gt_label_nnnn = valid_gt_labels.cpu().numpy()
+            gt_label_np = valid_gt_labels.cpu().numpy()
             if valid_gt_num > 0:
                 # mask = (gt_label < args.ins_num).type(torch.float32)
                 pred_label, ap, pred_matched_order = ins_eval(ins[..., :-1].cpu(), gt_ins, valid_gt_num, args.ins_num)
@@ -334,7 +317,7 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
             ins_map = {}
             for idx, pred_label_replica in enumerate(pred_matched_order):
                 if pred_label_replica != -1:
-                    ins_map[str(pred_label_replica)] = int(gt_label_nnnn[idx])
+                    ins_map[str(pred_label_replica)] = int(gt_label_np[idx])
 
             full_map[i] = ins_map
 
@@ -389,30 +372,20 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
         output = np.stack([psnrs, ssims, lpipses, aps[:, 0], aps[:, 1], aps[:, 2], aps[:, 3], aps[:, 4], aps[:, 5]])
         output = output.transpose([1, 0])
         out_ap = np.mean(aps, axis=0)
-        mean_output = np.array(
-            [np.nanmean(psnrs), np.nanmean(ssims), np.nanmean(lpipses), out_ap[0], out_ap[1], out_ap[2], out_ap[3],
-             out_ap[4], out_ap[5]])
+        mean_output = np.array([np.nanmean(psnrs), np.nanmean(ssims), np.nanmean(lpipses), out_ap[0],
+                                out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]])
         mean_output = mean_output.reshape([1, 9])
         output = np.concatenate([output, mean_output], 0)
         test_result_file = os.path.join(save_dir, 'test_results.txt')
         np.savetxt(fname=test_result_file, X=output, fmt='%.6f', delimiter=' ')
-        print(
-            'PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f} \n APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'.format(
-                np.mean(psnrs), np.mean(ssims),
-                np.mean(lpipses),
-                out_ap[0], out_ap[1], out_ap[2], out_ap[3], out_ap[4], out_ap[5]))
-
-    print("finished!!!!!!!")
+        print('PSNR: {:.4f}, SSIM: {:.4f},  LPIPS: {:.4f} '.format(np.mean(psnrs), np.mean(ssims), np.mean(lpipses)))
+        print('APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}, APs: {:.4f}'
+              .format(out_ap[0], out_ap[1], out_ap[2], out_ap[3],out_ap[4], out_ap[5]))
     return
 
 
-def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, save_dir, ins_rgbs,
-                     args,
-                     objs, objs_trans, view_poses, ins_map):
-    """
-            the first step to find the
-    """
-
+def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, objs_trans, save_dir,
+                     ins_rgbs, objs, view_poses, ins_map, args):
     """move_object must between 1 to args.class_number"""
     _, _, dataset_name, scene_name = args.datadir.split('/')
     H, W, K = hwk
@@ -425,10 +398,8 @@ def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine,
     os.makedirs(save_dir, exist_ok=True)
 
     # original
-    # oper_num = len(objs_trans[objs[0]['obj_name']])
-    print(view_poses.shape)
-    deform_v = np.concatenate(
-        (np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2), np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
+    deform_v = np.concatenate((np.linspace(0, 0.18, 2), np.linspace(0.18, 0, 2), np.linspace(0, -0.18, 2), np.linspace(-0.18, 0, 2)))
+
     for i, ori_pose in enumerate(view_poses):
         # operate objects at same time
         time_0 = time.time()
@@ -538,5 +509,4 @@ def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine,
         imageio.imwrite(gt_ins_file, np.array(label.cpu().numpy(), dtype=np.uint8))
         time_1 = time.time()
         print(f"Image{i}: {time_1 - time_0}")
-    print("finished!!!!!!!")
     return

@@ -64,11 +64,7 @@ def test():
                                          objs_trans=obj_trans, view_poses=int_view_poses, ins_map=ins_map)
 
         elif args.mesh:
-            print("###########################################")
-            print()
             print("MESH ONLY")
-            print()
-            print("###########################################")
             mesh_file = os.path.join(args.datadir, "mesh.ply")
             assert os.path.exists(mesh_file)
             trimesh_scene = trimesh.load(mesh_file, process=False)
