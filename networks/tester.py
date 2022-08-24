@@ -6,9 +6,9 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 from skimage import metrics
-from networks.ins_eval import ins_eval
+from networks.decomposition_evaluator import ins_eval
 from networks.helpers import get_rays_k, z_val_sample
-from networks.ins_eval import to8b
+from networks.decomposition_evaluator import to8b
 from networks.render import ins_nerf
 from tools.visualisation import render_label2img, render_gt_label2img
 import cv2

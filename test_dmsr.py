@@ -8,7 +8,7 @@ from datasets.dmsr import dmsr_loader_val
 from datasets.dmsr import dmsr_loader
 from networks import val_manipulator
 from networks import demo_manipulator
-from networks.test import render_test
+from networks.tester import render_test
 from tools.mesh_generator import mesh_main
 import trimesh
 

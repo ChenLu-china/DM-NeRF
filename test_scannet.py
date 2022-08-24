@@ -3,7 +3,7 @@ import torch
 from config import create_nerf, initial
 from datasets.scannet.scannet_loader import *
 from networks.editor import editor_test
-from networks.test import render_test
+from networks.tester import render_test
 
 
 def test():

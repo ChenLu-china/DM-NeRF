@@ -7,10 +7,10 @@ import time
 import json
 import torch.nn.functional as F
 from networks.helpers import get_rays_k, sample_pdf
-from networks.ins_eval import to8b
+from networks.decomposition_evaluator import to8b
 from tools.visualisation import editor_label2img, render_label2img, render_gt_label2img
 from skimage import metrics
-from networks.ins_eval import ins_eval
+from networks.decomposition_evaluator import ins_eval
 import cv2
 
 

@@ -3,9 +3,9 @@ import os
 import numpy as np
 from config import initial, create_nerf
 from datasets.dmsr.load_dmsr import load_data
-from networks.ins_eval import ins_criterion, img2mse, mse2psnr
+from networks.decomposition_evaluator import ins_criterion, img2mse, mse2psnr
 from networks.emptiness_penalizer import ins_penalizer
-from networks.test import render_test
+from networks.tester import render_test
 from networks.helpers import gt_select_general, z_val_sample
 from networks.render import ins_nerf
 from networks.helpers import round_losses
