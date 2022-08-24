@@ -59,8 +59,8 @@ This repository contains the implementation of the paper:
 
 ## Installation
 
-Create python >=3.7
 ```bash
+python >=3.7
 pip install pytorch==1.8.1 torchVision==0.9.1 torchaudio===0.8.1
 pip install -r environment.txt
 ```
