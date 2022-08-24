@@ -12,7 +12,7 @@ from skimage import metrics
 from networks.evaluator import to8b
 from networks.evaluator import ins_eval
 from networks.helpers import get_rays_k, sample_pdf
-from tools.visualizer import manipulator_label2img, render_label2img, render_gt_label2img
+from tools.visualizer import render_label2img, render_gt_label2img
 
 
 def exchanger(ori_raw, tar_raws, ori_raw_pred, tar_raw_preds, move_labels):
@@ -72,7 +72,6 @@ def exchanger(ori_raw, tar_raws, ori_raw_pred, tar_raw_preds, move_labels):
         operation_mask[reduced_mask == 1] = 1
         operation_mask[reduced_mask == 2] = 0
         operation_mask[reduced_mask == 3] = 1
-        # print(torch.sum(reduced_mask == 2))
         '''-1 means not exchange, 0 means eliminate, 1 means exchange'''
         ######################################################
         ori_raw[fillings] = tar_raw[fillings]
@@ -368,7 +367,7 @@ def manipulator_eval(position_embedder, view_embedder, model_coarse, model_fine,
 
 def manipulator_demo(position_embedder, view_embedder, model_coarse, model_fine, ori_poses, hwk, objs_trans, save_dir,
                      ins_rgbs, objs, view_poses, ins_map, args):
-    """move_object must between 1 to args.class_number"""
+
     _, _, dataset_name, scene_name = args.datadir.split('/')
     H, W, K = hwk
 

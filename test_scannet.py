@@ -42,8 +42,6 @@ if __name__ == '__main__':
     # load data
     images, poses, hwk, i_split, instances, ins_colors, args.ins_num, ins_indices, crop_mask = load_data(args)
     print('Loaded blender', images.shape, hwk, args.datadir)
-    # load transformation matrix
-    # render_poses = torch.stack([pose_spherical(angle, -30.0, 4.0) for angle in np.linspace(-180, 180, 40 + 1)[:-1]], 0)
 
     H, W, K = hwk
     i_train, i_test = i_split
