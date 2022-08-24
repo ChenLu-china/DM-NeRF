@@ -98,7 +98,14 @@ We used PSNR, SSIM, LPIPS, and mAPs to evaluate our tasks:
 
 For decomposition operation:
 
-You need to add `render=True` and `log_time="your log folder name"` into config txt, and then run `CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt`.
+You need to add `render=True` and `log_time="your log folder name"` into config txt.
+
+And then run:
+```bash 
+
+     CUDA_VISIBLE_DEVICES=7 python -u test_dmsr.py --config configs/test/dmsr/study.txt
+     
+```
 
 ### Manipulation
 
@@ -108,9 +115,11 @@ We only provide manipulated ground truth of DM-SR dataset for manipulation evalu
 
 Change `render = True` to `mani_eval = True`, add `target_label` and `editor_mode` to assign which object manipulated and which manipulated operation you want, specific format can renference `./configs/manipulation/dmsr/editor_multi/study.txt`.
 
+You can run:
+
 ```bash
 
-run CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr/manipulation_multi/study.txt
+ CUDA_VISIBLE_DEVICES=0 python -u test_dmsr.py --config configs/manipulation/dmsr/manipulation_multi/study.txt
 
 ```
 
@@ -119,6 +128,8 @@ Change `render = True` to `mani_demo = True`, edit objs_info.json to assign obje
 You can move view poses by given `view_id = null`, but given `views` a number in config file.
 
 More explanation, `ins_map` is a global matching list statistic from matching_logs.json, 
+
+You can run:
 
 ```bash
 
