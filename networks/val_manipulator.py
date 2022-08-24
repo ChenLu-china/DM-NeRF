@@ -8,7 +8,7 @@ import json
 import torch.nn.functional as F
 from networks.helpers import get_rays_k, sample_pdf
 from networks.decomposition_evaluator import to8b
-from tools.visualisation import editor_label2img, render_label2img, render_gt_label2img
+from tools.visualiser import editor_label2img, render_label2img, render_gt_label2img
 from skimage import metrics
 from networks.decomposition_evaluator import ins_eval
 import cv2

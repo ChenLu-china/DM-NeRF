@@ -6,7 +6,7 @@ import skimage.measure as ski_measure
 import numpy as np
 import trimesh
 import torch.nn.functional as F
-from tools.visualisation import *
+from tools.visualiser import *
 from networks.render import ins_nerf
 from networks.helpers import z_val_sample
 
